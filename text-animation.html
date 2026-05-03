@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poster Typography Animator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Playfair+Display:ital,wght@0,700;0,900;1,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { 
+            --speed: 0.8s; 
+            --primary-color: #cc0000;
+            --primary-hover: #ff1a1a;
+            --bg-dark: #121212;
+            --bg-panel: #1e1e1e;
+            --text-main: #ffffff;
+            --text-muted: #a0a0a0;
+        }
+
+        body { 
+            margin: 0; 
+            display: flex; 
+            font-family: 'Inter', sans-serif; 
+            background: var(--bg-dark); 
+            color: var(--text-main); 
+            height: 100vh; 
+            overflow: hidden; 
+        }
+        
+        /* Cột điều khiển */
+        .controls { 
+            width: 380px; 
+            background: var(--bg-panel); 
+            padding: 30px; 
+            box-sizing: border-box; 
+            border-right: 1px solid #2a2a2a; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 18px; 
+            overflow-y: auto;
+            box-shadow: 5px 0 15px rgba(0,0,0,0.3);
+            z-index: 10;
+        }
+
+        .controls::-webkit-scrollbar { width: 6px; }
+        .controls::-webkit-scrollbar-thumb { background: #444; border-radius: 3px; }
+
+        .controls h3 { 
+            margin: 0 0 5px 0; 
+            color: var(--primary-color); 
+            font-family: 'Playfair Display', serif; 
+            font-size: 28px;
+            letter-spacing: 0.5px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        label { 
+            font-size: 13px; 
+            color: var(--text-muted); 
+            font-weight: 600; 
+        }
+
+        input[type="text"] { 
+            width: 100%; 
+            padding: 14px; 
+            background: #2a2a2a; 
+            border: 1px solid #3a3a3a; 
+            color: var(--text-main); 
+            border-radius: 8px; 
+            box-sizing: border-box; 
+            font-family: 'Inter', sans-serif; 
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus { 
+            border-color: var(--primary-color); 
+            outline: none; 
+            box-shadow: 0 0 0 3px rgba(204, 0, 0, 0.2);
+        }
+
+        input[type="range"] { 
+            accent-color: var(--primary-color); 
+            cursor: pointer; 
+            width: 100%;
+        }
+
+        button { 
+            background: var(--primary-color); 
+            color: #fff; 
+            border: none; 
+            padding: 16px; 
+            border-radius: 8px; 
+            font-weight: 700; 
+            font-size: 14px;
+            cursor: pointer; 
+            text-transform: uppercase; 
+            letter-spacing: 1px;
+            margin-top: 15px; 
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(204, 0, 0, 0.3);
+        }
+
+        button:hover { 
+            background: var(--primary-hover); 
+            transform: translateY(-2px); 
+            box-shadow: 0 6px 16px rgba(204, 0, 0, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .guide-box {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 3px solid var(--primary-color);
+            font-size: 12px; 
+            color: #bbb; 
+            margin-top: 15px; 
+            line-height: 1.6;
+        }
+
+        .guide-box b { color: #fff; }
+
+        /* Cột hiển thị (Phông Xanh Tỷ lệ 9:16) */
+        .preview-area { 
+            flex: 1; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            background: #111; 
+            background-image: radial-gradient(circle at center, #222 0%, #0a0a0a 100%);
+            overflow: auto;
+            padding: 20px;
+        }
+
+        .canvas { 
+            width: 405px; 
+            height: 720px; 
+            min-width: 405px;
+            min-height: 720px;
+            background-color: #00FF00; /* Phông xanh lá */ 
+            position: relative; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+            text-align: center; 
+            overflow: hidden; 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5); 
+            border-radius: 4px;
+        }
+        
+        /* Typography System */
+        .text-wrapper { 
+            opacity: 0; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            padding: 0 20px;
+        }
+
+        .freight-text { 
+            font-family: 'Playfair Display', serif; 
+            font-size: 85px; 
+            font-weight: 900; 
+            color: var(--primary-color); 
+            line-height: 1.05; 
+            margin-bottom: 15px; 
+            text-transform: uppercase; 
+            text-shadow: 0px 8px 15px rgba(0,0,0,0.4); 
+            text-align: center;
+        }
+
+        .aeonik-text { 
+            font-family: 'Inter', sans-serif; 
+            font-size: 26px; 
+            font-weight: 700; 
+            color: #ffffff; 
+            letter-spacing: 2px; 
+            text-transform: uppercase; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 12px; 
+            text-shadow: 0px 4px 10px rgba(0,0,0,0.5); 
+            text-align: center;
+        }
+
+        .icon-box { 
+            font-size: 28px; 
+            color: var(--primary-color); 
+        }
+
+        /* Utilities */
+        .d-none { display: none !important; }
+
+        /* CSS Animations */
+        .anim-active .freight-text { 
+            animation: popIn var(--speed) cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; 
+        }
+        .anim-active .aeonik-text { 
+            animation: slideUp var(--speed) ease-out calc(var(--speed) * 0.25) forwards; 
+        }
+
+        @keyframes popIn {
+            0% { opacity: 0; transform: scale(0.4) translateY(40px); filter: blur(10px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
+        }
+        @keyframes slideUp {
+            0% { opacity: 0; transform: translateY(30px); filter: blur(5px); }
+            100% { opacity: 1; transform: translateY(0); filter: blur(0); }
+        }
+
+        /* Responsive */
+        @media (max-width: 800px) {
+            body { flex-direction: column; overflow: auto; }
+            .controls { width: 100%; border-right: none; border-bottom: 1px solid #2a2a2a; }
+            .preview-area { padding: 40px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="controls">
+        <h3>Design Tool</h3>
+        
+        <div class="input-group">
+            <label for="in-key">Chữ Nhấn (Font có chân - Đỏ):</label>
+            <input type="text" id="in-key" value="MATCH CUT">
+        </div>
+        
+        <div class="input-group">
+            <label for="in-sub">Chữ Phụ (Font không chân - Trắng):</label>
+            <input type="text" id="in-sub" value="SỰ GIỐNG NHAU">
+        </div>
+        
+        <div class="input-group">
+            <label for="in-icon">Icon minh họa (Mã FontAwesome):<br><small style="color:#777; font-weight:normal;">(VD: fa-scissors, fa-bolt, fa-eye)</small></label>
+            <input type="text" id="in-icon" value="fa-solid fa-scissors" placeholder="Để trống nếu không dùng icon">
+        </div>
+        
+        <div class="input-group">
+            <label for="in-speed">Tốc độ xuất hiện: <span id="speed-val" style="color:var(--primary-color)">0.8</span> giây</label>
+            <input type="range" id="in-speed" min="0.2" max="2.0" step="0.1" value="0.8">
+        </div>
+        
+        <button onclick="playAnim()"><i class="fa-solid fa-play"></i> Chạy & Ghi hình</button>
+        
+        <div class="guide-box">
+            <b>Hướng dẫn CapCut:</b><br>
+            1. Quay màn hình khung xanh bên phải.<br>
+            2. Đưa video vào lớp phủ (Overlay).<br>
+            3. Cắt Ảnh (Cutout) -> Phông Xanh (Chroma Key).<br>
+            4. Chọn màu xanh và kéo Cường độ (Intensity).
+        </div>
+    </div>
+
+    <div class="preview-area">
+        <div class="canvas" id="canvas">
+            <div class="text-wrapper" id="anim-box">
+                <div class="freight-text" id="out-key">MATCH CUT</div>
+                <div class="aeonik-text">
+                    <i class="fa-solid fa-scissors icon-box" id="out-icon"></i>
+                    <span id="out-sub">SỰ GIỐNG NHAU</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const root = document.documentElement;
+        const animBox = document.getElementById('anim-box');
+
+        // Cập nhật tốc độ realtime
+        document.getElementById('in-speed').addEventListener('input', function() {
+            document.getElementById('speed-val').innerText = parseFloat(this.value).toFixed(1);
+            root.style.setProperty('--speed', this.value + 's');
+        });
+
+        function playAnim() {
+            // Lấy dữ liệu
+            document.getElementById('out-key').innerText = document.getElementById('in-key').value;
+            document.getElementById('out-sub').innerText = document.getElementById('in-sub').value;
+            
+            // Xử lý Icon
+            let iconInput = document.getElementById('in-icon').value.trim();
+            let iconElement = document.getElementById('out-icon');
+            
+            if (iconInput) {
+                iconElement.className = iconInput + ' icon-box';
+            } else {
+                iconElement.className = 'icon-box d-none';
+            }
+
+            // Reset animation (Force Reflow)
+            animBox.classList.remove('anim-active');
+            void animBox.offsetWidth; 
+            animBox.classList.add('anim-active');
+        }
+
+        // Chạy lần đầu sau khi tải trang
+        window.onload = () => {
+            setTimeout(playAnim, 500);
+        };
+    </script>
+
+<script id="cms-pin-widget">if(localStorage.getItem("cms_auth")==="granted"){const p=window.location.pathname.split("/").filter(Boolean);let r="vietndj.github.io",f="index.html";if(p.length>1){r=p[0];f=p.pop()}else if(p.length===1){if(p[0].endsWith(".html"))f=p[0];else r=p[0]}const k=r+"/"+decodeURIComponent(f);let isP=false;try{const d=JSON.parse(localStorage.getItem("cms_repo_data"));if(d&&d.pinned&&d.pinned.includes(k))isP=true;}catch(e){}const b=document.createElement("a");b.href="https://vietndj.github.io/?"+(isP?"unpin=":"pin=")+encodeURIComponent(k);b.innerHTML=isP?"❌ Bỏ ghim":"📌 Ghim bài";b.style.cssText="position:fixed;top:15px;right:15px;background:"+(isP?"#FF3B30":"#FF9500")+";color:white;padding:8px 16px;border-radius:20px;font-weight:bold;font-size:12px;z-index:99999;text-decoration:none;box-shadow:0 4px 10px rgba(0,0,0,0.15);transition:all 0.2s ease;cursor:pointer;";b.onclick=function(e){e.preventDefault();window.open(this.href,"_blank");isP=!isP;this.innerHTML=isP?"❌ Bỏ ghim":"📌 Ghim bài";this.style.background=isP?"#FF3B30":"#FF9500";this.href="https://vietndj.github.io/?"+(isP?"unpin=":"pin=")+encodeURIComponent(k)};document.body.appendChild(b);}</script>
+</body>
+</html>
