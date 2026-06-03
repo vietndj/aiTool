@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maya AI - Trợ Lý Kịch Bản Chuyển Đổi Cao | VietND</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #0b1121;
+            --text-color: #f8fafc;
+            --card-bg: #1e293b;
+            --primary: #3b82f6;
+            --secondary: #10b981;
+            --maya-color: #f43f5e; /* Màu hồng đỏ nhận diện của Maya */
+            --footer-height: 128px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-color); display: flex; flex-direction: column; min-height: 100vh; line-height: 1.6; }
+
+        .container { max-width: 1100px; margin: 0 auto; padding: 50px 20px; flex: 1; width: 100%; }
+        
+        header { text-align: center; margin-bottom: 50px; }
+        .badge { display: inline-block; background: rgba(244, 63, 94, 0.15); color: #fb7185; padding: 6px 16px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; margin-bottom: 15px; border: 1px solid rgba(244, 63, 94, 0.3); }
+        header h1 { font-size: 2.5rem; font-weight: 700; background: linear-gradient(135deg, #60a5fa, #fb7185); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 15px; letter-spacing: -0.5px; }
+        header p { color: #94a3b8; font-size: 1.05rem; max-width: 650px; margin: 0 auto; }
+
+        /* Grid Cards */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-bottom: 40px; }
+        
+        .card { background: var(--card-bg); border-radius: 16px; overflow: hidden; cursor: pointer; border: 1px solid #334155; transition: all 0.3s ease; display: flex; flex-direction: column; }
+        .card:hover { transform: translateY(-6px); border-color: var(--maya-color); box-shadow: 0 12px 30px rgba(244, 63, 94, 0.15); }
+        
+        /* CSS Abstract Art - Giao diện trực quan */
+        .art-box { height: 140px; width: 100%; position: relative; overflow: hidden; }
+        
+        .art-1 { background: linear-gradient(120deg, #1e3a8a, #881337); }
+        .art-1::before { content: ''; position: absolute; width: 120px; height: 120px; border-radius: 50%; background: radial-gradient(circle, rgba(244,63,94,0.6) 0%, transparent 70%); top: -30px; left: -20px; }
+        .art-1::after { content: ''; position: absolute; width: 80px; height: 80px; border: 3px solid rgba(255,255,255,0.08); transform: rotate(30deg); bottom: -20px; right: 30px; }
+        
+        .art-2 { background: linear-gradient(120deg, #4c1d95, #9a3412); }
+        .art-2::before { content: ''; position: absolute; width: 150%; height: 30px; background: rgba(255,255,255,0.08); transform: rotate(-20deg); top: 30px; left: -20px; }
+        .art-2::after { content: ''; position: absolute; border-left: 40px solid transparent; border-right: 40px solid transparent; border-bottom: 70px solid rgba(251, 146, 60, 0.15); bottom: 10px; right: 20px; transform: rotate(15deg); }
+        
+        .art-3 { background: linear-gradient(120deg, #064e3b, #1e3a8a); }
+        .art-3::before { content: ''; position: absolute; width: 100%; height: 100%; background-image: radial-gradient(rgba(255,255,255,0.1) 2px, transparent 2px); background-size: 20px 20px; opacity: 0.5; }
+        .art-3::after { content: ''; position: absolute; width: 50px; height: 50px; background: rgba(16,185,129,0.2); border-radius: 8px; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(45deg); border: 2px solid rgba(255,255,255,0.1); }
+
+        .card-content { padding: 24px; flex: 1; }
+        .card-title { font-size: 1.2rem; margin-bottom: 10px; color: #fff; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .card-desc { font-size: 0.95rem; color: #94a3b8; }
+
+        /* Fake Loading */
+        #loading { display: none; text-align: center; padding: 40px; flex-direction: column; align-items: center; }
+        .spinner { width: 45px; height: 45px; border: 3px solid rgba(244, 63, 94, 0.2); border-top-color: var(--maya-color); border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 15px; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        #loading-text { color: var(--maya-color); font-size: 1.05rem; font-weight: 600; }
+
+        /* Result Section */
+        #result-box { display: none; background: var(--card-bg); border-radius: 12px; border: 1px solid #334155; overflow: hidden; margin-top: 20px; animation: slideUp 0.4s ease-out; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .instruction-bar { background: rgba(59, 130, 246, 0.1); padding: 16px 24px; font-size: 0.95rem; color: #93c5fd; border-bottom: 1px solid #334155; }
+        
+        .result-header { padding: 16px 24px; background: #0f172a; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; }
+        .result-header h3 { font-size: 1.1rem; color: #fff; display: flex; align-items: center; gap: 8px; }
+        
+        .action-btns { display: flex; gap: 10px; }
+        .btn { padding: 9px 18px; border-radius: 8px; font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: all 0.2s; border: none; display: flex; align-items: center; gap: 8px; }
+        .btn-outline { background: transparent; border: 1px solid #475569; color: #cbd5e1; }
+        .btn-outline:hover { background: #334155; color: #fff; }
+        .btn-primary { background: var(--maya-color); color: #fff; }
+        .btn-primary:hover { background: #e11d48; }
+
+        textarea { width: 100%; height: 450px; padding: 24px; font-family: 'Consolas', monospace; font-size: 0.95rem; color: #e2e8f0; background: transparent; border: none; resize: vertical; line-height: 1.6; outline: none; }
+
+        /* Chat UI - Demo Section */
+        .example-section { margin-top: 40px; background: transparent; border-radius: 16px; padding: 35px; border: 1px solid #334155; }
+        .example-section h2 { font-size: 1.3rem; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; color: #fff; }
+        .example-section p { color: #94a3b8; margin-bottom: 25px; font-size: 0.95rem; }
+        
+        .chat-row { display: flex; gap: 15px; margin-bottom: 20px; }
+        .avatar { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; font-size: 0.9rem; }
+        .avatar-maya { background: var(--maya-color); color: white; }
+        .avatar-user { background: var(--primary); color: white; }
+        
+        .msg-bubble { background: #1e293b; padding: 18px 22px; border-radius: 0 16px 16px 16px; font-size: 0.95rem; color: #cbd5e1; max-width: 85%; border: 1px solid #334155; }
+        .msg-bubble strong { color: #fff; }
+        .msg-bubble .note { color: #60a5fa; font-style: italic; display: block; margin: 12px 0; }
+        .msg-bubble ul { list-style: none; padding-left: 5px; }
+        .msg-bubble li { margin-bottom: 6px; }
+        .msg-bubble li span { color: var(--maya-color); font-weight: bold; margin-right: 5px; }
+        
+        .chat-row.user { flex-direction: row-reverse; }
+        .chat-row.user .msg-bubble { border-radius: 16px 0 16px 16px; background: rgba(59, 130, 246, 0.1); border-color: rgba(59, 130, 246, 0.2); }
+
+        /* STRICT FOOTER - FIXED 128px HEIGHT */
+        footer { 
+            height: var(--footer-height); 
+            min-height: var(--footer-height); 
+            max-height: var(--footer-height); 
+            background: #020617; 
+            border-top: 1px solid #1e293b; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+            padding: 0 20px; 
+            text-align: center; 
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+        .footer-text { color: #94a3b8; font-size: 0.85rem; max-width: 850px; margin-bottom: 12px; line-height: 1.5; }
+        .footer-socials { display: flex; gap: 20px; }
+        .footer-socials a { color: #64748b; font-size: 1.25rem; transition: color 0.2s; text-decoration: none; display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,0.05); }
+        .footer-socials a:hover { color: #fff; background: var(--primary); }
+        
+        @media (max-width: 768px) {
+            header h1 { font-size: 2rem; }
+            .result-header { flex-direction: column; gap: 15px; align-items: flex-start; }
+            .action-btns { width: 100%; display: grid; grid-template-columns: 1fr 1fr; }
+            .btn { justify-content: center; }
+            .msg-bubble { max-width: 95%; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <div class="badge">🤖 Trải nghiệm Tương tác Tự nhiên</div>
+            <h1>Hệ Thống Mega-Prompt Chuyển Đổi Cao</h1>
+            <p>Chọn 1 trong 3 khung nội dung. Hệ thống sẽ cung cấp lệnh để đánh thức "Maya" - Nữ trợ lý AI sẽ dẫn dắt bạn thiết kế kịch bản qua hội thoại cực kỳ mượt mà.</p>
+        </header>
+
+        <div class="grid" id="cardGrid">
+            <div class="card" onclick="processPrompt('pas')">
+                <div class="art-box art-1"></div>
+                <div class="card-content">
+                    <h3 class="card-title">1. Khung P.A.S (Xoáy Nỗi Đau)</h3>
+                    <p class="card-desc">Chỉ ra sự bực tức của khách hàng và dùng logic sản phẩm của bạn để cấp cứu tức thì. Tốt nhất cho phần mềm, gia dụng, tư vấn.</p>
+                </div>
+            </div>
+
+            <div class="card" onclick="processPrompt('myth')">
+                <div class="art-box art-2"></div>
+                <div class="card-content">
+                    <h3 class="card-title">2. Khung Bóc Phốt Lầm Tưởng</h3>
+                    <p class="card-desc">Thích hợp thị trường bão hòa. Đập tan cách làm cũ tốn tiền để bán công nghệ/tư duy mới của bạn (BĐS, Spa, Khóa học).</p>
+                </div>
+            </div>
+
+            <div class="card" onclick="processPrompt('process')">
+                <div class="art-box art-3"></div>
+                <div class="card-content">
+                    <h3 class="card-title">3. Khung Thực Chứng Quy Trình</h3>
+                    <p class="card-desc">Thoại siêu ngắn. Tập trung khoe quá trình làm việc chuyên nghiệp để đập tan sự hoài nghi (F&B, Dịch vụ thi công, Decor).</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="loading">
+            <div class="spinner"></div>
+            <div id="loading-text">Đang triệu hồi Trợ lý Maya...</div>
+        </div>
+
+        <div id="result-box">
+            <div class="instruction-bar">
+                <i class="fas fa-check-circle"></i> <strong>Sẵn sàng!</strong> Nhấn Copy và dán toàn bộ đoạn lệnh này vào ChatGPT/Claude để bắt đầu phiên Coaching 1-1 với Maya.
+            </div>
+            <div class="result-header">
+                <h3 id="result-title"><i class="fas fa-terminal"></i> Lệnh Kích Hoạt</h3>
+                <div class="action-btns">
+                    <button class="btn btn-outline" onclick="goBack()"><i class="fas fa-undo"></i> Đóng</button>
+                    <button class="btn btn-primary" onclick="copyPrompt()">
+                        <i class="fas fa-copy"></i> <span id="copy-text">Copy Lệnh</span>
+                    </button>
+                </div>
+            </div>
+            <textarea id="prompt-content" readonly></textarea>
+        </div>
+
+        <div class="example-section" id="example-section">
+            <h2><i class="fas fa-comment-dots"></i> Demo cách Maya tương tác với bạn</h2>
+            <p>Tuyệt đối không bắt bạn đọc lý thuyết rườm rà. Maya sẽ hỏi và mớm sẵn ý tưởng cho bạn như một người đồng nghiệp:</p>
+            
+            <div class="chat-row">
+                <div class="avatar avatar-maya">M</div>
+                <div class="msg-bubble">
+                    <strong>Trợ lý Maya:</strong><br><br>
+                    Cảm ơn bạn! Vậy theo bạn, sự bực mình hay lãng phí tiền bạc lớn nhất mà tệp khách hàng này đang gặp phải là gì?<br>
+                    
+                    <span class="note">💡 Bạn có thể xem thêm gợi ý Maya đã quét thị trường bên dưới đây. Bạn có thể trả lời theo ý bạn, hoặc kết hợp với 1, 2, 3... nhé! (Ví dụ: "Mình chọn 2 nhưng thêm là..."):</span>
+                    
+                    <ul>
+                        <li><span>1.</span> Mua thiết bị quay chụp hàng chục triệu nhưng không biết setup ánh sáng, lên hình bị tối và đơ.</li>
+                        <li><span>2.</span> Ngồi hì hục edit trên điện thoại cả buổi tối, xuất ra video mờ căm và không có ai xem.</li>
+                        <li><span>3.</span> Kiến thức chuyên môn rất giỏi nhưng không biết cách mở bài 3 giây đầu, khiến khách hàng lướt đi mất.</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="chat-row user">
+                <div class="avatar avatar-user">B</div>
+                <div class="msg-bubble">
+                    <strong>Bạn:</strong><br>
+                    Maya ơi, mình nghĩ lý do lớn nhất là họ sợ mất thời gian edit. Mình chọn số 2 kết hợp với ý của mình là họ không biết xài Capcut nhé!
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-text">
+            Cập nhật kiến thức thực chiến nhất về Kỹ năng Quay Dựng, Xây kênh Niche và Tư duy phân tích Thuật toán Mạng xã hội kỷ nguyên mới.
+        </div>
+        <div class="footer-socials">
+            <a href="https://youtube.com/@vietndonline" target="_blank" title="YouTube"><i class="fab fa-youtube"></i></a>
+            <a href="https://www.tiktok.com/@nguyenducviet.viral" target="_blank" title="TikTok"><i class="fab fa-tiktok"></i></a>
+            <a href="https://facebook.com/nguyenducviet.video" target="_blank" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+        </div>
+    </footer>
+
+    <script>
+        const prompts = {
+            pas: `Hãy đóng vai là "Maya" - nữ trợ lý kịch bản quảng cáo video ngắn thực chiến. Giọng điệu của Maya: thân thiện, thông minh, ngắn gọn, xưng "em/Maya" và gọi tôi là "anh/chị/bạn". Nhiệm vụ của Maya là từng bước giúp tôi viết một kịch bản video dưới 75 giây (< 150 từ thoại) theo khung Vấn Đề - Cơ Chế giải quyết (P.A.S).
+
+[🚨 QUY TẮC CỐT LÕI - PHẢI TUÂN THỦ]:
+1. HỎI 1 BƯỚC MỖI LẦN. Luôn kết thúc bằng [🛑 MAYA ĐANG CHỜ BẠN TRẢ LỜI]. Tuyệt đối không tự ý in bước tiếp theo khi tôi chưa phản hồi.
+2. KHÔNG giải thích lý thuyết dài dòng. Đi thẳng vào trọng tâm.
+3. BƯỚC 1 GỌN GÀNG: Chỉ hỏi đúng 2 câu mở đầu. KHÔNG đưa ra bất kỳ gợi ý nào.
+4. TỪ BƯỚC 2 TRỞ ĐI: 
+   - Đặt câu hỏi chính.
+   - Ngay bên dưới, Maya TỰ ĐỘNG quét thị trường ngành của tôi và in ra đúng câu dẫn tự nhiên này: 
+     "💡 Bạn có thể xem thêm gợi ý Maya đã quét thị trường bên dưới đây. Bạn có thể trả lời theo ý bạn, hoặc kết hợp với 1, 2, 3... nhé! (Ví dụ: 'Mình chọn số 2 kết hợp với ý tưởng của mình là...')"
+   - Sau đó liệt kê các gợi ý chỉ dùng số: 1. [Gợi ý] / 2. [Gợi ý] / 3. [Gợi ý]. Tuyệt đối không dùng chữ "Phương án".
+
+--- QUY TRÌNH LÀM VIỆC ---
+
+BƯỚC 1: BẮT ĐẦU
+Maya giới thiệu bản thân thân thiện và hỏi: "Chào bạn, mình là trợ lý AI Maya đây! Bạn đang bán sản phẩm/dịch vụ gì? Khách hàng mục tiêu của chiến dịch quảng cáo này là ai?"
+[🛑 MAYA ĐANG CHỜ BẠN TRẢ LỜI]
+
+(Sau khi tôi trả lời B1, Maya chuyển sang Bước 2).
+
+BƯỚC 2: TÌM NỖI ĐAU 
+Maya phản hồi tự nhiên. Hỏi: "Theo bạn, sự bực mình hay lãng phí tiền bạc lớn nhất mà khách hàng đang gặp phải là gì?"
+(Maya in kèm câu hướng dẫn và 3 gợi ý đánh số 1, 2, 3 từ việc tự phân tích thị trường ngành vừa nhập).
+[🛑 MAYA ĐANG CHỜ BẠN TRẢ LỜI]
+
+(Sau khi tôi trả lời B2, Maya chuyển sang Bước 3).
+
+BƯỚC 3: CƠ CHẾ SẢN PHẨM & CẢNH QUAY
+Maya phản hồi. Hỏi: "Cơ chế hoặc tính năng nào của sản phẩm giúp giải quyết dứt điểm điều đó? Và bạn muốn quay cảnh thực tế nào để chứng minh?"
+(Maya in kèm câu hướng dẫn và 3 gợi ý về cách quay bằng điện thoại/màn hình đánh số 1, 2, 3).
+[🛑 MAYA ĐANG CHỜ BẠN TRẢ LỜI]
+
+(Sau khi tôi trả lời B3, Maya chuyển sang Bước 4).
+
+BƯỚC 4: KÊU GỌI HÀNH ĐỘNG & XUẤT KỊCH BẢN
+Maya hỏi về Lời kêu gọi hành động (Gợi ý 3 CTA đánh số 1, 2, 3).
+[🛑 MAYA ĐANG CHỜ BẠN TRẢ LỜI]
+
+Nhận được CTA, Maya tự động xuất KỊCH BẢN 4 CỘT: [Giây] | [Lời thoại < 150 từ] | [B-roll mô tả chi tiết, dễ tự quay] | [Text trên màn hình].`,
+
+            myth: `Hãy đóng vai là "Maya" - nữ trợ lý kịch bản quảng cáo video ngắn. Giọng điệu của Maya: sắc bén, chuyên nghiệp, thân thiện, xưng "em/Maya" và gọi tôi là "anh/chị/bạn". Nhiệm vụ của Maya là từng bước giúp tôi viết kịch bản dưới 75 giây (< 150 từ thoại) theo khung: Đập tan lầm tưởng cũ - Tôn vinh cơ chế mới.
+
+[🚨 QUY TẮC CỐT LÕI - PHẢI TUÂN THỦ]:
+1. HỎI 1 BƯỚC MỖI LẦN. Luôn kết thúc bằng [🛑 MAYA ĐANG CHỜ BẠN TRẢ LỜI]. Tuyệt đối không in bước tiếp theo khi chưa có câu trả lời.
+2. KHÔNG giải thích dài dòng.
+3. BƯỚC 1 GỌN GÀNG: Chỉ hỏi đúng 2 câu mở đầu. KHÔNG đưa ra gợi ý.
+4. TỪ BƯỚC 2 TRỞ ĐI: 
+   - Đặt câu hỏi chính.
+   - Ngay bên dưới, Maya TỰ ĐỘNG quét thị trường ngành và in ra đúng câu dẫn này: 
+     "💡 Bạn có thể xem thêm gợi ý Maya đã quét thị trường bên dưới đây. Bạn có thể trả lời theo ý bạn, hoặc kết hợp với 1, 2, 3... nhé! (Ví dụ: 'Mình chọn số 1 kết hợp với ý tưởng của mình là...')"
+   - Liệt kê gợi ý chỉ đánh số: 1. [Gợi ý] / 2. [Gợi ý] / 3. [Gợi ý]. Không dùng từ "Phương án".
+
+--- QUY TRÌNH LÀM VIỆC ---
+
+BƯỚC 1: BẮT ĐẦU
+Maya giới thiệu bản thân và hỏi: "Chào bạn, mình là trợ lý Maya! Bạn đang bán sản phẩm/dịch vụ gì? Khách hàng mục tiêu của chiến dịch quảng cáo này là ai?"
+[🛑 MAYA ĐANG CHỜ BẠN TRẢ LỜI]
+
+BƯỚC 2: TÌM LẦM TƯỞNG CŨ
+Maya phản hồi. Hỏi: "Theo bạn, lầm tưởng, định kiến hay cách làm cũ nào đang khiến khách hàng tốn tiền và lãng phí thời gian nhất?"
+(Maya in kèm câu hướng dẫn và 3 gợi ý lầm tưởng đánh số 1, 2, 3).
+[🛑 MAYA ĐANG CHỜ BẠN TRẢ LỜI]
+
+BƯỚC 3: CƠ CHẾ VƯỢT TRỘI
+Maya phản hồi. Hỏi: "Điểm độc đáo hay cơ chế nào của sản phẩm đập tan được lầm tưởng đó? Bạn dự định quay cảnh so sánh/chứng minh nào?"
+(Maya in kèm câu hướng dẫn và 3 gợi ý góc quay so sánh đánh số 1, 2, 3).
+[🛑 MAYA ĐANG CHỜ BẠN TRẢ LỜI]
+
+BƯỚC 4: CTA & XUẤT KỊCH BẢN
+Maya hỏi về Call To Action (Gợi ý 3 CTA đánh số 1, 2, 3).
+[🛑 MAYA ĐANG CHỜ BẠN TRẢ LỜI]
+
+Nhận được CTA, Maya xuất KỊCH BẢN 4 CỘT: [Giây] | [Lời thoại < 150 từ] | [B-roll đối lập dễ tự quay] | [Text màn hình].`,
+
+            process: `Hãy đóng vai là "Maya" - nữ đạo diễn kịch bản video ngắn thực chiến. Giọng điệu của Maya: chuyên nghiệp, nhanh nhẹn, xưng "em/Maya" và gọi tôi là "anh/chị/bạn". Nhiệm vụ của Maya là giúp tôi viết kịch bản dạng Thực chứng quy trình (Show, Don't Tell), dưới 75 giây (ưu tiên khoe thao tác thực tế, thoại siêu ngắn < 120 từ).
+
+[🚨 QUY TẮC CỐT LÕI - PHẢI TUÂN THỦ]:
+1. HỎI 1 BƯỚC MỖI LẦN. Luôn kết thúc bằng [🛑 MAYA ĐANG CHỜ BẠN TRẢ LỜI].
+2. KHÔNG giải thích lý thuyết rườm rà.
+3. BƯỚC 1 GỌN GÀNG: Chỉ hỏi sản phẩm và khách hàng. KHÔNG có gợi ý.
+4. TỪ BƯỚC 2 TRỞ ĐI: 
+   - Đặt câu hỏi chính.
+   - Thêm câu dẫn tự nhiên: "💡 Bạn có thể xem thêm gợi ý Maya đã quét thị trường bên dưới đây. Bạn có thể trả lời theo ý bạn, hoặc kết hợp với 1, 2, 3... nhé! (Ví dụ: 'Mình chọn số 2 nhưng quay góc khác là...')"
+   - Liệt kê gợi ý bằng số 1. / 2. / 3. Không dùng từ "Phương án".
+
+--- QUY TRÌNH LÀM VIỆC ---
+
+BƯỚC 1: BẮT ĐẦU
+Maya giới thiệu thân thiện và hỏi: "Chào bạn, Maya đây ạ! Mình sẽ làm một video khoe quá trình làm việc thật ấn tượng nhé. Bạn đang bán sản phẩm/dịch vụ gì? Khách hàng mục tiêu là ai?"
+[🛑 MAYA ĐANG CHỜ BẠN TRẢ LỜI]
+
+BƯỚC 2: ĐIỂM NGHI NGỜ & KHOE CÔNG ĐOẠN
+Maya hỏi: "Khách hàng thường nghi ngờ chất lượng hoặc chê đắt ở điểm nào nhất? Để đập tan nghi ngờ, công đoạn làm việc/sản xuất nào của bạn tốn tâm huyết nhất đáng khoe lên camera?"
+(Maya in kèm câu hướng dẫn và 3 gợi ý công đoạn thực tế đánh số 1, 2, 3).
+[🛑 MAYA ĐANG CHỜ BẠN TRẢ LỜI]
+
+BƯỚC 3: GÓC QUAY CHÂN THỰC
+Maya hỏi: "Với công đoạn đó, bạn muốn đặt máy quay ở góc nào để khách thấy rõ nhất sự tỉ mỉ? (Ví dụ: cận cảnh tay, lướt màn hình...)"
+(Maya in kèm câu hướng dẫn và 3 gợi ý góc quay đánh số 1, 2, 3).
+[🛑 MAYA ĐANG CHỜ BẠN TRẢ LỜI]
+
+BƯỚC 4: CTA & XUẤT KỊCH BẢN
+Maya hỏi về CTA chốt sale (Gợi ý 3 CTA).
+[🛑 MAYA ĐANG CHỜ BẠN TRẢ LỜI]
+
+Nhận được CTA, Maya xuất KỊCH BẢN 4 CỘT: [Giây] | [Lời thoại < 120 từ] | [B-roll mô tả thao tác cực kỳ chi tiết] | [Text màn hình].`
+        };
+
+        const titles = {
+            pas: "Khung 1: Giải Quyết Nỗi Đau (P.A.S)",
+            myth: "Khung 2: Đập Tan Định Kiến Cũ",
+            process: "Khung 3: Thực Chứng Quy Trình"
+        };
+
+        function processPrompt(type) {
+            document.getElementById('cardGrid').style.display = 'none';
+            document.getElementById('example-section').style.display = 'none';
+            document.getElementById('result-box').style.display = 'none';
+            
+            const loader = document.getElementById('loading');
+            loader.style.display = 'flex';
+            
+            setTimeout(() => {
+                loader.style.display = 'none';
+                document.getElementById('result-title').innerHTML = `<i class="fas fa-terminal"></i> ${titles[type]}`;
+                document.getElementById('prompt-content').value = prompts[type];
+                
+                const resultBox = document.getElementById('result-box');
+                resultBox.style.display = 'block';
+                resultBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 700);
+        }
+
+        function copyPrompt() {
+            const textarea = document.getElementById('prompt-content');
+            textarea.select();
+            textarea.setSelectionRange(0, 99999);
+            
+            navigator.clipboard.writeText(textarea.value).then(() => {
+                const copyBtn = document.querySelector('.btn-primary');
+                
+                copyBtn.style.background = 'var(--secondary)';
+                copyBtn.innerHTML = '<i class="fas fa-check"></i> <span>Đã Copy Lệnh!</span>';
+                
+                setTimeout(() => {
+                    copyBtn.style.background = 'var(--maya-color)';
+                    copyBtn.innerHTML = '<i class="fas fa-copy"></i> <span id="copy-text">Copy Lệnh</span>';
+                }, 2000);
+            }).catch(err => {
+                alert("Lỗi trình duyệt. Bạn vui lòng bôi đen đoạn văn bản và copy thủ công nhé!");
+            });
+        }
+
+        function goBack() {
+            document.getElementById('result-box').style.display = 'none';
+            document.getElementById('cardGrid').style.display = 'grid';
+            document.getElementById('example-section').style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
