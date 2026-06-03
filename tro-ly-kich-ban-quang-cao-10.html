@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống Trích Xuất Kịch Bản AI | VietND</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --text-color: #f8fafc;
+            --card-bg: #1e293b;
+            --primary: #3b82f6;
+            --secondary: #10b981;
+            --footer-height: 128px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-color); display: flex; flex-direction: column; min-height: 100vh; }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; flex: 1; width: 100%; }
+        
+        header { text-align: center; margin-bottom: 50px; }
+        header h1 { font-size: 2.5rem; background: linear-gradient(90deg, #60a5fa, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 15px; }
+        header p { color: #94a3b8; font-size: 1.1rem; max-width: 700px; margin: 0 auto; line-height: 1.6; }
+
+        /* Khối Grid Card */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; margin-bottom: 40px; }
+        
+        .card { background: var(--card-bg); border-radius: 16px; overflow: hidden; cursor: pointer; border: 1px solid #334155; transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s; display: flex; flex-direction: column; }
+        .card:hover { transform: translateY(-8px); border-color: var(--primary); box-shadow: 0 10px 25px rgba(59, 130, 246, 0.15); }
+        
+        /* CSS Abstract Art (Nghệ thuật trừu tượng bằng Code) */
+        .art-box { height: 160px; width: 100%; position: relative; overflow: hidden; }
+        
+        /* Art 1: PAS (Xoáy sâu, mạnh mẽ) */
+        .art-1 { background: linear-gradient(135deg, #1e3a8a, #312e81); }
+        .art-1::before { content: ''; position: absolute; width: 120px; height: 120px; border-radius: 50%; background: rgba(59, 130, 246, 0.4); top: -20px; left: -20px; filter: blur(15px); }
+        .art-1::after { content: ''; position: absolute; width: 100px; height: 100px; border: 3px solid rgba(255,255,255,0.1); transform: rotate(45deg); bottom: -30px; right: 20px; }
+        
+        /* Art 2: Lật đổ định kiến (Phá vỡ khối) */
+        .art-2 { background: linear-gradient(135deg, #4c1d95, #701a75); }
+        .art-2::before { content: ''; position: absolute; width: 200%; height: 40px; background: rgba(255,255,255,0.1); transform: rotate(-20deg); top: 30px; left: -20px; }
+        .art-2::after { content: ''; position: absolute; border-left: 60px solid transparent; border-right: 60px solid transparent; border-bottom: 100px solid rgba(244, 114, 182, 0.2); bottom: -10px; right: 20px; }
+        
+        /* Art 3: Bóc tách quy trình (Lắp ráp, Logic) */
+        .art-3 { background: linear-gradient(135deg, #064e3b, #0f766e); }
+        .art-3::before { content: ''; position: absolute; width: 100%; height: 100%; background: repeating-linear-gradient(45deg, transparent, transparent 15px, rgba(16,185,129,0.1) 15px, rgba(16,185,129,0.1) 30px); }
+        .art-3::after { content: ''; position: absolute; width: 70px; height: 70px; background: rgba(16,185,129,0.3); border-radius: 12px; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(15deg); box-shadow: inset 0 0 20px rgba(0,0,0,0.5); }
+
+        .card-content { padding: 25px; flex: 1; }
+        .card-title { font-size: 1.3rem; margin-bottom: 10px; color: #fff; font-weight: 600; }
+        .card-desc { font-size: 0.95rem; color: #94a3b8; line-height: 1.5; }
+
+        /* Fake Loading */
+        #loading { display: none; text-align: center; padding: 40px; flex-direction: column; align-items: center; margin-top: 20px; }
+        .spinner { width: 50px; height: 50px; border: 4px solid rgba(59, 130, 246, 0.2); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        #loading-text { color: var(--primary); font-size: 1.1rem; font-weight: 600; }
+        #loading-sub { color: #64748b; font-size: 0.9rem; margin-top: 8px; }
+        
+        /* Vùng Kết quả */
+        #result-box { display: none; background: var(--card-bg); border-radius: 12px; border: 1px solid var(--primary); overflow: hidden; margin-top: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .result-header { padding: 20px 25px; background: rgba(0,0,0,0.2); display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; }
+        .result-header h3 { color: #fff; font-size: 1.2rem; }
+        .btn-copy { background: var(--primary); color: #fff; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 8px; transition: background 0.2s; }
+        .btn-copy:hover { background: #2563eb; }
+        .btn-back { background: transparent; color: #cbd5e1; border: 1px solid #475569; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600; transition: 0.2s; }
+        .btn-back:hover { background: #334155; }
+        
+        .instruction { background: rgba(16, 185, 129, 0.1); border-left: 4px solid var(--secondary); padding: 15px 25px; font-size: 0.95rem; color: #a7f3d0; line-height: 1.6; }
+        textarea { width: 100%; height: 400px; padding: 25px; font-family: 'Consolas', monospace; font-size: 0.95rem; color: #e2e8f0; background: #0b1120; border: none; resize: vertical; line-height: 1.6; }
+        
+        /* Khối Ví dụ */
+        .example-section { margin-top: 50px; background: var(--card-bg); border: 1px dashed #475569; border-radius: 12px; padding: 30px; }
+        .example-section h2 { margin-bottom: 15px; color: #fff; font-size: 1.4rem; }
+        .example-section p { color: #94a3b8; margin-bottom: 20px; line-height: 1.6; }
+        .chat-bubble { padding: 15px 20px; border-radius: 8px; margin-bottom: 15px; font-size: 0.95rem; line-height: 1.6; }
+        .chat-ai { background: rgba(59, 130, 246, 0.1); border-left: 3px solid var(--primary); color: #e2e8f0; }
+        .chat-user { background: rgba(16, 185, 129, 0.1); border-left: 3px solid var(--secondary); color: #e2e8f0; margin-left: 20px; }
+
+        /* Footer - QUY ĐỊNH CHIỀU CAO CHÍNH XÁC 128px */
+        footer { 
+            height: var(--footer-height); 
+            min-height: var(--footer-height); 
+            max-height: var(--footer-height); 
+            background: #020617; 
+            border-top: 1px solid #1e293b; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+            padding: 0 20px; 
+            text-align: center; 
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+        .footer-text { color: #94a3b8; font-size: 0.9rem; max-width: 900px; margin-bottom: 12px; line-height: 1.5; }
+        .footer-socials { display: flex; gap: 20px; }
+        .footer-socials a { color: #cbd5e1; font-size: 1.5rem; transition: color 0.3s; text-decoration: none;}
+        .footer-socials a:hover { color: var(--primary); transform: translateY(-2px); }
+        
+        @media (max-width: 768px) {
+            header h1 { font-size: 2rem; }
+            .result-header { flex-direction: column; gap: 15px; align-items: stretch;}
+            .footer { height: auto; min-height: 128px; max-height: none; padding: 20px 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Hệ Thống Thiết Kế Kịch Bản Đa Ngành</h1>
+            <p>Chọn khung kịch bản phù hợp. Hệ thống sẽ cấp Mega-Prompt tối ưu hóa giúp ép AI phân tích thị trường và hỗ trợ bạn thiết kế video chuyển đổi cao.</p>
+        </header>
+
+        <div class="grid" id="cardGrid">
+            <div class="card" onclick="processAI('pas')">
+                <div class="art-box art-1"></div>
+                <div class="card-content">
+                    <h3 class="card-title">1. Khung P.A.S (Vấn đề - Cơ chế)</h3>
+                    <p class="card-desc">Tối ưu cho SP/DV khắc phục rắc rối, ứng dụng phần mềm, đồ gia dụng, y tế. Đi thẳng vào nỗi đau và cấp cứu bằng cơ chế.</p>
+                </div>
+            </div>
+
+            <div class="card" onclick="processAI('myth')">
+                <div class="art-box art-2"></div>
+                <div class="card-content">
+                    <h3 class="card-title">2. Khung Đập Tan Lầm Tưởng</h3>
+                    <p class="card-desc">Bóc phốt cách làm cũ, tôn vinh công nghệ/tư duy mới. Tối ưu cho thị trường bão hòa như Đào tạo, BĐS, Spa, Agency.</p>
+                </div>
+            </div>
+
+            <div class="card" onclick="processAI('process')">
+                <div class="art-box art-3"></div>
+                <div class="card-content">
+                    <h3 class="card-title">3. Khung Thực Chứng Quy Trình</h3>
+                    <p class="card-desc">Show thao tác thực tế, ít lời thoại. Tối ưu cho F&B, Tư vấn High-ticket, Xưởng sản xuất, Dịch vụ thi công.</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="loading">
+            <div class="spinner"></div>
+            <div id="loading-text">Đang phân tích dữ liệu ngành...</div>
+            <div id="loading-sub">Thiết lập tham số 5 phương án sáng tạo.</div>
+        </div>
+
+        <div id="result-box">
+            <div class="instruction">
+                <strong><i class="fas fa-lightbulb"></i> Hướng dẫn áp dụng:</strong> Nhấn Copy và dán toàn bộ đoạn mã này vào ChatGPT hoặc Claude. Ở mỗi bước, hãy tự do suy nghĩ về sản phẩm của bạn. Nếu bí ý tưởng, hãy tham khảo các gợi ý mà AI đã tự động phân tích ở bên dưới câu hỏi.
+            </div>
+            <div class="result-header">
+                <h3 id="result-title">✨ Mega-Prompt Đã Sẵn Sàng</h3>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn-back" onclick="goBack()">Chọn Lại</button>
+                    <button class="btn-copy" onclick="copyPrompt()">
+                        <i class="fas fa-copy"></i> <span id="copy-text">Copy Prompt</span>
+                    </button>
+                </div>
+            </div>
+            <textarea id="prompt-content" readonly></textarea>
+        </div>
+
+        <div class="example-section" id="example-section">
+            <h2>👁️ Ví dụ quá trình AI Coaching</h2>
+            <p>Khác với các Prompt công nghiệp, hệ thống này ép bạn tự tư duy trước, AI đóng vai trò làm lưới an toàn ở bên dưới:</p>
+            
+            <div class="chat-bubble chat-ai">
+                <strong>🤖 AI (Hỏi & Gợi ý):</strong><br><br>
+                BƯỚC 2: TÌM NỖI ĐAU CỐT LÕI<br>
+                > Theo kinh nghiệm của bạn, nỗi đau tốn kém hoặc sự bực mình lớn nhất mà khách hàng đang gặp phải là gì?<br><br>
+                <span style="color: #60a5fa;">[💡 NGHIÊN CỨU TỪ AI & GỢI Ý]:</span><br>
+                <em>Lưu ý: Bạn có thể dùng Phương án 1 (tự viết), chọn các gợi ý của AI, hoặc kết hợp chúng lại!</em><br>
+                - Phương án 1: [Khoảng trống để bạn tự viết]<br>
+                - Phương án 2: Tốn chục triệu mua máy ảnh xịn nhưng lên hình vẫn đơ.<br>
+                - Phương án 3: Hì hục edit trên điện thoại cả ngày nhưng video flop.<br>
+                - Phương án 4: Setup ánh sáng sai khiến mặt bị tối, thiếu chuyên nghiệp.
+            </div>
+            
+            <div class="chat-bubble chat-user">
+                <strong>👤 Bạn (Trả lời tự do):</strong><br>
+                Mình chọn mix Phương án 1 và 3. Ý của mình là: Khách hàng mất quá nhiều thời gian để cắt ghép video trên app, lúc xuất ra thì chất lượng mờ căm.
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-text">
+            Cập nhật kiến thức thực chiến nhất về Kỹ năng Quay Dựng, Xây kênh Niche và Tư duy phân tích Thuật toán Mạng xã hội kỷ nguyên mới.
+        </div>
+        <div class="footer-socials">
+            <a href="https://youtube.com/@vietndonline" target="_blank" title="YouTube"><i class="fab fa-youtube"></i></a>
+            <a href="https://www.tiktok.com/@nguyenducviet.viral" target="_blank" title="TikTok"><i class="fab fa-tiktok"></i></a>
+            <a href="https://facebook.com/nguyenducviet.video" target="_blank" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+        </div>
+    </footer>
+
+    <script>
+        const prompts = {
+            pas: `Đóng vai là Chuyên gia Kịch bản Quảng cáo Thực chiến. Nhiệm vụ của bạn là Coaching tôi tạo ra KỊCH BẢN VIDEO < 75 GIÂY (Tối đa 150 từ thoại).
+
+[🚨 LUẬT LÀM VIỆC CỦA AI - BẮT BUỘC TUÂN THỦ]:
+1. HỎI TỪNG BƯỚC MỘT. Luôn có lệnh [🛑 DỪNG LẠI CHỜ USER TRẢ LỜI] ở cuối mỗi bước. Tuyệt đối không tự ý in bước tiếp theo.
+2. KHƠI GỢI TƯ DUY TRƯỚC: Ở mỗi bước, hãy đặt câu hỏi để tôi TỰ SUY NGHĨ về sản phẩm của mình trước.
+3. NGHIÊN CỨU & GỢI Ý (BẮT BUỘC): Ngay dưới câu hỏi, bạn PHẢI tự động nghiên cứu thị trường ngành của tôi và in ra khung [💡 NGHIÊN CỨU TỪ AI & GỢI Ý].
+4. FORMAT GỢI Ý (5 Phương án):
+   - Phương án 1: Tự đưa ra ý tưởng của riêng bạn.
+   - Phương án 2 đến 5: [Gợi ý do AI tạo ra từ nghiên cứu thị trường].
+5. LƯU Ý CHO NGƯỜI DÙNG: Bắt buộc chèn dòng note: "Bạn có thể dùng Phương án 1 (tự viết), chọn các gợi ý của AI, hoặc kết hợp chúng lại nhé!"
+
+--- BẮT ĐẦU ---
+
+BƯỚC 1: XÁC ĐỊNH BỐI CẢNH
+> CÂU HỎI: Bạn đang bán sản phẩm/dịch vụ gì? Khách hàng mục tiêu là ai?
+[🛑 DỪNG LẠI CHỜ TRẢ LỜI]
+
+(Sau khi tôi trả lời B1, bạn quét thị trường, rồi xuất Bước 2 theo đúng format).
+
+BƯỚC 2: TÌM NỖI ĐAU CỐT LÕI
+> CÂU HỎI: Theo bạn, nỗi đau tốn kém hoặc sự bực mình lớn nhất mà khách hàng đang gặp phải là gì?
+---
+[💡 NGHIÊN CỨU TỪ AI & GỢI Ý]:
+*Lưu ý: Bạn có thể chọn Phương án 1 (tự nghĩ), chọn gợi ý của AI, hoặc kết hợp chúng lại.*
+- Phương án 1: [Khoảng trống để bạn tự đưa ra ý tưởng của riêng mình].
+- Phương án 2: [AI gợi ý góc độ nỗi đau 1...]
+- Phương án 3: [AI gợi ý góc độ nỗi đau 2...]
+- Phương án 4: [AI gợi ý góc độ nỗi đau 3...]
+- Phương án 5: [AI gợi ý góc độ nỗi đau 4...]
+[🛑 DỪNG LẠI CHỜ TRẢ LỜI]
+
+(Sau khi tôi trả lời B2, tiếp tục làm Bước 3: CƠ CHẾ SẢN PHẨM & GÓC QUAY B-ROLL. Áp dụng format 5 Phương án như trên. Đợi trả lời).
+(Sau khi tôi trả lời B3, tiếp tục làm Bước 4: CALL TO ACTION. Áp dụng format 5 Phương án. Đợi trả lời).
+(Sau khi tôi trả lời B4, lập tức xuất Bảng Kịch bản 4 cột: Giây | Lời thoại <150 từ | B-roll hành động tay | Text màn hình).`,
+
+            myth: `Đóng vai là Giám đốc Phễu Bán Hàng. Nhiệm vụ: Coaching tôi làm KỊCH BẢN QUẢNG CÁO < 75 GIÂY (Tối đa 150 từ thoại). Phương pháp: "Đập bỏ cách làm cũ - Tôn vinh Cơ chế mới".
+
+[🚨 LUẬT LÀM VIỆC CỦA AI - BẮT BUỘC TUÂN THỦ]:
+1. HỎI TỪNG BƯỚC MỘT. Luôn có lệnh [🛑 DỪNG LẠI CHỜ USER TRẢ LỜI].
+2. KHƠI GỢI TƯ DUY TRƯỚC: Ở mỗi bước, đặt câu hỏi để tôi TỰ SUY NGHĨ.
+3. NGHIÊN CỨU & GỢI Ý (BẮT BUỘC): Ngay dưới câu hỏi, tự động phân tích thị trường và in ra khung [💡 NGHIÊN CỨU TỪ AI & GỢI Ý].
+4. FORMAT GỢI Ý (5 Phương án):
+   - Phương án 1: Tự đưa ra ý tưởng của riêng bạn.
+   - Phương án 2 đến 5: [Gợi ý do AI tạo ra từ nghiên cứu].
+5. LƯU Ý CHO NGƯỜI DÙNG: Bắt buộc chèn note: "Bạn có thể dùng Phương án 1 (tự viết), chọn các gợi ý của AI, hoặc kết hợp chúng lại!"
+
+--- BẮT ĐẦU ---
+
+BƯỚC 1: XÁC ĐỊNH BỐI CẢNH
+> CÂU HỎI: Bạn đang bán sản phẩm/dịch vụ gì? Khách hàng mục tiêu là ai?
+[🛑 DỪNG LẠI CHỜ TRẢ LỜI]
+
+(Sau khi tôi trả lời B1, bạn quét thị trường, rồi xuất Bước 2).
+
+BƯỚC 2: TÌM LẦM TƯỞNG CỦA ĐÁM ĐÔNG
+> CÂU HỎI: Theo bạn, lầm tưởng hay cách làm cũ nào đang khiến khách hàng của bạn đốt tiền/thời gian lãng phí nhất?
+---
+[💡 NGHIÊN CỨU TỪ AI & GỢI Ý]:
+*Lưu ý: Bạn có thể chọn Phương án 1 (tự nghĩ), chọn gợi ý của AI, hoặc kết hợp chúng lại.*
+- Phương án 1: [Khoảng trống để bạn tự đưa ra ý tưởng của riêng mình].
+- Phương án 2 đến 5: [AI liệt kê 4 lầm tưởng tốn kém nhất của ngành này].
+[🛑 DỪNG LẠI CHỜ TRẢ LỜI]
+
+(Sau B2, làm Bước 3: CƠ CHẾ SẢN PHẨM ƯU VIỆT HƠN & CÁCH QUAY B-ROLL SO SÁNH. Áp dụng format 5 Phương án. Đợi trả lời).
+(Sau B3, làm Bước 4: CALL TO ACTION. Áp dụng format 5 Phương án. Đợi trả lời).
+(Sau B4, lập tức xuất Bảng Kịch bản 4 cột: Giây | Lời thoại <150 từ | B-roll | Text màn hình).`,
+
+            process: `Đóng vai là Đạo diễn Quảng Cáo Thực Chiến. Nhiệm vụ: Coaching tôi làm KỊCH BẢN QUẢNG CÁO DƯỚI 75 GIÂY (Thoại cực ngắn < 120 từ). Phương pháp: Thực chứng Quy trình - Khoe thao tác.
+
+[🚨 LUẬT LÀM VIỆC CỦA AI - BẮT BUỘC TUÂN THỦ]:
+1. HỎI TỪNG BƯỚC MỘT. Luôn có lệnh [🛑 DỪNG LẠI CHỜ USER TRẢ LỜI].
+2. KHƠI GỢI TƯ DUY TRƯỚC: Ở mỗi bước, đặt câu hỏi để tôi TỰ SUY NGHĨ về quy trình làm việc của mình.
+3. NGHIÊN CỨU & GỢI Ý (BẮT BUỘC): Ngay dưới câu hỏi, tự động phân tích ngành và in ra khung [💡 NGHIÊN CỨU TỪ AI & GỢI Ý].
+4. FORMAT GỢI Ý (5 Phương án):
+   - Phương án 1: Tự đưa ra ý tưởng của riêng bạn.
+   - Phương án 2 đến 5: [Gợi ý do AI tạo ra từ nghiên cứu].
+5. LƯU Ý CHO NGƯỜI DÙNG: Bắt buộc chèn note: "Bạn có thể dùng Phương án 1 (tự viết), chọn các gợi ý của AI, hoặc kết hợp chúng lại!"
+
+--- BẮT ĐẦU ---
+
+BƯỚC 1: ĐỊNH VỊ SỰ NGHI NGỜ
+> CÂU HỎI: Sản phẩm/Dịch vụ của bạn là gì? Khách hàng hay nghi ngờ chất lượng hoặc chê đắt ở khâu nào nhất?
+[🛑 DỪNG LẠI CHỜ TRẢ LỜI]
+
+(Sau khi tôi trả lời B1, bạn quét thị trường, rồi xuất Bước 2).
+
+BƯỚC 2: CHỌN HÀNH ĐỘNG THỰC CHỨNG
+> CÂU HỎI: Để đập tan sự nghi ngờ, công đoạn nào trong quá trình làm việc của bạn tốn chất xám và đáng để khoe nhất? Bạn sẽ quay nó như thế nào?
+---
+[💡 NGHIÊN CỨU TỪ AI & GỢI Ý GÓC QUAY CHO NGÀNH NÀY]:
+*Lưu ý: Bạn có thể chọn Phương án 1 (tự nghĩ), chọn gợi ý của AI, hoặc kết hợp chúng lại.*
+- Phương án 1: [Khoảng trống để bạn tự đưa ra ý tưởng của riêng mình].
+- Phương án 2: [AI gợi ý góc quay màn hình/số liệu].
+- Phương án 3: [AI gợi ý góc Time-lapse].
+- Phương án 4: [AI gợi ý góc cận cảnh thao tác tay].
+- Phương án 5: [AI gợi ý góc Review thành phẩm].
+[🛑 DỪNG LẠI CHỜ TRẢ LỜI]
+
+(Sau B2, làm Bước 3: CTA CHỐT SALE. Áp dụng format 5 Phương án. Đợi trả lời).
+(Sau B3, LẬP TỨC xuất Bảng Kịch bản 4 cột. Ràng buộc: Thoại <120 từ. Cột B-roll mô tả chi tiết thao tác).`
+        };
+
+        const titles = {
+            pas: "Khung 1: Mega-Prompt Vấn Đề - Cơ Chế (P.A.S)",
+            myth: "Khung 2: Mega-Prompt Đập Tan Lầm Tưởng",
+            process: "Khung 3: Mega-Prompt Thực Chứng Quy Trình"
+        };
+
+        const loadingStages = [
+            "Đang tải thuật toán phân tích hành vi...",
+            "Đang thiết lập Logic Khơi gợi sáng tạo...",
+            "Đang kết nối Module Nghiên cứu Thị trường...",
+            "Đang hoàn thiện mã lệnh..."
+        ];
+
+        function processAI(type) {
+            document.getElementById('cardGrid').style.display = 'none';
+            document.getElementById('example-section').style.display = 'none';
+            document.getElementById('result-box').style.display = 'none';
+            
+            const loader = document.getElementById('loading');
+            const loadText = document.getElementById('loading-text');
+            loader.style.display = 'flex';
+            
+            let stage = 0;
+            loadText.innerText = loadingStages[stage];
+            
+            // Fake loading effect
+            const interval = setInterval(() => {
+                stage++;
+                if(stage < loadingStages.length) {
+                    loadText.innerText = loadingStages[stage];
+                } else {
+                    clearInterval(interval);
+                    finishLoading(type);
+                }
+            }, 800);
+        }
+
+        function finishLoading(type) {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('result-title').innerText = titles[type];
+            document.getElementById('prompt-content').value = prompts[type];
+            
+            const resultBox = document.getElementById('result-box');
+            resultBox.style.display = 'block';
+            
+            // Scroll to result
+            resultBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function copyPrompt() {
+            const textarea = document.getElementById('prompt-content');
+            textarea.select();
+            textarea.setSelectionRange(0, 99999); // For mobile devices
+            
+            navigator.clipboard.writeText(textarea.value).then(() => {
+                const copyBtn = document.querySelector('.btn-copy');
+                const copyText = document.getElementById('copy-text');
+                
+                copyText.innerText = 'Đã Copy Thành Công!';
+                copyBtn.style.background = 'var(--secondary)';
+                
+                setTimeout(() => {
+                    copyText.innerText = 'Copy Prompt';
+                    copyBtn.style.background = 'var(--primary)';
+                }, 2500);
+            }).catch(err => {
+                alert("Trình duyệt không hỗ trợ copy tự động. Vui lòng bôi đen và copy thủ công!");
+            });
+        }
+
+        function goBack() {
+            document.getElementById('result-box').style.display = 'none';
+            document.getElementById('cardGrid').style.display = 'grid';
+            document.getElementById('example-section').style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
