@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Private Node - Conversion Video Architect</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap');
+        body { font-family: 'Space Grotesk', sans-serif; background-color: #050505; color: #e5e5e5; }
+        .glass-panel { background: rgba(15, 15, 15, 0.9); border: 1px solid #333; box-shadow: 0 0 30px rgba(0, 255, 163, 0.05); }
+        .text-neon { color: #00ffa3; text-shadow: 0 0 10px rgba(0, 255, 163, 0.3); }
+        .border-neon { border-color: #00ffa3; }
+        .bg-neon { background-color: #00ffa3; color: #000; transition: all 0.3s; }
+        .bg-neon:hover { background-color: #00cc82; box-shadow: 0 0 15px rgba(0, 255, 163, 0.4); }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #000; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #00ffa3; }
+        .hidden-section { display: none; }
+        .blink { animation: blinker 1s linear infinite; }
+        @keyframes blinker { 50% { opacity: 0; } }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4 lg:p-8">
+
+    <div class="glass-panel w-full max-w-4xl rounded-xl p-6 lg:p-8 relative overflow-hidden">
+        <div class="flex justify-between items-center border-b border-gray-800 pb-4 mb-6">
+            <div>
+                <h1 class="text-xl md:text-2xl font-bold tracking-wider">CONVERSION<span class="text-neon">_ARCHITECT</span></h1>
+                <p class="text-xs text-gray-500 mt-1">Hệ thống tạo kịch bản video 3 phần chuyên nghiệp (< 75s)</p>
+            </div>
+            <div class="text-right">
+                <div class="flex items-center justify-end space-x-2">
+                    <div class="w-2 h-2 rounded-full bg-green-500 blink"></div>
+                    <span class="text-xs text-green-500 font-bold">SECURE CONNECTION</span>
+                </div>
+                <p class="text-xs text-gray-500 mt-1">AI CORE: <span id="ai-name-display" class="text-neon font-bold">INITIALIZING...</span></p>
+            </div>
+        </div>
+
+        <div id="intro-screen">
+            <h2 class="text-lg font-bold mb-4 text-white">Khởi tạo Trợ lý AI Cá nhân hóa</h2>
+            <div class="bg-gray-900 border border-gray-800 p-4 rounded-lg mb-6">
+                <p class="text-sm text-gray-400 mb-3 leading-relaxed">Hệ thống này sẽ thiết lập cho bạn một Mega-Prompt dựa trên <strong>Cấu trúc 3 Phần Chuẩn Thuật Toán</strong>:</p>
+                <ul class="text-sm text-gray-300 space-y-2 ml-4 list-disc">
+                    <li><span class="text-neon font-bold">Phần 1 (Hook - Mỏ neo):</span> Tùy biến để test thị trường.</li>
+                    <li><span class="text-yellow-500 font-bold">Phần 2 (Body - Nội dung):</span> Lõi chuyên môn CỐ ĐỊNH, quay 1 lần dùng mãi mãi.</li>
+                    <li><span class="text-blue-400 font-bold">Phần 3 (CTA - Kêu gọi):</span> Tùy biến theo luồng kịch bản.</li>
+                </ul>
+            </div>
+            <button onclick="startSetup()" class="bg-neon font-bold py-3 px-8 rounded-lg w-full md:w-auto">KẾT NỐI MÁY CHỦ TÂM LÝ</button>
+        </div>
+
+        <div id="chat-screen" class="hidden-section">
+            <div id="chat-history" class="h-64 overflow-y-auto mb-4 space-y-4 pr-2 text-sm">
+                </div>
+            <div id="input-area" class="flex gap-3">
+                <input type="text" id="user-input" class="flex-1 bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-neon" placeholder="Nhập câu trả lời của bạn..." onkeypress="handleEnter(event)">
+                <button onclick="processInput()" class="bg-neon font-bold px-6 py-3 rounded-lg">GỬI</button>
+            </div>
+        </div>
+
+        <div id="prompt-screen" class="hidden-section">
+            <div class="bg-green-900/20 border border-green-500/30 p-4 rounded-lg mb-4">
+                <p class="text-sm text-green-400 font-bold"><i class="fas fa-check-circle mr-2"></i>THIẾT LẬP THÀNH CÔNG!</p>
+                <p class="text-xs text-gray-400 mt-1">Copy toàn bộ đoạn mã dưới đây, dán vào ChatGPT hoặc Gemini để Trợ lý bắt đầu làm việc 1-1 với bạn.</p>
+            </div>
+            <div class="relative">
+                <textarea id="mega-prompt" class="w-full h-72 bg-gray-900 border border-gray-700 rounded-lg p-4 text-sm text-gray-300 focus:outline-none resize-none font-mono" readonly></textarea>
+            </div>
+            <button onclick="copyPrompt()" class="mt-4 bg-neon font-bold py-3 px-6 rounded-lg w-full flex justify-center items-center gap-2">
+                COPY MEGA PROMPT & MỞ CHATGPT
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Database
+        const aiNames = ["NOVA", "KIRA", "NEXUS", "AURA", "SYLPH"];
+        const selectedAI = aiNames[Math.floor(Math.random() * aiNames.length)];
+        let step = 0;
+        let userNiche = "";
+
+        // Elements
+        const chatHistory = document.getElementById('chat-history');
+        const userInput = document.getElementById('user-input');
+        const inputArea = document.getElementById('input-area');
+
+        // Initialize
+        document.getElementById('ai-name-display').innerText = selectedAI;
+
+        function startSetup() {
+            document.getElementById('intro-screen').classList.add('hidden-section');
+            document.getElementById('chat-screen').classList.remove('hidden-section');
+            addBotMessage(`[Hệ thống đã kết nối] Xin chào, tôi là <strong>${selectedAI}</strong> - Trợ lý AI Cố vấn Kịch bản của bạn. Tôi vừa cập nhật dữ liệu thuật toán Video Ngắn toàn cầu ngày hôm nay.`);
+            setTimeout(() => {
+                addBotMessage(`Để tôi điều chỉnh khung Prompt chuẩn xác nhất, xin hỏi: <strong>Chủ đề chuyên môn / Khóa học bạn đang đào tạo là gì?</strong>`);
+            }, 800);
+        }
+
+        function handleEnter(e) {
+            if (e.key === 'Enter') processInput();
+        }
+
+        function processInput() {
+            const text = userInput.value.trim();
+            if (!text) return;
+
+            addUserMessage(text);
+            userInput.value = '';
+
+            if (step === 0) {
+                userNiche = text;
+                step++;
+                inputArea.style.display = 'none';
+                setTimeout(() => {
+                    addBotMessage(`Đang trích xuất dữ liệu hành vi khách hàng ngách "${userNiche}"... Tỷ lệ cạnh tranh: Cao. Cần bẻ gãy tư duy bằng Hook mạnh.`);
+                    setTimeout(() => {
+                        addBotMessage(`Câu hỏi cuối: <strong>Rào cản tâm lý lớn nhất khiến khách hàng của bạn chưa xuống tiền mua khóa học là gì?</strong> (VD: Sợ tốn thời gian, sợ không làm được...)`);
+                        inputArea.style.display = 'flex';
+                        userInput.focus();
+                    }, 1000);
+                }, 600);
+            } else if (step === 1) {
+                step++;
+                inputArea.style.display = 'none';
+                setTimeout(() => {
+                    addBotMessage(`Tuyệt vời. Đang tổng hợp dữ liệu tâm lý và nạp vào Engine 3 Phần...`);
+                    setTimeout(() => {
+                        generatePrompt();
+                    }, 1500);
+                }, 500);
+            }
+        }
+
+        function addBotMessage(text) {
+            const div = document.createElement('div');
+            div.className = "flex flex-col items-start fade-in";
+            div.innerHTML = `
+                <span class="text-xs text-neon font-bold mb-1">${selectedAI}</span>
+                <div class="bg-gray-800 border border-gray-700 text-gray-200 px-4 py-3 rounded-lg rounded-tl-none max-w-[85%]">${text}</div>
+            `;
+            chatHistory.appendChild(div);
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+        }
+
+        function addUserMessage(text) {
+            const div = document.createElement('div');
+            div.className = "flex flex-col items-end fade-in mb-4";
+            div.innerHTML = `
+                <span class="text-xs text-gray-500 font-bold mb-1">Chuyên gia</span>
+                <div class="bg-gray-700 text-white px-4 py-3 rounded-lg rounded-tr-none max-w-[85%]">${text}</div>
+            `;
+            chatHistory.appendChild(div);
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+        }
+
+        function generatePrompt() {
+            document.getElementById('chat-screen').classList.add('hidden-section');
+            document.getElementById('prompt-screen').classList.remove('hidden-section');
+            
+            const promptTemplate = `Hãy đóng vai trò là một Chuyên gia Cố vấn Video Chuyển đổi và Trợ lý AI có tên là ${selectedAI}. Nhiệm vụ của bạn là đồng hành cùng tôi (như một trợ lý con người) tạo ra các kịch bản quảng cáo kinh doanh tri thức có thời lượng STRICTLY dưới 75 giây (tối đa 215 từ).
+
+TƯ DUY HỆ THỐNG 3 PHẦN:
+- Phần 1 (Mỏ neo/Hook): Thay đổi linh hoạt để thu hút chú ý.
+- Phần 2 (Nội dung cố định): Chỉ quay 1 lần, dùng cho mọi video.
+- Phần 3 (CTA): Thay đổi linh hoạt chốt sale khớp với Hook.
+
+NỘI DUNG PHẦN 2 (CỐ ĐỊNH) CỦA TÔI LÀ:
+"Và đây là lộ trình 5 phần thực chiến dành cho bạn: Một: Chuyển đổi tri thức thành kịch bản giữ chân, chuẩn thuật toán. Hai: Biến phòng làm việc thành studio 1 chạm. Ba: Kiểm soát khung hình với tư duy: quay để dựng, quay để xoá. Bốn: Tự tay hậu kỳ Capcut cực nhanh và chuyên nghiệp. Năm: Ứng dụng AI mới nhất để tự động hóa, giải phóng bạn khỏi việc thủ công."
+
+QUY TẮC LÀM VIỆC BẮT BUỘC:
+- Bạn phải làm việc theo TỪNG BƯỚC HỎI ĐÁP. TUYỆT ĐỐI KHÔNG xuất ra toàn bộ kịch bản ngay. Phải đợi tôi trả lời câu hỏi hiện tại mới được chuyển sang bước tiếp theo. Dữ liệu tôi trả lời ở bước trước sẽ làm đầu vào cho bước sau.
+- Kể từ Bước 2, bạn phải ĐÓNG VAI LÀ NGƯỜI NGHIÊN CỨU THỊ TRƯỜNG, sử dụng dữ liệu tôi đã cung cấp để đưa ra 4 GỢI Ý (đánh số 1, 2, 3, 4) để tôi có thể kết hợp hoặc chọn 1.
+
+CÁC BƯỚC THỰC HIỆN:
+
+BƯỚC 1: Chào tôi bằng tên ${selectedAI} và hỏi: "Hôm nay bạn muốn nhắm tới tệp khách hàng nào? Và nỗi đau lớn nhất của họ mà video này giải quyết là gì?". (Chờ tôi trả lời).
+
+BƯỚC 2 (Tạo Hook): Đóng vai nghiên cứu thị trường, phân tích dữ liệu Bước 1 và đưa ra 4 gợi ý Hook (mỗi gợi ý ~55 từ). Các gợi ý nên xoay quanh: (1) Bằng chứng chuyên gia, (2) Nỗi đau tốn sức lực/năng lượng, (3) Tấn công thuật toán, (4) Lật ngược tư duy. Yêu cầu tôi đánh số 1,2,3,4 để chọn hoặc kết hợp. (Chờ tôi trả lời).
+
+BƯỚC 3 (Tạo CTA): Dựa vào Hook tôi chọn, tiếp tục đưa ra 4 gợi ý CTA (~30 từ) nhắm vào bài toán tiết kiệm chi phí, giữ gìn năng lượng hoặc giục hành động. Yêu cầu tôi chọn. (Chờ tôi trả lời).
+
+BƯỚC 4 (Xuất kịch bản): Ghép [Hook đã chọn] + [Nội dung Phần 2 cố định ở trên] + [CTA đã chọn] thành 1 kịch bản hoàn chỉnh. Tinh chỉnh thành văn nói trơn tru. YÊU CẦU BẮT BUỘC: Đếm chính xác tổng số từ, đảm bảo tuyệt đối dưới 215 từ.
+
+Nếu bạn đã hiểu quy trình, hãy xác nhận và bắt đầu ngay Bước 1!`;
+
+            document.getElementById('mega-prompt').value = promptTemplate;
+        }
+
+        function copyPrompt() {
+            const textArea = document.getElementById("mega-prompt");
+            textArea.select();
+            document.execCommand("copy");
+            alert("Đã Copy Mega Prompt thành công! Chuyển hướng sang ChatGPT...");
+            window.open("https://chatgpt.com", "_blank");
+        }
+    </script>
+</body>
+</html>
