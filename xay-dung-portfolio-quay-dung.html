@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giáo Án Thực Chiến: Xây Dựng Portfolio Quay Dựng</title>
+    <style>
+        :root {
+            --bg-color: #0d0d0c;
+            --card-bg: #161614;
+            --text-color: #e6e6e3;
+            --accent-color: #d4af37; /* Vàng kim tối giản */
+            --muted-text: #8a8a85;
+            --border-color: #2c2c28;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Top Bar điều khiển */
+        .top-control {
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            padding: 8px 16px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 13px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn:hover {
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+        }
+
+        .btn.active {
+            background-color: var(--accent-color);
+            color: var(--bg-color);
+            font-weight: bold;
+        }
+
+        .slide-counter {
+            font-size: 14px;
+            color: var(--muted-text);
+        }
+
+        /* Vùng hiển thị Slide */
+        .presentation-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            position: relative;
+            outline: none;
+        }
+
+        .slide {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            width: 100%;
+            max-width: 1100px;
+            height: 100%;
+            max-height: 550px;
+            padding: 50px;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            border-radius: 8px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+
+        .slide.active {
+            display: flex;
+        }
+
+        /* Định dạng nội dung bên trong Slide */
+        .slide-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--accent-color);
+            margin-bottom: 25px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            line-height: 1.3;
+        }
+
+        .slide-subtitle {
+            font-size: 20px;
+            color: var(--text-color);
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+
+        .slide-content {
+            font-size: 18px;
+            line-height: 1.7;
+            color: var(--text-color);
+        }
+
+        .slide-content ul {
+            list-style-type: none;
+        }
+
+        .slide-content ul li {
+            position: relative;
+            padding-left: 25px;
+            margin-bottom: 12px;
+        }
+
+        .slide-content ul li::before {
+            content: "■";
+            position: absolute;
+            left: 0;
+            color: var(--accent-color);
+            font-size: 12px;
+            top: 2px;
+        }
+
+        /* Định dạng Slide Nghỉ / Quote */
+        .slide.quote-slide {
+            align-items: center;
+            text-align: center;
+            background: radial-gradient(circle, #1a1a17 0%, #0d0d0c 100%);
+        }
+
+        .quote-text {
+            font-size: 28px;
+            font-style: italic;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            color: var(--text-color);
+            max-width: 800px;
+        }
+
+        .quote-author {
+            font-size: 16px;
+            color: var(--accent-color);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Định dạng Slide chứa hình mô tả trực quan */
+        .visual-placeholder {
+            margin-top: 20px;
+            border: 1px dashed var(--border-color);
+            padding: 15px;
+            text-align: center;
+            background-color: var(--bg-color);
+            color: var(--muted-text);
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Cố định Footer chuẩn 128px */
+        footer {
+            height: 128px;
+            background-color: #070706;
+            border-top: 1px solid var(--border-color);
+            padding: 0 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .footer-info {
+            max-width: 65%;
+            font-size: 12px;
+            line-height: 1.6;
+            color: var(--muted-text);
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 15px;
+        }
+
+        .social-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 12px;
+            border: 1px solid var(--border-color);
+            padding: 8px 14px;
+            border-radius: 4px;
+            background-color: var(--card-bg);
+            transition: all 0.2s ease;
+        }
+
+        .social-link:hover {
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+        }
+
+        .social-icon {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+        }
+
+        /* Định dạng khi In/Xuất PDF */
+        @media print {
+            .top-control, footer { display: none !important; }
+            body, .presentation-container { overflow: visible !important; height: auto !important; background: #fff !important; color: #000 !important; }
+            .slide { display: block !important; page-break-after: always !important; max-width: 100% !important; max-height: none !important; box-shadow: none !important; border: none !important; background: #fff !important; color: #000 !important; padding: 20px !important; }
+            .slide-title { color: #000 !important; border-bottom: 2px solid #000; padding-bottom: 5px; }
+            .slide-content, .slide-subtitle { color: #000 !important; }
+            .visual-placeholder { border-color: #000 !important; color: #000 !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-control">
+        <div class="slide-counter">Slide: <span id="current-index">1</span> / <span id="total-slides">37</span></div>
+        <div class="btn-group">
+            <button class="btn" onclick="toggleEditMode()" id="btn-edit">✏️ Bật Canvas Edit</button>
+            <button class="btn" onclick="prevSlide()">◀ Trước</button>
+            <button class="btn" onclick="nextSlide()">Sau ▶</button>
+            <button class="btn" onclick="toggleFullscreen()">📺 Trình Chiếu</button>
+            <button class="btn" onclick="window.print()">📥 Xuất PDF / In</button>
+        </div>
+    </div>
+
+    <div class="presentation-container" id="presentation-zone" tabindex="0">
+        
+        <div class="slide active">
+            <div class="slide-title">CHIẾN LƯỢC NỘI DUNG HUB PORTFOLIO</div>
+            <div class="slide-subtitle">Lộ trình 4 Chặng Xây Dựng Thương Hiệu Creative Team</div>
+            <div class="slide-content">
+                <ul>
+                    <li>Chuyển dịch từ tư duy "Nộp bài tập Drive" sang "Xây dựng Hub thực tế".</li>
+                    <li>Sử dụng Facebook Page làm Landing Page tối ưu hóa năng lực hiển thị sản phẩm.</li>
+                    <li>Lộ trình tích lũy giờ bay thiết kế độc quyền cho học viên Multimedia.</li>
+                </ul>
+            </div>
+            <div class="visual-placeholder">[Ảnh minh họa: Giao diện tối giản của một Hub sáng tạo số]</div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-title">TỔNG QUAN HÀNH TRÌNH TIẾN HÓA</div>
+            <div class="slide-content">
+                <ul>
+                    <li><strong>Chặng 1:</strong> Khởi Động (Lab Videos) - Làm chủ nền tảng kỹ thuật gốc.</li>
+                    <li><strong>Chặng 2:</strong> Tăng Tốc (Trend Decode) - Giải mã kỹ xảo và thuật toán.</li>
+                    <li><strong>Chặng 3:</strong> Thực Chiến (Behind The Lens) - Phơi bày quy trình làm việc nhóm.</li>
+                    <li><strong>Chặng 4:</strong> Đỉnh Cao (Storytelling Hero) - Chạm cảm xúc, tạo giá trị thương mại.</li>
+                </ul>
+            </div>
+            <div class="visual-placeholder">[Ảnh minh họa: Biểu đồ đường thẳng tăng trưởng qua 4 nấc thang]</div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-title">CHẶNG 1: KHỞI ĐỘNG (LAB VIDEOS)</div>
+            <div class="slide-subtitle">Xây Dựng Nền Móng Kỹ Thuật</div>
+            <div class="slide-content">
+                <ul>
+                    <li>Mục tiêu cốt lõi: Tích lũy giờ bay căn bản (Shooting & Editing Hours).</li>
+                    <li>Tập trung giải quyết các bài toán kỹ thuật đơn lẻ với độ chính xác cao.</li>
+                    <li>Loại bỏ hoàn toàn thói quen quay phim và dựng hình theo bản năng.</li>
+                </ul>
+            </div>
+            <div class="visual-placeholder">[Ảnh minh họa: Biểu tượng khung ngắm máy ảnh Viewfinder tiêu chuẩn]</div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-title">CHẶNG 1: ĐỊNH NGHĨA (WHAT)</div>
+            <div class="slide-content">
+                <ul>
+                    <li><strong>Lab Videos là gì?</strong> Là chuỗi sản phẩm video siêu ngắn, thời lượng từ 15s đến 30s.</li>
+                    <li>Mỗi video chỉ giải quyết duy nhất một tiêu chuẩn kỹ thuật được chỉ định cụ thể.</li>
+                    <li>Không đặt nặng tính phức tạp của kịch bản, đặt nặng sự chuẩn xác của thao tác.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-title">CHẶNG 1: TẠI SAO PHẢI CÓ? (WHY)</div>
+            <div class="slide-content">
+                <ul>
+                    <li>Tạo thói quen rèn luyện phản xạ và hình thành "trí nhớ cơ bắp" (Muscle Memory).</li>
+                    <li>Giúp học viên làm chủ thiết bị quay và các phím tắt hậu kỳ một cách tự động.</li>
+                    <li>Xây dựng tính kỷ luật cao độ ngay từ những tuần đầu tiên bước vào ngành.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-title">CHẶNG 1: TRIỂN KHAI THẾ NÀO? (HOW)</div>
+            <div class="slide-content">
+                <ul>
+                    <li>Giảng viên đưa đề bài giới hạn ngặt nghèo (Constraint-based challenges).</li>
+                    <li>Học viên làm việc theo nhóm, tối ưu hóa thiết bị sẵn có (Điện thoại/DSLR).</li>
+                    <li>Đăng tải trực tiếp sản phẩm lên Facebook Reels của nhóm kèm mã định danh.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-title">CHẶNG 1: TÁC ĐỘNG TỚI PORTFOLIO</div>
+            <div class="slide-content">
+                <ul>
+                    <li><strong>Chứng minh có gốc:</strong> Nhà tuyển dụng thấy bạn hiểu luật hình ảnh bài bản.</li>
+                    <li><strong>Điểm mốc so sánh:</strong> Là cột mốc số 0 để làm nổi bật sự tiến bộ vượt bậc ở các chặng sau.</li>
+                    <li>Chứng minh tần suất luyện tập và số giờ bay thực tế vô cùng nghiêm túc.</li>
+                </ul>
+            </div>
+            <div class="visual-placeholder">[Ảnh minh họa: Biểu đồ tăng trưởng đi lên từ điểm mốc Lab]</div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-title">LAB #01: TÍNH LIÊN TỤC VÀ CỠ CẢNH</div>
+            <div class="slide-subtitle">Ngôn Ngữ Khung Hình (Framing)</div>
+            <div class="slide-content">
+                <ul>
+                    <li><strong>Mục đích:</strong> Thành thạo 5 cỡ cảnh cơ bản và làm chủ Quy tắc 180 độ.</li>
+                    <li>Đảm bảo tính liên tục tuyệt đối của chuyển động khi cắt cảnh (Match on Action).</li>
+                    <li>Tránh hiện tượng nhảy trục máy gây mất phương hướng cho người xem.</li>
+                </ul>
+            </div>
+            <div class="visual-placeholder">[Ảnh minh họa: Sơ đồ thiết lập trục quay 180 độ tối giản]</div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-title">LAB #01: ĐỀ BÀI THỰC HÀNH</div>
+            <div class="slide-content">
+                <ul>
+                    <li><strong>Hành động:</strong> Một nhân vật đi từ ngoài cửa vào phòng, đi tới bàn và ngồi xuống uống nước.</li>
+                    <li><strong>Yêu cầu hậu kỳ:</strong> Cắt dựng mượt mà, thời lượng chuẩn 15s, không giật hình.</li>
+                    <li><strong>Đầu ra portfolio:</strong> Minh chứng cho kỹ năng làm chủ trục không gian.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-title">LAB #02: CHƠI ĐÙA VỚI BÓNG TỐI</div>
+            <div class="slide-subtitle">Kiểm Soát Ánh Sáng (Lighting)</div>
+            <div class="slide-content">
+                <ul>
+                    <li><strong>Mục đích:</strong> Thấu hiểu vai trò của Key Light, Fill Light và Backlight.</li>
+                    <li>Sử dụng ánh sáng tương phản cao (Chiaroscuro) để tạo khối sâu và định hình mood tâm lý.</li>
+                    <li>Làm chủ công cụ đo sáng để hình ảnh không bị bết tối hoặc cháy sáng vô nghĩa.</li>
+                </ul>
+            </div>
+            <div class="visual-placeholder">[Ảnh minh họa: Sơ đồ 3 điểm sáng cơ bản - Three-point lighting]</div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-title">LAB #02: ĐỀ BÀI THỰC HÀNH</div>
+            <div class="slide-content">
+                <ul>
+                    <li><strong>Yêu cầu:</strong> Dùng 1 nguồn sáng duy nhất diễn tả gương mặt nhân vật chuyển từ trạng thái tĩnh sang lo âu.</li>
+                    <li><strong>Thời lượng:</strong> 15 giây.</li>
+                    <li><strong>Đầu ra portfolio:</strong> Chứng minh khả năng kiểm soát dải tương phản (Dynamic Range) của thiết bị.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-title">LAB #03: ĐƯỜNG ĐI CỦA GÓC MÁY</div>
+            <div class="slide-subtitle">Chuyển Động Máy Thủ Công (Camera Movement)</div>
+            <div class="slide-content">
+                <ul>
+                    <li><strong>Mục đích:</strong> Làm chủ các cú máy Pan, Tilt, Push in, Pull out, Tracking hoàn toàn bằng tay.</li>
+                    <li>Yêu cầu chuyển động mượt mà không phụ thuộc vào phần mềm chống rung kỹ thuật số.</li>
+                    <li>Xác định rõ ràng điểm bắt đầu (Start frame) và điểm kết thúc (End frame) có ý đồ.</li>
+                </ul>
+            </div>
+            <div class="visual-placeholder">[Ảnh minh họa: Sơ đồ mũi tên chuyển động camera theo các trục X-Y-Z]</div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-title">LAB #03: ĐỀ BÀI THỰC HÀNH</div>
+            <div class="slide-content">
+                <ul>
+                    <li><strong>Yêu cầu:</strong> Thực hiện một cú máy phức hợp (Pan + Push in) bám theo một vật thể đang di chuyển tốc độ cao.</li>
+                    <li><strong>Thời lượng:</strong> 15 giây.</li>
+                    <li><strong>Đầu ra portfolio:</strong> Khẳng định đôi tay vững chãi và tư duy chọn góc máy cơ động.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="slide quote-slide">
+            <div class="quote-text">"Điện ảnh không phải là thứ nằm trong khung hình, mà là việc quyết định cái gì được phép ở lại và cái gì phải bị đẩy ra ngoài."</div>
+            <div class="quote-author">— Martin Scorsese</div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-title">LAB #04: CẮT DỰNG VÔ HÌNH</div>
+            <div class="slide-subtitle">Nhịp Điệu Và Cắt Dựng (Pacing)</div>
+            <div class="slide-content">
+                <ul>
+                    <li><strong>Mục đích:</strong> Thấu hiểu khái niệm về điểm rơi hành động (Cutting on Action).</li>
+                    <li>Cắt clip chính xác tại khoảnh khắc gia tốc chuyển động lớn nhất để giấu đi vết cắt của biên tập viên.</li>
+                    <li>Tạo ra chuỗi hình ảnh liên tục có năng lượng cao mà không làm mỏi mắt khán giả.</li>
+                </ul>
+            </div>
+            <div class="visual-placeholder">[Ảnh minh họa: Sơ đồ dòng thời gian Timeline cắt tại điểm đỉnh chuyển động]</div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-title">LAB #04: ĐỀ BÀI THỰC HÀNH</div>
+            <div class="slide-content">
+                <ul>
+                    <li><strong>Yêu cầu:</strong> Quay 5 thành viên thực hiện cùng 1 động tác quay đầu lại. Ghép nối thành chuỗi Match Cut liên hoàn.</li>
+                    <li><strong>Thời lượng:</strong> 20 giây.</li>
+                    <li><strong>Đầu ra portfolio:</strong> Chứng minh tư duy làm chủ tiết tấu và nhịp độ thị giác (Visual Rhythm).</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-title">LAB #05: ÂM THANH ĐÁNH LỪA THỊ GIÁC</div>
+            <div class="slide-subtitle">Thiết Kế Âm Thanh (Sound Design & Foley)</div>
+            <div class="slide-content">
+                <ul>
+                    <li><strong>Mục đích:</strong> Nhận thức sâu sắc nguyên lý: "Âm thanh chiếm 50% linh hồn của video".</li>
+                    <li>Thành thạo kỹ thuật dựng chuyển âm nâng cao như J-cut và L-cut.</li>
+                    <li>Biết cách đắp nhiều lớp âm thanh bao gồm: Tiếng môi trường (Ambient), Tiếng động đặc tả (Foley) và Sound FX.</li>
+                </ul>
+            </div>
+            <div class="visual-placeholder">[Ảnh minh họa: Sơ đồ xếp lớp nhiều tầng Audio Tracks chuyên nghiệp]</div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-title">LAB #05: ĐỀ BÀI THỰC HÀNH</div>
+            <div class="slide-content">
+                <ul>
+                    <li><strong>Yêu cầu:</strong> Quay một góc máy tĩnh (Ví dụ: Một cốc nước đá đang tan). Dùng ít nhất 5 track âm thanh tái tạo không gian sống động.</li>
+                    <li><strong>Thời lượng:</strong> 15 giây.</li>
+                    <li><strong>Đầu ra portfolio:</strong> Show năng lực thiết kế âm thanh lập thể giúp đánh lừa cảm giác của người xem.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-title">QUY CHUẨN ĐĂNG BÀI CHẶNG 1</div>
+            <div class="slide-content">
+                <ul>
+                    <li><strong>Cú pháp tiêu đề:</strong> [Mã Lớp]_[Tên Nhóm] | Lab #[Số bài]: [Tên Kỹ thuật]</li>
+                    <li>Ví dụ: <em>S226_NovaMedia | Lab #01: Thử nghiệm kỹ thuật Seamless Transition</em></li>
+                    <li><strong>Nội dung Caption bắt buộc:</strong> Ghi rõ mục tiêu thử nghiệm, Thiết bị sử dụng, Bài học sương máu rút ra khi file lỗi.</li>
+                </ul>
+            </div>
+            <div class="visual-placeholder">[Ảnh chụp Mockup bài đăng Facebook Reels chuẩn hóa giao diện Dark Mode]</div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-title">CHẶNG 2: TĂNG TỐC (TREND DECODE)</div>
+            <div class="slide-subtitle">Giải Mã Kỹ Xảo Nâng Cao</div>
+            <div class="slide-content">
+                <ul>
+                    <li>Mục tiêu cốt lõi: Làm chủ các phần mềm hậu kỳ chuyên sâu (Adobe After Effects/Premiere Pro).</li>
+                    <li>Nhạy bén trước dòng chảy thị trường mạng xã hội kỷ nguyên mới.</li>
+                    <li>Nâng cấp tư duy từ việc bắt chước sang giải mã cấu trúc kỹ thuật nâng cao.</li>
+                </ul>
+            </div>
+            <div class="visual-placeholder">[Ảnh minh họa: Đồ họa chia đôi màn hình Bản gốc vs Bản rã layer hậu kỳ]</div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-title">CHẶNG 2: ĐỊNH NGHĨA - TẠI SAO - TRIỂN KHAI</div>
+            <div class="slide-content">
+                <ul>
+                    <li><strong>What:</strong> Chọn và tái hiện lại chuẩn xác các hiệu ứng hình ảnh đang viral mạnh mẽ trên thế giới.</li>
+                    <li><strong>Why:</strong> Rèn luyện tư duy kỹ thuật ngược (Reverse-Engineering). Nhìn sản phẩm bóc tách được cách làm.</li>
+                    <li><strong>How:</strong> Phân tích video gốc theo từng khung hình đơn lẻ (Frame-by-frame) để tìm điểm mấu chốt.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-title">CHẶNG 2: TÁC ĐỘNG TỚI PORTFOLIO</div>
+            <div class="slide-content">
+                <ul>
+                    <li>Chứng minh năng lực xử lý hậu kỳ phức tạp (Masking, Keyframing, Tracking).</li>
+                    <li>Cho nhà tuyển dụng thấy bạn là người nhạy cảm với các xu hướng nghe nhìn mới nhất.</li>
+                    <li>Thu hút tương tác tự nhiên (Like, View) cho Page nhờ đòn bẩy thuật toán đề xuất của Facebook Reels.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-title">LAB #06 & #07: TỐC ĐỘ VÀ SẢN PHẨM</div>
+            <div class="slide-content">
+                <ul>
+                    <li><strong>Lab #06: Seamless Zoom Transition (Phong cách Sam Kolder)</strong><br>Làm chủ sự kết hợp giữa Motion Blur và Speed Ramping tinh tế.</li>
+                    <li><strong>Lab #07: Product In-and-Out (Phong cách Daniel Schiffer)</strong><br>Ứng dụng cú máy Whip Pan khớp với chuyển động sản phẩm thương mại.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-title">LAB #08 & #09: KHÔNG GIAN VÀ KHÁI NIỆM</div>
+            <div class="slide-content">
+                <ul>
+                    <li><strong>Lab #08: Clone Trail / Masking (Phong cách Zach King)</strong><br>Sử dụng công cụ Masking nâng cao để cắt lớp không gian, tạo kỹ xảo biến hình kỳ ảo.</li>
+                    <li><strong>Lab #09: Text Behind Object (3D Camera Tracking)</strong><br>Theo vết camera trong không gian ba chiều, chèn đồ họa chìm khuất sau vật thể thực tế.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-title">LAB #10: DÒNG CHẢY THỜI GIAN</div>
+            <div class="slide-content">
+                <ul>
+                    <li><strong>Lab #10: Object Hyperlapse / Flow-motion</strong></li>
+                    <li>Chụp hoặc quay ngắt quãng liên tục xung quanh một trục vật thể cố định ngoài không gian thực tế.</li>
+                    <li>Hậu kỳ xử lý chống rung tuyệt đối (Stabilization) tạo hiệu ứng thời gian nén trôi tốc độ cao siêu thực.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-title">CHẶNG 3: THỰC CHIẾN (BEHIND THE LENS)</div>
+            <div class="slide-subtitle">Quy Trình Hoạt Động Chuyên Nghiệp</div>
+            <div class="slide-content">
+                <ul>
+                    <li>Mục tiêu cốt lõi: Phơi bày toàn bộ kỹ năng mềm và quy trình sản xuất thực tế của nhóm.</li>
+                    <li>Nhà tuyển dụng không chỉ mua sản phẩm cuối cùng, họ mua cách thức các bạn vận hành.</li>
+                    <li>Xây dựng lòng tin tuyệt đối dựa trên sự chân thực của quá trình lao động sáng tạo.</li>
+                </ul>
+            </div>
+            <div class="visual-placeholder">[Ảnh minh họa: Toàn cảnh góc rộng hậu trường một buổi bấm máy phức tạp]</div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-title">CHẶNG 3: BẢN CHẤT VÀ CÁCH LÀM</div>
+            <div class="slide-content">
+                <ul>
+                    <li><strong>What:</strong> Sản xuất chuỗi nội dung dạng nhật ký hậu trường (Behind The Scenes) và bóc tách kỹ thuật (Breakdown).</li>
+                    <li><strong>Why:</strong> Chứng minh năng lực làm việc nhóm thực tế, giải quyết xung đột ý kiến và vượt qua khủng hoảng.</li>
+                    <li><strong>How:</strong> Luôn phân vai một thành viên làm nhiếp ảnh hiện trường, dựng dạng Vlog tốc độ cao kèm giọng đọc tự sự.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-title">CHẶNG 3: TÁC ĐỘNG TỚI PORTFOLIO</div>
+            <div class="slide-content">
+                <ul>
+                    <li><strong>Xác thực độ chính chủ:</strong> Loại bỏ hoàn toàn nghi ngờ đạo nhái ý tưởng hoặc sử dụng template mua sẵn.</li>
+                    <li>Show năng lực quản trị dự án, bài trí ánh sáng hiện trường chuyên nghiệp như một Agency thu nhỏ.</li>
+                    <li>Tăng tính kết nối con người, biến trang portfolio khô khan thành một thực thể có cá tính nghệ thuật rõ ràng.</li>
+                </ul>
+            </div>
+            <div class="visual-placeholder">[Chữ "TRUST" được thiết kế lớn tinh tế biểu thị giá trị cốt lõi của chặng]</div>
+        </div>
+
+        <div class="slide quote-slide">
+            <div class="quote-text">"Sáng tạo không gì khác chính là việc trí thông minh đang tìm thấy niềm vui trong quá trình chơi đùa tự do."</div>
+            <div class="quote-author">— Albert Einstein</div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-title">LAB #11 & #12: BÓC TÁCH THỰC ĐỊA</div>
+            <div class="slide-content">
+                <ul>
+                    <li><strong>Lab #11: The 30s Setup Breakdown</strong><br>Show sơ đồ bố trí đèn thực tế tại hiện trường đối chiếu trực tiếp với thước phim hoàn thiện trên Monitor.</li>
+                    <li><strong>Lab #12: Color Grading Before/After</strong><br>Hiển thị quá trình biến đổi màu sắc từ file gốc hệ Log phẳng xám sang không gian nghệ thuật rực rỡ.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-title">LAB #13 & #14: GIẢI QUYẾT KHỦNG HOẢNG</div>
+            <div class="slide-content">
+                <ul>
+                    <li><strong>Lab #13: Audio Rescue (Giải cứu âm thanh)</strong><br>So sánh âm thanh lỗi tạp âm môi trường và giải pháp bóc tách lọc nhiễu đắp foley cứu file.</li>
+                    <li><strong>Lab #14: The Creative Argument</strong><br>Ghi lại quá trình nhóm phản biện và thay đổi kịch bản phân cảnh Storyboard phút chót để cứu tiến độ.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-title">LAB #15: TƯ DUY CÔNG NGHIỆP</div>
+            <div class="slide-content">
+                <ul>
+                    <li><strong>Lab #15: File Management & Pipeline Workflow</strong></li>
+                    <li>Quay màn hình cấu trúc quản trị dữ liệu dự án chuẩn hóa quốc tế của nhóm.</li>
+                    <li>Phân chia logic khoa học giữa các thư mục: Footage gốc, Audio, Assets đồ họa và File xuất bản Render.</li>
+                    <li>Chứng minh tư duy làm nghề ngăn nắp, sẵn sàng bàn giao dự án cho các dự án quy mô lớn.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-title">CHẶNG 4: ĐÌNH CAO (STORYTELLING)</div>
+            <div class="slide-subtitle">Nhà Kể Chuyện Bằng Hình Ảnh</div>
+            <div class="slide-content">
+                <ul>
+                    <li>Mục tiêu tối thượng: Tích hợp toàn bộ kỹ năng đơn lẻ để tạo ra sản phẩm hoàn chỉnh mang giá trị nội dung sâu sắc.</li>
+                    <li>Kỹ thuật lúc này lùi lại phía sau, đóng vai trò công cụ phục vụ hoàn toàn cho thông điệp cốt lõi.</li>
+                    <li>Đánh giá trực tiếp năng lực giữ chân người xem (Retention Rate) dựa trên tâm lý học đám đông.</li>
+                </ul>
+            </div>
+            <div class="visual-placeholder">[Ảnh minh họa: Khung hình cinematic giàu chất thơ biểu đạt chiều sâu nhân vật]</div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-title">CHẶNG 4: CỐT LÕI NẰM Ở ĐÂU?</div>
+            <div class="slide-content">
+                <ul>
+                    <li><strong>What:</strong> Các sản phẩm Hero Content hoàn chỉnh (1-3 phút) có biên kịch, cấu trúc hồi kịch tính rõ ràng.</li>
+                    <li><strong>Why:</strong> Editor thông thường chỉ cắt ghép hình ảnh, Editor cao cấp làm chủ cảm xúc và hành vi người xem.</li>
+                    <li><strong>How:</strong> Ứng dụng cấu trúc biên kịch kinh điển kết hợp tư duy lồng ghép thông điệp tinh tế của nhãn hàng.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-title">CHẶNG 4: TÁC ĐỘNG QUYẾT ĐỊNH TUYỂN DỤNG</div>
+            <div class="slide-content">
+                <ul>
+                    <li>Chứng minh tầm nhìn vĩ mô (Macro View) kiểm soát toàn bộ dự án lớn từ ý tưởng sơ khai đến sản phẩm cuối cùng.</li>
+                    <li>Là sản phẩm chiến lược được Ghim (Pin) ngay đầu trang Facebook để định vị thương hiệu cá nhân của Creative Team.</li>
+                    <li>Khiến nhà tuyển dụng lập tức bấm nút lựa chọn vì thấy được khả năng hái ra tiền thông qua tư duy video marketing.</li>
+                </ul>
+            </div>
+            <div class="visual-placeholder">[Mockup Portfolio hiển thị video chặng 4 nằm ở vị trí trung tâm nổi bật]</div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-title">DỰ ÁN SÁNG TẠO 01 & 02 & 03</div>
+            <div class="slide-content">
+                <ul>
+                    <li><strong>Project #01: The Human Behind (Phim tài liệu ngắn về Con người)</strong><br>Khai thác góc nhìn nhân văn sâu sắc về một cuộc đời thực tế quanh trường học.</li>
+                    <li><strong>Project #02: The Local Brand Soul (Câu chuyện Thương hiệu)</strong><br>Biến sản phẩm của một cửa hàng địa phương thành một câu chuyện có linh hồn, có chiều sâu.</li>
+                    <li><strong>Project #03: The Vulnerable Gen Z (Cinematic Vlog tự sự)</strong><br>Khai thác tâm lý, áp lực tuổi trẻ bằng giọng đọc voice-over trầm ấm và pacing chậm rãi tinh tế.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-title">DỰ ÁN SÁNG TẠO 04 & 05 (ĐÍNH ƯỚC TỐI THƯỢNG)</div>
+            <div class="slide-content">
+                <ul>
+                    <li><strong>Project #04: The 3-Second Hook Challenge</strong><br>Sản xuất một video nhưng thử nghiệm 3 phiên bản mở đầu khác nhau để đo lường và tối ưu thuật toán.</li>
+                    <li><strong>Project #05: The Masterpiece (Tác phẩm để đời)</strong><br>Dự án tốt nghiệp tự do tối đa về mặt nghệ thuật duy mỹ để tích lũy làm vốn thực chiến đi xin việc lớn.</li>
+                </ul>
+            </div>
+            <div class="visual-placeholder">[Ảnh minh họa: Bộ Poster 5 dự án đỉnh cao xếp lớp đầy nghệ thuật]</div>
+        </div>
+
+    </div>
+
+    <footer>
+        <div class="footer-info">
+            Cập nhật kiến thức thực chiến nhất về Kỹ năng Quay Dựng, Xây kênh Niche và Tư duy phân tích Thuật toán Mạng xã hội kỷ nguyên mới.
+        </div>
+        <div class="footer-social">
+            <a href="https://youtube.com/@vietndonline" target="_blank" class="social-link">
+                <svg class="social-icon" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                YouTube
+            </a>
+            <a href="https://www.tiktok.com/@nguyenducviet.viral" target="_blank" class="social-link">
+                <svg class="social-icon" viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.02 1.59 4.23.94.12 1.88.24 2.8.44V8.51c-1.28-.17-2.54-.59-3.64-1.3-.14 2.75-.15 5.5.01 8.25.19 2.22-1.25 4.37-3.41 4.95-2.25.68-4.75-.46-5.63-2.63-.97-2.47.45-5.41 3.02-6.03.14-.03.28-.04.42-.06v3.83c-.15.04-.3.07-.44.13-1 .44-1.52 1.57-1.19 2.63.36 1.09 1.6 1.74 2.69 1.39 1-.31 1.57-1.39 1.41-2.43-.1-1.63-.04-3.26-.06-4.9V0h.03z"/></svg>
+                TikTok
+            </a>
+            <a href="https://web.facebook.com/profile.php?id=61580450902746" target="_blank" class="social-link">
+                <svg class="social-icon" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                Facebook
+            </a>
+        </div>
+    </footer>
+
+    <script>
+        let currentIndex = 0;
+        const slides = document.querySelectorAll('.slide');
+        const currentIndexEl = document.getElementById('current-index');
+        const totalSlidesEl = document.getElementById('total-slides');
+        const container = document.getElementById('presentation-zone');
+        let isEditMode = false;
+
+        totalSlidesEl.textContent = slides.length;
+
+        function updateSlide() {
+            slides.forEach((slide, index) => {
+                slide.classList.toggle('active', index === currentIndex);
+            });
+            currentIndexEl.textContent = currentIndex + 1;
+        }
+
+        function nextSlide() {
+            if (currentIndex < slides.length - 1) {
+                currentIndex++;
+                updateSlide();
+            }
+        }
+
+        function prevSlide() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateSlide();
+            }
+        }
+
+        // Tự động nhận diện phím điều hướng bàn phím
+        document.addEventListener('keydown', (e) => {
+            if (isEditMode) return; // Nếu đang bật edit text thì tắt phím tắt slide
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                prevSlide();
+            }
+        </script>
+    </body>
+    </html>
