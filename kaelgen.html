@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Strategy Node | Prompt Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; }
+        .card-hover:hover { transform: translateY(-4px); border-color: #3b82f6; box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.15); }
+        .hidden-section { display: none !important; }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-5xl rounded-3xl shadow-xl overflow-hidden flex flex-col border border-slate-200 h-[90vh]">
+        
+        <header class="bg-slate-900 text-white p-6 flex justify-between items-center shrink-0">
+            <div>
+                <h1 class="text-xl font-bold">Insight <span class="text-blue-500">Node</span></h1>
+                <p class="text-sm text-slate-400">Trợ lý Chiến lược: <span id="ai-name" class="text-emerald-400 font-bold tracking-wider">INIT...</span></p>
+            </div>
+            <button onclick="location.reload()" class="text-sm text-slate-400 hover:text-white"><i class="fa-solid fa-rotate-right"></i> Reset</button>
+        </header>
+
+        <div id="step-1" class="p-6 md:p-8 overflow-y-auto flex-1">
+            <h2 class="text-xl font-bold text-slate-800 mb-2">Chọn Lăng Kính Phân Tích</h2>
+            <p class="text-slate-600 mb-8 text-sm max-w-3xl leading-relaxed">Hệ thống áp dụng Tư duy Khai vấn (Coaching). Ở mỗi bước, AI sẽ tự động phân tích và đưa ra <strong>4 gợi ý đánh số</strong>. Bạn không cần vắt óc suy nghĩ, chỉ cần chọn con số phù hợp nhất.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div onclick="generatePrompt(1)" class="card-hover cursor-pointer bg-slate-50 border border-slate-200 p-6 rounded-2xl transition-all flex flex-col">
+                    <div class="w-12 h-12 bg-rose-100 text-rose-600 rounded-xl flex items-center justify-center text-xl mb-4"><i class="fa-solid fa-band-aid"></i></div>
+                    <h3 class="font-bold text-lg mb-2 text-slate-800">1. Vết Thương Ngầm</h3>
+                    <p class="text-sm text-slate-600 mb-4 flex-1">Đào sâu nỗi đau tột cùng của ngách nhỏ để thiết kế phễu sản phẩm chữa lành.</p>
+                </div>
+
+                <div onclick="generatePrompt(2)" class="card-hover cursor-pointer bg-slate-50 border border-slate-200 p-6 rounded-2xl transition-all flex flex-col">
+                    <div class="w-12 h-12 bg-orange-100 text-orange-600 rounded-xl flex items-center justify-center text-xl mb-4"><i class="fa-solid fa-hand-fist"></i></div>
+                    <h3 class="font-bold text-lg mb-2 text-slate-800">2. Kẻ Thách Thức</h3>
+                    <p class="text-sm text-slate-600 mb-4 flex-1">Đại dương đỏ. Khai thác review 1-sao của đối thủ để biến SP của bạn thành Vị Cứu Tinh.</p>
+                </div>
+
+                <div onclick="generatePrompt(3)" class="card-hover cursor-pointer bg-slate-50 border border-slate-200 p-6 rounded-2xl transition-all flex flex-col">
+                    <div class="w-12 h-12 bg-purple-100 text-purple-600 rounded-xl flex items-center justify-center text-xl mb-4"><i class="fa-solid fa-gem"></i></div>
+                    <h3 class="font-bold text-lg mb-2 text-slate-800">3. Nhiệm Vụ Ẩn</h3>
+                    <p class="text-sm text-slate-600 mb-4 flex-1">Thoát ly tính năng, tìm động lực vô hình khách hàng khao khát để định giá cao.</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="step-2" class="hidden-section flex-1 bg-slate-50 flex flex-col">
+            <div class="p-6 md:p-8 flex-1 flex flex-col">
+                <button onclick="goBack()" class="mb-4 text-sm font-medium text-slate-500 hover:text-blue-600 w-fit"><i class="fa-solid fa-arrow-left"></i> Chọn lại</button>
+                <textarea id="prompt-output" class="flex-1 w-full bg-white border border-slate-200 text-slate-700 p-6 rounded-2xl text-[15px] focus:outline-none shadow-inner resize-none font-mono leading-relaxed" readonly></textarea>
+            </div>
+            <div class="px-6 md:px-8 pb-6 shrink-0">
+                <button onclick="copyPrompt()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl w-full text-base transition-colors shadow-lg flex justify-center items-center gap-2">
+                    <i class="fa-regular fa-copy"></i> COPY LỆNH & MỞ CHATGPT
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const names = ["Atlas", "Leon", "Kael", "Silas", "Orion"];
+        const aiName = names[Math.floor(Math.random() * names.length)];
+        document.getElementById('ai-name').innerText = aiName;
+
+        const logics = {
+            1: `B1: Chào tôi bằng tên của bạn. Hỏi: "Bạn đang bán (hoặc dự định bán) sản phẩm gì?".\nB2: Phân tích sản phẩm đó. Đưa ra 4 Ngách khách hàng, mô tả cực kỳ chi tiết NỖI ĐAU TÂM LÝ TỘT CÙNG của họ. Hỏi tôi chọn ngách nào.\nB3: Đưa ra 4 Rào cản hoài nghi khiến ngách đó sợ hãi chưa mua hàng. Hỏi tôi chọn rào cản nào để tập trung đập tan.\nB4: Xuất ra Bảng Chiến lược: Gồm Lỗ hổng thị trường và Chuỗi sản phẩm (Mồi câu -> Lõi -> Upsell) vá đúng rào cản đó.`,
+            2: `B1: Chào tôi bằng tên của bạn. Hỏi: "Sản phẩm của bạn là gì và bạn muốn đánh bại đối thủ/kiểu người bán nào nhất?".\nB2: Phân tích đối thủ đó. Đưa ra 4 Sự bất mãn / Review 1 sao / Lỗ hổng dịch vụ tồi tệ nhất khách đang chịu đựng. Hỏi tôi chọn tấn công vào lỗ hổng nào.\nB3: Vẽ chân dung "Tâm lý học phòng thủ" của tệp khách đang bất mãn. Đưa ra 4 cách Định vị thương hiệu làm "Vị Cứu Tinh" và bảo tôi chọn 1.\nB4: Thiết kế Bảng Vũ Khí: Chuỗi sản phẩm "Vị Cứu Tinh" đâm thẳng vào yếu điểm của đối thủ, kèm thông điệp cốt lõi.`,
+            3: `B1: Chào tôi bằng tên của bạn. Hỏi: "Khoan nói về tính năng, khách hàng đang 'thuê' sản phẩm của bạn để hoàn thành SỰ THAY ĐỔI / NÂNG CẤP nào trong cuộc sống?".\nB2: Phân rã câu trả lời thành 4 Động lực ngầm sâu thẳm (VD: Quyền lực, Thể diện, An toàn, Lười biếng...). Hỏi tôi chọn động lực nào.\nB3: Liệt kê 4 "Cách thức thay thế / Đối thủ gián tiếp không cùng ngành" khách đang dùng để đạt động lực đó. Hỏi tôi chọn giành thị phần từ thói quen nào.\nB4: Lập Bảng Hệ Sinh Thái: Thiết kế các Level Nâng cấp Hành trình (Free -> Core -> Premium) giúp khách đạt động lực đó với trải nghiệm WOW nhất.`
+        };
+
+        function generatePrompt(type) {
+            const prompt = `Hãy đóng vai một Giám đốc Chiến lược tên là ${aiName}. Nhiệm vụ của bạn là cố vấn 1-1 giúp tôi thiết kế Chuỗi sản phẩm.
+
+QUY TẮC BẮT BUỘC: 
+1. TUYỆT ĐỐI không xuất toàn bộ kịch bản 1 lần. Hỏi TỪNG BƯỚC, đợi tôi trả lời.
+2. BẠN PHẢI LÀM VIỆC NẶNG: Ở các bước phân tích, bạn LUÔN PHẢI đưa ra 4 gợi ý (đánh số 1,2,3,4) sâu sắc để tôi chọn. Không bắt tôi phải tự vắt óc suy nghĩ.
+
+QUY TRÌNH THỰC HIỆN:
+${logics[type]}
+
+Nếu đã hiểu, hãy bắt đầu Bước 1 ngay!`;
+
+            document.getElementById('step-1').classList.add('hidden-section');
+            document.getElementById('step-2').classList.remove('hidden-section');
+            document.getElementById('step-2').classList.add('flex');
+            document.getElementById('prompt-output').value = prompt;
+        }
+
+        function goBack() {
+            document.getElementById('step-2').classList.add('hidden-section');
+            document.getElementById('step-2').classList.remove('flex');
+            document.getElementById('step-1').classList.remove('hidden-section');
+        }
+
+        function copyPrompt() {
+            document.getElementById('prompt-output').select();
+            document.execCommand('copy');
+            alert("Đã Copy Lệnh! Chuyển hướng sang ChatGPT...");
+            window.open("https://chatgpt.com", "_blank");
+        }
+    </script>
+</body>
+</html>
