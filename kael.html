@@ -3,212 +3,367 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Strategist | Private AI Node</title>
+    <title>Hệ thống Thiết lập Bản đồ Chiến lược Kinh doanh</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #020617; color: #f8fafc; }
-        .glass-panel { background: #0f172a; border: 1px solid #1e293b; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; color: #1e293b; }
+        
+        .glass-panel { background: #ffffff; border: 1px solid #e2e8f0; box-shadow: 0 20px 40px -15px rgba(0,0,0,0.05); }
+        .chat-container { scroll-behavior: smooth; }
+        
         ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
         
-        /* Markdown Styles */
-        .markdown-body p { margin-bottom: 0.75rem; line-height: 1.6; }
-        .markdown-body strong { color: #38bdf8; font-weight: 600; }
-        .markdown-body ul { list-style-type: disc; margin-left: 1.5rem; margin-bottom: 1rem; }
-        .markdown-body table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.9em; }
-        .markdown-body th, .markdown-body td { border: 1px solid #334155; padding: 12px; text-align: left; }
-        .markdown-body th { background-color: #1e293b; color: #38bdf8; }
+        .typing-dots { display: flex; gap: 4px; padding: 4px 0; }
+        .typing-dots span { width: 6px; height: 6px; background-color: #94a3b8; border-radius: 50%; animation: bounce 1.4s infinite ease-in-out both; }
+        .typing-dots span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dots span:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
         
-        /* Typing animation */
-        .typing span { width: 6px; height: 6px; background: #38bdf8; border-radius: 50%; display: inline-block; margin: 0 2px; animation: bounce 1.4s infinite; }
-        .typing span:nth-child(2) { animation-delay: 0.2s; }
-        .typing span:nth-child(3) { animation-delay: 0.4s; }
-        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
-        .hidden-el { display: none !important; }
+        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .hidden-section { display: none !important; }
     </style>
 </head>
-<body class="h-screen flex items-center justify-center p-0 md:p-6">
+<body class="min-h-screen flex items-center justify-center p-0 md:p-6">
 
-    <div id="setup-screen" class="glass-panel w-full max-w-md p-8 rounded-2xl shadow-2xl z-20">
-        <div class="text-center mb-8">
-            <i class="fa-solid fa-microchip text-4xl text-sky-400 mb-4"></i>
-            <h1 class="text-2xl font-bold">SYSTEM BOOT</h1>
-            <p class="text-sm text-slate-400 mt-1">Vui lòng cấp quyền Google AI Studio API</p>
-        </div>
-        <input type="password" id="api-key" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-5 py-4 mb-6 text-white focus:outline-none focus:border-sky-500" placeholder="Nhập API Key (AIzaSy...)">
-        <button onclick="initSystem()" class="w-full bg-sky-600 hover:bg-sky-500 font-bold py-4 rounded-xl transition-colors">
-            KẾT NỐI MÁY CHỦ
-        </button>
-    </div>
-
-    <div id="chat-screen" class="hidden-el glass-panel w-full max-w-5xl h-screen md:h-[90vh] md:rounded-2xl flex-col shadow-2xl overflow-hidden">
+    <div class="glass-panel w-full max-w-5xl h-screen md:h-[90vh] md:rounded-2xl flex flex-col overflow-hidden relative">
         
-        <header class="px-6 py-4 border-b border-slate-800 bg-slate-900/50 flex justify-between items-center shrink-0">
+        <!-- HEADER -->
+        <header class="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-white z-10 shrink-0">
             <div class="flex items-center gap-4">
-                <div class="w-10 h-10 rounded-full border border-sky-500 flex items-center justify-center font-bold text-sky-400 bg-slate-800" id="ai-avatar">AI</div>
+                <div class="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center border border-blue-100">
+                    <i class="fa-solid fa-brain text-blue-600 text-lg"></i>
+                </div>
                 <div>
-                    <h1 class="font-bold text-lg leading-tight tracking-wide">C-Level: <span id="header-name" class="text-sky-400"></span></h1>
-                    <div class="flex items-center gap-2">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                        <p class="text-xs text-slate-400">Gemini 1.5 AI Node</p>
-                    </div>
+                    <h1 class="text-lg md:text-xl font-bold text-slate-800 tracking-tight flex items-center gap-2">
+                        <span id="bot-title-name">Trợ lý</span>
+                        <span class="text-xs font-normal bg-blue-100 text-blue-700 px-2 py-0.5 rounded-md">Cố vấn Chiến lược 4.0</span>
+                    </h1>
+                    <p class="text-xs md:text-sm text-slate-500 font-medium">Bóc tách mô hình & Đóng gói dữ liệu Content Marketing</p>
                 </div>
             </div>
-            <button onclick="location.reload()" class="text-sm text-slate-400 hover:text-white px-3 py-1.5 rounded border border-slate-700">Ngắt kết nối</button>
+            <div class="flex items-center gap-2">
+                <span class="relative flex h-2.5 w-2.5">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                </span>
+                <span class="text-xs font-semibold text-slate-500 hidden md:inline" id="bot-status">Đang trực tuyến</span>
+            </div>
         </header>
 
-        <div id="chat-history" class="flex-1 overflow-y-auto p-4 md:p-8 space-y-6"></div>
-
-        <div class="p-4 bg-slate-900 border-t border-slate-800 shrink-0">
-            <div class="flex gap-3 max-w-4xl mx-auto relative">
-                <input type="text" id="user-input" class="flex-1 bg-slate-800 border border-slate-700 rounded-xl px-5 py-4 text-white focus:outline-none focus:border-sky-500 placeholder-slate-500" placeholder="Nhập câu trả lời hoặc phím số (1, 2, 3)..." onkeypress="if(event.key==='Enter') sendMessage()">
-                <button onclick="sendMessage()" id="send-btn" class="bg-sky-600 hover:bg-sky-500 px-8 rounded-xl font-bold transition-colors"><i class="fa-solid fa-paper-plane"></i></button>
+        <!-- CHAT SCREEN -->
+        <div id="chat-screen" class="flex-1 flex flex-col bg-slate-50/50 overflow-hidden">
+            <div id="chat-history" class="chat-container flex-1 overflow-y-auto p-4 md:p-8 space-y-6"></div>
+            
+            <div class="bg-white border-t border-slate-200 p-4 md:p-5 shrink-0 shadow-[0_-10px_15px_-3px_rgba(0,0,0,0.02)]">
+                <div class="flex gap-3 max-w-4xl mx-auto relative">
+                    <input type="text" id="user-input" class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-5 py-3.5 md:py-4 text-slate-800 text-base focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all placeholder-slate-400" placeholder="Nhập câu trả lời của bạn tại đây..." onkeypress="handleEnter(event)">
+                    <button onclick="processInput()" id="send-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 md:px-8 py-3.5 md:py-4 rounded-xl transition-colors flex items-center gap-2">
+                        <span class="hidden md:inline">Gửi</span> <i class="fa-solid fa-paper-plane text-sm"></i>
+                    </button>
+                </div>
             </div>
         </div>
+
+        <!-- PROMPT SCREEN -->
+        <div id="prompt-screen" class="hidden-section flex-1 bg-white flex flex-col overflow-hidden">
+            <div class="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-circle-check text-emerald-500 text-xl"></i>
+                    <div>
+                        <h2 class="font-bold text-slate-800 text-lg">Hệ thống đồng bộ dữ liệu hoàn tất!</h2>
+                        <p class="text-sm text-slate-500">Bản Mega-Prompt cá nhân hóa đã được đóng gói cấu trúc theo đúng thiết lập.</p>
+                    </div>
+                </div>
+                <button onclick="resetApp()" class="text-sm text-blue-600 font-medium hover:underline flex items-center gap-1">
+                    <i class="fa-solid fa-rotate-left text-xs"></i> Làm lại từ đầu
+                </button>
+            </div>
+            
+            <div class="flex-1 p-6 relative bg-slate-950 m-6 rounded-xl border border-slate-800 shadow-inner flex flex-col">
+                <textarea id="mega-prompt" class="flex-1 w-full bg-transparent text-slate-300 text-[14px] md:text-[15px] focus:outline-none resize-none font-mono leading-relaxed" readonly></textarea>
+                <div class="absolute top-4 right-4">
+                    <button id="copy-btn" onclick="copyPrompt()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 shadow-sm border border-slate-700">
+                        <i class="fa-regular fa-copy"></i> Sao chép lệnh
+                    </button>
+                </div>
+            </div>
+            
+            <div class="px-6 pb-6 pt-0 shrink-0">
+                <button onclick="copyAndOpenAI()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl w-full text-base transition-colors shadow-lg flex justify-center items-center gap-2 tracking-wide">
+                    CHUYỂN SANG TRÌNH DUYỆT AI CHIẾN LƯỢC <i class="fa-solid fa-arrow-up-right-from-square text-sm"></i>
+                </button>
+            </div>
+        </div>
+
     </div>
 
     <script>
-        const names = ["Atlas", "Leon", "Kael", "Silas", "Orion"];
-        const aiName = names[Math.floor(Math.random() * names.length)];
-        let apiKey = "";
-        let chatContext = [];
+        let currentStep = 0;
+        let botName = "";
+        
+        // Kho dữ liệu đầu vào thu thập từ người dùng
+        let userData = {
+            product: "",
+            painPoint: "",
+            competitorGap: "",
+            upsellProduct: ""
+        };
 
-        document.getElementById('header-name').innerText = aiName;
-        document.getElementById('ai-avatar').innerText = aiName[0];
+        const personas = ["Aura", "Orion", "Kha"];
+        const chatHistory = document.getElementById('chat-history');
+        const userInput = document.getElementById('user-input');
+        const sendBtn = document.getElementById('send-btn');
 
-        // MASTER PROMPT NẠP VÀO SYSTEM INSTRUCTION
-        const systemInstruction = `Đóng vai trò là Giám đốc Chiến lược Cấp cao. Tên của bạn là ${aiName}. Nhiệm vụ của bạn là cố vấn 1-1 để giúp tôi thiết kế chuỗi sản phẩm.
-QUY TẮC:
-1. TUYỆT ĐỐI KHÔNG xuất ra toàn bộ kịch bản trong 1 lần. Tương tác TỪNG BƯỚC.
-2. KHÔNG ĐƯỢC bắt tôi tự suy nghĩ. Ở mỗi bước, BẠN TỰ ĐƯA RA 4 GỢI Ý ĐÁNH SỐ (1, 2, 3, 4) sâu sắc nhất để tôi chọn.
-3. Ngôn ngữ: Điềm đạm, xưng "Tôi" và "Bạn".
-
-PHẦN 1: KHỞI ĐỘNG
-Chào tôi bằng tên của bạn. Giải thích ngắn gọn 3 Lộ trình Chiến lược dưới đây (kèm ví dụ) và yêu cầu tôi chọn bằng cách gõ số 1, 2, hoặc 3:
-- [1] Lộ trình "VẾT THƯƠNG NGẦM": Tìm nỗi đau tâm lý sâu kín nhất thiết kế phễu chữa lành.
-- [2] Lộ trình "KẺ THÁCH THỨC": Khai thác điểm mù Đối thủ lớn tạo sản phẩm cướp khách.
-- [3] Lộ trình "NHIỆM VỤ NGẦM" (Jobs-To-Be-Done): Bỏ qua tính năng, tập trung vào "Sự thay đổi vị thế".
-(DỪNG LẠI và chờ tôi gõ số lựa chọn).
-
-PHẦN 2: THỰC THI (Chỉ kích hoạt lộ trình tôi đã chọn)
-NẾU TÔI CHỌN [1]:
-- B1.1: Hỏi tôi đang bán sản phẩm gì. (Chờ).
-- B1.2: Đưa 4 gợi ý đánh số về Nhóm khách ngách kèm Nỗi đau tột cùng. (Chờ tôi chọn).
-- B1.3: Đưa 4 gợi ý đánh số về Rào cản/Hoài nghi. (Chờ tôi chọn).
-- B1.4: Đề xuất Chuỗi sản phẩm phễu (Mồi câu -> Lõi -> Upsell).
-
-NẾU TÔI CHỌN [2]:
-- B2.1: Hỏi sản phẩm và Đối thủ tôi ghét nhất. (Chờ).
-- B2.2: Đưa 4 gợi ý đánh số về "Cục tức/Lỗ hổng" khách đang chịu đựng. (Chờ chọn).
-- B2.3: Vẽ tâm lý khách bất mãn. Đưa 4 gợi ý thông điệp "Vị Cứu Tinh". (Chờ chọn).
-- B2.4: Đề xuất Chuỗi sản phẩm "Cướp khách".
-
-NẾU TÔI CHỌN [3]:
-- B3.1: Hỏi tôi đang bán sản phẩm gì. (Chờ).
-- B3.2: Đưa 4 gợi ý đánh số về "Sự thay đổi/Động lực ngầm" khách khao khát. (Chờ chọn).
-- B3.3: Chỉ ra 4 Sản phẩm thay thế (không cùng ngành) khách đang dùng. (Chờ chọn).
-- B3.4: Đề xuất chuỗi Giá trị gia tăng để tránh đua giá.`;
-
-        function initSystem() {
-            const key = document.getElementById('api-key').value.trim();
-            if(!key) return alert("Vui lòng nhập API Key!");
-            apiKey = key;
+        window.onload = () => {
+            // Cơ chế Random danh tính thực tế ngay khi khởi chạy
+            botName = personas[Math.floor(Math.random() * personas.length)];
+            document.getElementById('bot-title-name').innerText = `${botName} Co-Pilot`;
             
-            document.getElementById('setup-screen').classList.add('hidden-el');
-            document.getElementById('chat-screen').classList.remove('hidden-el');
-            document.getElementById('chat-screen').classList.add('flex');
-            
-            // Kích hoạt AI tự động chào hỏi bằng 1 trigger ẩn
-            callGeminiAPI("Hệ thống đã kết nối. Hãy bắt đầu Phần 1.", true);
+            showTyping(1200, () => {
+                addBotMessage(`
+                    <div class="font-bold text-slate-900 mb-1 text-base tracking-tight">BƯỚC 1: BẠN ĐANG KINH DOANH HOẶC DỰ ĐỊNH BÁN SẢN PHẨM, DỊCH VỤ CỤ THỂ NÀO?</div>
+                    <blockquote class="border-l-2 border-slate-300 pl-3 text-xs text-slate-500 italic mt-2 leading-relaxed">
+                        Gợi ý cách nghĩ: Hãy gọi tên nó một cách đơn giản nhất. Nếu đây là sản phẩm làm thử để bán thử (MVP) nhằm đo lường phản hồi thị trường, hãy nói rõ công dụng cốt lõi của nó để tôi nắm thông tin.
+                    </blockquote>
+                `);
+            });
+        };
+
+        function handleEnter(e) { 
+            if (e.key === 'Enter') processInput(); 
         }
 
-        async function callGeminiAPI(text, isHiddenInit = false) {
-            const input = document.getElementById('user-input');
-            const btn = document.getElementById('send-btn');
+        function showTyping(ms, callback) {
+            userInput.disabled = true; 
+            sendBtn.disabled = true;
             
-            if (!isHiddenInit) {
-                appendMessage('user', text);
-            }
-            
-            chatContext.push({ role: "user", parts: [{ text: text }] });
-            
-            input.disabled = true; btn.disabled = true;
-            input.value = '';
-            
-            const loadingId = appendTyping();
-
-            try {
-                // Sử dụng v1beta để hỗ trợ systemInstruction
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        systemInstruction: { parts: [{ text: systemInstruction }] },
-                        contents: chatContext
-                    })
-                });
-
-                const data = await response.json();
-                document.getElementById(loadingId).remove();
-
-                if (data.error) throw new Error(data.error.message);
-
-                const botReply = data.candidates[0].content.parts[0].text;
-                chatContext.push({ role: "model", parts: [{ text: botReply }] });
-                appendMessage('bot', botReply);
-
-            } catch (error) {
-                document.getElementById(loadingId).remove();
-                appendMessage('system', `<span class="text-rose-400">Lỗi kết nối: ${error.message}</span>`);
-                chatContext.pop(); // Remove failed message from history
-            }
-
-            input.disabled = false; btn.disabled = false;
-            if(!isHiddenInit) input.focus();
-        }
-
-        function sendMessage() {
-            const text = document.getElementById('user-input').value.trim();
-            if(text) callGeminiAPI(text);
-        }
-
-        function appendMessage(sender, text) {
-            const box = document.getElementById('chat-history');
-            const div = document.createElement('div');
-            
-            if (sender === 'user') {
-                div.className = "flex justify-end mb-6";
-                div.innerHTML = `<div class="bg-sky-600 text-white px-5 py-3 rounded-2xl rounded-tr-sm max-w-[85%] text-[15px] shadow-lg">${text}</div>`;
-            } else if (sender === 'bot') {
-                div.className = "flex gap-4 mb-6";
-                div.innerHTML = `
-                    <div class="w-10 h-10 rounded-full border border-sky-500 bg-slate-800 flex items-center justify-center font-bold text-sky-400 text-sm shrink-0 shadow-lg">${aiName[0]}</div>
-                    <div class="bg-slate-800 border border-slate-700 px-6 py-5 rounded-2xl rounded-tl-sm w-full max-w-[85%] text-[15px] text-slate-200 markdown-body shadow-lg leading-relaxed">${marked.parse(text)}</div>
-                `;
-            } else {
-                div.className = "text-center mb-6 text-sm";
-                div.innerHTML = text;
-            }
-            
-            box.appendChild(div);
-            box.scrollTop = box.scrollHeight;
-        }
-
-        function appendTyping() {
-            const id = 'type-' + Date.now();
-            const box = document.getElementById('chat-history');
+            const id = 'typing-' + Date.now();
             const div = document.createElement('div');
             div.id = id;
-            div.className = "flex gap-4 mb-6";
+            div.className = "flex items-start gap-3 md:gap-4 fade-in w-full md:w-4/5";
             div.innerHTML = `
-                <div class="w-10 h-10 rounded-full border border-slate-600 bg-slate-800 flex items-center justify-center font-bold text-slate-500 text-sm shrink-0">${aiName[0]}</div>
-                <div class="bg-slate-800 border border-slate-700 px-6 py-4 rounded-2xl rounded-tl-sm flex items-center shadow-lg"><div class="typing"><span></span><span></span><span></span></div></div>
+                <div class="w-8 h-8 rounded-full bg-slate-200 flex-shrink-0 flex items-center justify-center mt-1"><i class="fa-solid fa-microchip text-slate-500 text-xs animate-pulse"></i></div>
+                <div class="bg-white border border-slate-200 px-4 py-3 rounded-2xl rounded-tl-sm shadow-sm">
+                    <div class="typing-dots"><span></span><span></span><span></span></div>
+                </div>
             `;
-            box.appendChild(div);
-            box.scrollTop = box.scrollHeight;
-            return id;
+            chatHistory.appendChild(div);
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+
+            setTimeout(() => {
+                const element = document.getElementById(id);
+                if(element) element.remove();
+                userInput.disabled = false; 
+                sendBtn.disabled = false;
+                callback();
+                userInput.focus();
+            }, ms);
+        }
+
+        function addBotMessage(htmlContent) {
+            const div = document.createElement('div');
+            div.className = "flex items-start gap-3 md:gap-4 fade-in w-full md:w-[85%]";
+            div.innerHTML = `
+                <div class="w-8 h-8 rounded-full bg-blue-50 flex-shrink-0 flex items-center justify-center border border-blue-100 mt-1">
+                    <i class="fa-solid fa-robot text-blue-600 text-xs"></i>
+                </div>
+                <div class="bg-white border border-slate-200 px-5 md:px-6 py-4 rounded-2xl rounded-tl-sm shadow-sm text-[15px] leading-relaxed text-slate-700">
+                    ${htmlContent}
+                    <div class="mt-3 pt-2 border-t border-slate-100 text-[11px] text-slate-400 font-mono flex items-center justify-between">
+                        <span>🚀 Hệ thống phản hồi tự động</span>
+                        <span class="font-medium text-slate-500">${botName}</span>
+                    </div>
+                </div>
+            `;
+            chatHistory.appendChild(div);
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+        }
+
+        function addUserMessage(text) {
+            const div = document.createElement('div');
+            div.className = "flex items-start gap-3 md:gap-4 flex-row-reverse fade-in w-full ml-auto md:w-[85%]";
+            div.innerHTML = `
+                <div class="bg-blue-600 text-white px-5 py-3.5 rounded-2xl rounded-tr-sm shadow-md text-[15px] leading-relaxed max-w-[85%]">
+                    ${text}
+                </div>
+            `;
+            chatHistory.appendChild(div);
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+        }
+
+        function getSummarySnippet(input) {
+            // Hàm cắt lọc thông minh lấy dưới 5 từ làm tóm tắt real-time
+            const words = input.trim().split(/\s+/);
+            if (words.length <= 4) return words.join(" ");
+            return words.slice(0, 4).join(" ") + "...";
+        }
+
+        function processInput() {
+            const text = userInput.value.trim();
+            if (!text) return;
+
+            addUserMessage(text);
+            userInput.value = '';
+            
+            // Xử lý các bước bằng máy trạng thái (State Machine) phối hợp Real-time Log
+            if (currentStep === 0) {
+                userData.product = text;
+                currentStep++;
+                const summary = getSummarySnippet(text);
+                
+                document.getElementById('bot-status').innerText = "Đang xử lý dữ liệu lõi...";
+                showTyping(1400, () => {
+                    document.getElementById('bot-status').innerText = "Đang trực tuyến";
+                    addBotMessage(`
+                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-mono">Đã ghi nhận: ${summary}</span>
+                        <div class="font-bold text-slate-900 mb-1 text-base tracking-tight mt-3">BƯỚC 2: KHÁCH HÀNG CỦA BẠN ĐANG GẶP RẮC RỐI, BỰC MÌNH HOẶC TỐN TIỀN NHẤT Ở CÔNG ĐOẠN NÀO MÀ SẢN PHẨM CỦA BẠN CÓ THỂ GIẢI QUYẾT?</div>
+                        <blockquote class="border-l-2 border-slate-300 pl-3 text-xs text-slate-500 italic mt-2 leading-relaxed">
+                            Gợi ý cách nghĩ: Hãy nhìn thẳng vào hành vi, thói quen thực tế hàng ngày của họ. Họ mất nhiều thời gian nhất ở đâu? Đang phải chịu đựng giải pháp tạm bợ, ức chế nào khi chưa dùng sản phẩm của bạn?
+                        </blockquote>
+                    `);
+                });
+            } 
+            else if (currentStep === 1) {
+                userData.painPoint = text;
+                currentStep++;
+                const summary = getSummarySnippet(text);
+                
+                document.getElementById('bot-status').innerText = "Đang đối chiếu thị trường...";
+                showTyping(1400, () => {
+                    document.getElementById('bot-status').innerText = "Đang trực tuyến";
+                    addBotMessage(`
+                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-mono">Insight cốt lõi: ${summary}</span>
+                        <div class="font-bold text-slate-900 mb-1 text-base tracking-tight mt-3">BƯỚC 3: BẠN THẤY CÁC ĐỐI THỦ TRÊN THỊ TRƯỜNG ĐANG LÀM ĐIỀU GÌ KHIẾN KHÁCH HÀNG CHƯA HÀI LÒNG? BẠN SẼ LÀM GÌ TỐT HƠN HỌ?</div>
+                        <blockquote class="border-l-2 border-slate-300 pl-3 text-xs text-slate-500 italic mt-2 leading-relaxed">
+                            Gợi ý cách nghĩ: Quét tìm các kẽ hở lớn của các bên đi trước (Ví dụ: đối thủ định giá quá cao, công cụ quá phức tạp khó thao tác, chỉ bán lý thuyết suông thiếu đồng hành...). Định hình duy nhất một lợi thế bạn tự tin nhất.
+                        </blockquote>
+                    `);
+                });
+            } 
+            else if (currentStep === 2) {
+                userData.competitorGap = text;
+                currentStep++;
+                const summary = getSummarySnippet(text);
+                
+                document.getElementById('bot-status').innerText = "Đang tính toán chuỗi dòng tiền...";
+                showTyping(1400, () => {
+                    document.getElementById('bot-status').innerText = "Đang trực tuyến";
+                    addBotMessage(`
+                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-mono">Lợi thế cạnh tranh: ${summary}</span>
+                        <div class="font-bold text-slate-900 mb-1 text-base tracking-tight mt-3">BƯỚC 4: SAU KHI KHÁCH HÀNG MUA XONG SẢN PHẨM ĐẦU TIÊN NÀY, BẠN ĐỊNH BÁN THÊM CHO HỌ SẢN PHẨM HOẶC DỊCH VỤ CAO CẤP NÀO TIẾP THEO?</div>
+                        <blockquote class="border-l-2 border-slate-300 pl-3 text-xs text-slate-500 italic mt-2 leading-relaxed">
+                            Gợi ý cách nghĩ: Tư duy xây dựng chuỗi giá trị dài hạn. Khi khách giải quyết xong bài toán cũ bằng sản phẩm cốt lõi, nhu cầu phát sinh nâng cao tiếp theo là gì giúp bạn bán thêm được hệ sinh thái số 2, số 3?
+                        </blockquote>
+                    `);
+                });
+            } 
+            else if (currentStep === 3) {
+                userData.upsellProduct = text;
+                currentStep++;
+                
+                document.getElementById('bot-status').innerText = "Đang biên dịch cấu trúc lệnh...";
+                showTyping(2000, () => {
+                    document.getElementById('bot-status').innerText = "Đã đồng bộ";
+                    addBotMessage(`Đã tổng hợp toàn bộ các điểm chạm dữ liệu. Hệ thống đang tiến hành đóng gói cấu trúc Mega-Prompt tổng thể...`);
+                    setTimeout(() => generatePrompt(), 1000);
+                });
+            }
+        }
+
+        function generatePrompt() {
+            document.getElementById('chat-screen').classList.add('hidden-section');
+            document.getElementById('prompt-screen').classList.remove('hidden-section');
+            document.getElementById('prompt-screen').classList.add('flex');
+            
+            // Render chính xác Prompt đã được tối ưu hóa cấu trúc có Mindmap ASCII và cấu trúc in hoa, loop hỏi tiếp
+            const promptTemplate = `Bạn là một cố vấn chiến lược kinh doanh thực chiến, sở hữu năng lực xử lý dữ liệu và cấu trúc thông tin đỉnh cao. Nhiệm vụ của bạn là tiếp nhận tập dữ liệu phỏng vấn thô dưới đây của tôi để xử lý, phân tích chuyên sâu và tạo ra bức tranh chiến lược kinh doanh, định vị thị trường, kịch bản marketing hoàn chỉnh.
+
+DỮ LIỆU ĐẦU VÀO ĐÃ THU THẬP:
+- Sản phẩm/Dịch vụ gốc: ${userData.product}
+- Nỗi đau hành vi thực tế: ${userData.painPoint}
+- Điểm mù/Kẽ hở của đối thủ: ${userData.competitorGap}
+- Sản phẩm nâng cao thiết lập phễu sau: ${userData.upsellProduct}
+
+QUY TẮC XUẤT ĐẦU RA CHIẾN LƯỢC CHUẨN XÁC (TUÂN THỦ 100%):
+
+1. ĐẦU TIÊN: Xuất ngay một sơ đồ tư duy bằng ký tự ASCII (ASCII Text Mindmap) để tổng hợp trực quan mối quan hệ hệ sinh thái giữa bốn yếu tố trên (Sử dụng cấu trúc các ký tự nét liền ───, │, └─── để vẽ phân nhánh rõ ràng).
+
+2. TIẾP THEO: Xuất các bảng phân tích chi tiết. Toàn bộ các tiêu đề lớn của bảng bắt buộc phải VIẾT TO, IN HOA TOÀN BỘ bằng thẻ tiêu đề Markdown kích thước lớn (# hoặc ##):
+
+# BẢNG 1: ĐỊNH VỊ SẢN PHẨM VÀ THỊ TRƯỜNG NGÁCH
+- Làm rõ bản chất giải pháp, điểm độc bản (USP) cốt lõi của sản phẩm.
+- Chỉ ra phân khúc khách hàng ngách tiềm năng có tỷ lệ xuống tiền nhanh nhất.
+
+# BẢNG 2: BẢN ĐỒ ĐỐI THỦ VÀ KẼ HỞ CHIẾN TRƯỜNG
+- Mô tả phân tích điểm mạnh lớn nhất của các nhóm đối thủ trên thị trường.
+- Làm nổi bật lỗ hổng vận hành/điểm mù của họ và chiến lược định vị truyền thông của tôi để đánh trực diện vào kẽ hở đó.
+
+# BẢNG 3: HỒ SƠ TÂM LÝ HỌC KHÁCH HÀNG SÂU SẮC
+- Mô tả chi tiết nỗi sợ hãi thầm kín, rào cản và động lực mua hàng ẩn giấu.
+- Cung cấp bộ từ khóa thôi miên tâm lý (Psychological triggers) nên dùng khi viết bài hoặc làm clip.
+
+# BẢNG 4: SỰ DỊCH CHUYỂN CỦA CHUỖI SẢN PHẨM DÒNG TIỀN
+- Cấu trúc hóa mô hình thang giá trị: Sản phẩm mồi/Quà tặng thu hút -> Sản phẩm chính -> Sản phẩm biên lợi nhuận cao (dựa trên giải pháp nâng cao đã thu thập).
+
+# KHO BÁU CONTENT: 5 GÓC TIẾP CẬN KỊCH BẢN VIDEO NGẮN XÂY KÊNH
+- Đưa ra 5 ý tưởng định hướng nội dung video (TikTok/YouTube Reels) ngắn đánh mạnh vào insight nỗi đau hành vi thực tế của khách hàng mục tiêu để chuyển đổi traffic về phễu sản phẩm.
+
+3. CUỐI CÙNG (CƠ CHẾ VÒNG LẶP HOÀN THIỆN):
+Sau khi xuất xong toàn bộ các bảng trên, bạn phải giữ vai trò tương tác và đưa ra câu hỏi loop nguyên văn: "Bảng dữ liệu chiến lược đã được thiết lập. Bạn muốn đào sâu thêm, bổ sung dữ liệu hay chỉnh sửa cụ thể ở bảng nào hoặc phần nào trong sơ đồ trên để tôi tối ưu lại chuẩn xác nhất?".
+
+Hãy kích hoạt tư duy phân tích sắc bén nhất của bạn, suy luận dựa trên dữ liệu thật và xuất toàn bộ đầu ra một cách logic, thực chiến nhất.`;
+
+            document.getElementById('mega-prompt').value = promptTemplate;
+        }
+
+        function copyPrompt() {
+            const textArea = document.getElementById("mega-prompt");
+            textArea.select();
+            document.execCommand("copy");
+            
+            const btn = document.getElementById('copy-btn');
+            btn.innerHTML = `<i class="fa-solid fa-check"></i> Đã sao chép vào bộ nhớ tạm`;
+            btn.classList.add('bg-emerald-600', 'text-white', 'border-emerald-500');
+            btn.classList.remove('bg-slate-800', 'text-slate-200', 'border-slate-700');
+            
+            setTimeout(() => {
+                btn.innerHTML = `<i class="fa-regular fa-copy"></i> Sao chép lệnh`;
+                btn.classList.remove('bg-emerald-600', 'text-white', 'border-emerald-500');
+                btn.classList.add('bg-slate-800', 'text-slate-200', 'border-slate-700');
+            }, 2500);
+        }
+
+        function copyAndOpenAI() {
+            copyPrompt();
+            window.open("https://chatgpt.com", "_blank");
+        }
+
+        function resetApp() {
+            currentStep = 0;
+            userData = { product: "", painPoint: "", competitorGap: "", upsellProduct: "" };
+            
+            document.getElementById('prompt-screen').classList.add('hidden-section');
+            document.getElementById('prompt-screen').classList.remove('flex');
+            document.getElementById('chat-screen').classList.remove('hidden-section');
+            
+            chatHistory.innerHTML = '';
+            botName = personas[Math.floor(Math.random() * personas.length)];
+            document.getElementById('bot-title-name').innerText = `${botName} Co-Pilot`;
+            
+            showTyping(800, () => {
+                addBotMessage(`
+                    <div class="font-bold text-slate-900 mb-1 text-base tracking-tight">HỆ THỐNG ĐÃ RESET. XIN HỎI LẠI, BẠN ĐANG KINH DOANH HOẶC DỰ ĐỊNH BÁN SẢN PHẨM, DỊCH VỤ CỤ THỂ NÀO?</div>
+                    <blockquote class="border-l-2 border-slate-300 pl-3 text-xs text-slate-500 italic mt-2">
+                        Gợi ý cách nghĩ: Hãy gọi tên nó một cách đơn giản nhất. Nếu đây là sản phẩm làm thử để bán thử (MVP) nhằm đo lường phản hồi thị trường, hãy nói rõ công dụng cốt lõi của nó để tôi nắm thông tin.
+                    </blockquote>
+                `);
+            });
         }
     </script>
 </body>
