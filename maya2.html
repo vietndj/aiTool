@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trợ lý Maya - Kịch bản video quảng cáo theo công thức version 2.0</title>
+    <title>Trợ lý Maya v2.0 | Hệ thống tối ưu kịch bản chuyển đổi</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome Icons -->
@@ -18,13 +18,8 @@
                 extend: {
                     colors: {
                         brand: {
-                            50: '#f0f9ff',
-                            100: '#e0f2fe',
-                            500: '#0ea5e9',
-                            600: '#0284c7',
-                            700: '#0369a1',
-                            darkBg: '#0b0f19',
-                            panelBg: '#131b2e',
+                            darkBg: '#080c14',
+                            panelBg: '#0f172a',
                             border: '#1e293b'
                         }
                     },
@@ -39,27 +34,27 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #0b0f19;
+            background-color: #080c14;
             color: #f1f5f9;
         }
         
-        /* Custom Scrollbar */
+        /* Custom Scrollbar cho giao diện tối */
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
         }
         ::-webkit-scrollbar-track {
-            background: #0f172a;
+            background: #090d16;
         }
         ::-webkit-scrollbar-thumb {
-            background: #334155;
+            background: #1e293b;
             border-radius: 9999px;
         }
         ::-webkit-scrollbar-thumb:hover {
             background: #0ea5e9;
         }
 
-        /* Abstract Micro-Animations */
+        /* Hiệu ứng chuyển động vi mô cho các loại khung kịch bản */
         .anim-pas .circle { width: 14px; height: 14px; background: #ef4444; border-radius: 50%; position: absolute; animation: pas-beat 2s infinite; }
         .anim-pas .wave { width: 100%; height: 100%; border: 2px solid #3b82f6; border-radius: 50%; position: absolute; animation: pas-wave 2s infinite; opacity: 0; }
         @keyframes pas-beat { 0%, 100% { transform: scale(1); background: #ef4444; } 50% { transform: scale(0.6); background: #3b82f6; } }
@@ -76,162 +71,162 @@
         .anim-process .dot-step:nth-child(3) { animation-delay: 0.6s; }
         @keyframes process-step { 0%, 100% { background: #cbd5e1; transform: translateY(0); } 30% { background: #8b5cf6; transform: translateY(-5px); box-shadow: 0 4px 6px rgba(139, 92, 246, 0.4); } }
 
-        /* Glowing accents */
+        /* Khung sáng nhẹ tinh tế */
         .glowing-indigo {
-            box-shadow: 0 0 20px rgba(99, 102, 241, 0.15);
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.12);
         }
     </style>
 </head>
 <body class="min-h-screen flex flex-col antialiased">
 
-    <!-- Top Navigation Bar -->
-    <header class="w-full bg-[#111827] border-b border-slate-800 px-6 py-4 flex items-center justify-between sticky top-0 z-50">
+    <!-- Thanh điều hướng trên cùng (Top Navigation Bar) -->
+    <header class="w-full bg-[#0a0f1d] border-b border-slate-800 px-6 py-4 flex items-center justify-between sticky top-0 z-50">
         <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-500 via-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-sky-500/20">
                 <i class="fas fa-brain text-white text-lg"></i>
             </div>
             <div>
                 <h1 class="text-base font-extrabold tracking-tight text-white flex items-center gap-2">
-                    Content Strategist Copilot 
-                    <span class="text-xs bg-sky-500/20 text-sky-400 font-medium px-2 py-0.5 rounded-full border border-sky-500/30">Premium v2.0</span>
+                    Trợ lý Maya <span class="text-xs bg-sky-500/20 text-sky-400 font-semibold px-2 py-0.5 rounded-full border border-sky-500/30">Version 2.0</span>
                 </h1>
-                <p class="text-xs text-slate-400">Hệ thống tạo mẫu & tối ưu kịch bản video ngắn</p>
+                <p class="text-xs text-slate-400">Thiết kế chuỗi kịch bản video ngắn và tối ưu hóa chuyển đổi thực chiến</p>
             </div>
         </div>
 
         <div class="flex items-center gap-4">
-            <div class="flex items-center gap-2 px-3 py-1.5 bg-[#1f2937] rounded-lg border border-slate-700/60 text-xs">
+            <div class="flex items-center gap-2 px-3 py-1.5 bg-[#131b2e] rounded-lg border border-slate-700/60 text-xs">
                 <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span class="text-slate-300 font-medium">Băng thông LLMs: Hoạt động</span>
+                <span class="text-slate-300 font-medium">Hệ thống: Trực tuyến</span>
             </div>
         </div>
     </header>
 
-    <!-- Main Workspace Layout -->
+    <!-- Không gian làm việc chính (Main Workspace) -->
     <div class="flex-1 w-full max-w-7xl mx-auto flex flex-col lg:flex-row overflow-hidden relative">
         
-        <!-- PANEL LEFT: Settings / Customization Configuration (1/4 width) -->
-        <aside class="w-full lg:w-80 bg-[#111827] border-b lg:border-b-0 lg:border-r border-slate-800 p-5 flex flex-col gap-6 shrink-0 z-10">
+        <!-- BẢNG TRÁI: Tuỳ chọn cấu hình nội dung (1/4 chiều rộng) -->
+        <aside class="w-full lg:w-80 bg-[#0a0f1d] border-b lg:border-b-0 lg:border-r border-slate-800 p-5 flex flex-col gap-6 shrink-0 z-10">
             <div>
                 <h2 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-2">
-                    <i class="fas fa-sliders-h text-sky-400"></i> Tham số cấu hình
+                    <i class="fas fa-sliders-h text-sky-400"></i> Tham số chiến dịch
                 </h2>
                 <div class="space-y-4">
-                    <!-- Distribution Channel -->
+                    <!-- Kênh phân phối -->
                     <div>
-                        <label class="block text-xs font-semibold text-slate-300 mb-1.5">Kênh phân phối tối ưu</label>
-                        <select id="setting-channel" class="w-full bg-[#1f2937] border border-slate-700 rounded-lg py-2 px-3 text-sm text-slate-200 outline-none focus:border-sky-500 transition-colors">
+                        <label class="block text-xs font-semibold text-slate-300 mb-1.5">Kênh đăng tải tối ưu</label>
+                        <select id="setting-channel" class="w-full bg-[#131b2e] border border-slate-700/80 rounded-lg py-2 px-3 text-sm text-slate-200 outline-none focus:border-sky-500 transition-colors">
                             <option value="tiktok">TikTok Video (&lt; 60 giây)</option>
                             <option value="reels">Facebook / Instagram Reels</option>
                             <option value="shorts">YouTube Shorts</option>
                         </select>
                     </div>
 
-                    <!-- Voice Tone -->
+                    <!-- Giọng điệu chủ đạo -->
                     <div>
-                        <label class="block text-xs font-semibold text-slate-300 mb-1.5">Giọng điệu truyền đạt</label>
-                        <select id="setting-tone" class="w-full bg-[#1f2937] border border-slate-700 rounded-lg py-2 px-3 text-sm text-slate-200 outline-none focus:border-sky-500 transition-colors">
-                            <option value="expert">Chuyên gia đáng tin cậy</option>
-                            <option value="dramatic">Kịch tính, khơi gợi cảm xúc tột độ</option>
-                            <option value="pragmatic">Thực tế, không lý thuyết, đập thẳng vấn đề</option>
-                            <option value="humorous">Hài hước châm biếm, cuốn hút</option>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1.5">Giọng điệu truyền tải</label>
+                        <select id="setting-tone" class="w-full bg-[#131b2e] border border-slate-700/80 rounded-lg py-2 px-3 text-sm text-slate-200 outline-none focus:border-sky-500 transition-colors">
+                            <option value="expert">Chuyên gia thực tế, đáng tin cậy</option>
+                            <option value="dramatic">Kịch tính, đánh thức cảm xúc mạnh mẽ</option>
+                            <option value="pragmatic">Thực chiến, đi thẳng vào bản chất vấn đề</option>
+                            <option value="humorous">Hài hước, duyên dáng, lôi cuốn tự nhiên</option>
                         </select>
                     </div>
 
-                    <!-- Hook Pattern -->
+                    <!-- Kiểu mở đầu Hook -->
                     <div>
-                        <label class="block text-xs font-semibold text-slate-300 mb-1.5">Kiểu Hook 3 giây đầu tiên</label>
-                        <select id="setting-hook" class="w-full bg-[#1f2937] border border-slate-700 rounded-lg py-2 px-3 text-sm text-slate-200 outline-none focus:border-sky-500 transition-colors">
-                            <option value="fomo">Đánh trực diện tâm lý sợ bỏ lỡ (F.O.M.O)</option>
-                            <option value="paradox">Sự thật nghịch lý gây lú (Counter-intuitive)</option>
-                            <option value="question">Câu hỏi rúng động tự thức tỉnh</option>
-                            <option value="action">Hành động bất ngờ ngay giây đầu tiên</option>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1.5">Cách giật Hook 3 giây đầu</label>
+                        <select id="setting-hook" class="w-full bg-[#131b2e] border border-slate-700/80 rounded-lg py-2 px-3 text-sm text-slate-200 outline-none focus:border-sky-500 transition-colors">
+                            <option value="fomo">Kích hoạt nỗi sợ bị bỏ lỡ (F.O.M.O)</option>
+                            <option value="paradox">Sự thật nghịch lý gây lột xác tư duy</option>
+                            <option value="question">Câu hỏi gợi mở xoáy thẳng vào thực tế</option>
+                            <option value="action">Hành động trực quan kịch tính ngay giây thứ nhất</option>
                         </select>
                     </div>
                 </div>
             </div>
 
-            <!-- Agent Section selection -->
+            <!-- Chọn góc nhìn chuyên gia -->
             <div class="border-t border-slate-800/80 pt-5">
                 <h2 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-2">
-                    <i class="fas fa-user-circle text-purple-400"></i> Lực lượng đặc nhiệm AI
+                    <i class="fas fa-user-circle text-purple-400"></i> Chọn góc nhìn chuyên gia
                 </h2>
                 <div class="space-y-2" id="agents-list">
-                    <!-- Agent Maya -->
-                    <div class="agent-card p-3 rounded-lg border border-slate-800 bg-[#182032] hover:border-slate-700 transition-all cursor-pointer flex items-center gap-3 active-agent" data-agent="maya">
+                    <!-- Chuyên gia Maya -->
+                    <div class="agent-card p-3 rounded-lg border border-slate-800 bg-[#131b2e] hover:border-slate-700 transition-all cursor-pointer flex items-center gap-3 active-agent" data-agent="maya">
                         <div class="w-8 h-8 rounded-full bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-400 text-xs font-bold">MY</div>
                         <div class="flex-1">
                             <div class="flex items-center justify-between">
-                                <span class="text-xs font-bold text-white">Agent Maya</span>
+                                <span class="text-xs font-bold text-white">Chuyên gia Maya</span>
                                 <span class="text-[10px] text-red-400 font-medium">Bản đồ Insight</span>
                             </div>
-                            <p class="text-[10px] text-slate-400">Trích xuất nỗi đau cốt tủy độc giả</p>
+                            <p class="text-[10px] text-slate-400">Phân tích trúng nỗi đau & tâm lý khách hàng</p>
                         </div>
                     </div>
-                    <!-- Agent Leo -->
+                    <!-- Chuyên gia Leo -->
                     <div class="agent-card p-3 rounded-lg border border-slate-800 bg-transparent hover:border-slate-700 transition-all cursor-pointer flex items-center gap-3" data-agent="leo">
                         <div class="w-8 h-8 rounded-full bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-400 text-xs font-bold">LE</div>
                         <div class="flex-1">
                             <div class="flex items-center justify-between">
-                                <span class="text-xs font-bold text-white">Agent Leo</span>
+                                <span class="text-xs font-bold text-white">Chuyên gia Leo</span>
                                 <span class="text-[10px] text-blue-400 font-medium">Phễu Chuyển Đổi</span>
                             </div>
-                            <p class="text-[10px] text-slate-400">Xây cấu trúc mỏ neo và dẫn dắt</p>
+                            <p class="text-[10px] text-slate-400">Điều phối cấu trúc dẫn dắt hành vi mua hàng</p>
                         </div>
                     </div>
-                    <!-- Agent Iris -->
+                    <!-- Chuyên gia Iris -->
                     <div class="agent-card p-3 rounded-lg border border-slate-800 bg-transparent hover:border-slate-700 transition-all cursor-pointer flex items-center gap-3" data-agent="iris">
                         <div class="w-8 h-8 rounded-full bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 text-xs font-bold">IR</div>
                         <div class="flex-1">
                             <div class="flex items-center justify-between">
-                                <span class="text-xs font-bold text-white">Agent Iris</span>
-                                <span class="text-[10px] text-purple-400 font-medium">Short-form Director</span>
+                                <span class="text-xs font-bold text-white">Chuyên gia Iris</span>
+                                <span class="text-[10px] text-purple-400 font-medium">Đạo diễn Hình ảnh</span>
                             </div>
-                            <p class="text-[10px] text-slate-400">Biên tập B-roll & Thị giác đỉnh cao</p>
+                            <p class="text-[10px] text-slate-400">Tối ưu góc quay B-roll và thị giác video ngắn</p>
                         </div>
                     </div>
-                    <!-- Agent Kai -->
+                    <!-- Chuyên gia Kai -->
                     <div class="agent-card p-3 rounded-lg border border-slate-800 bg-transparent hover:border-slate-700 transition-all cursor-pointer flex items-center gap-3" data-agent="kai">
                         <div class="w-8 h-8 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 text-xs font-bold">KI</div>
                         <div class="flex-1">
                             <div class="flex items-center justify-between">
-                                <span class="text-xs font-bold text-white">Agent Kai</span>
-                                <span class="text-[10px] text-emerald-400 font-medium">ROI Optimization</span>
+                                <span class="text-xs font-bold text-white">Chuyên gia Kai</span>
+                                <span class="text-[10px] text-emerald-400 font-medium">Tối ưu Tỷ lệ Click</span>
                             </div>
-                            <p class="text-[10px] text-slate-400">Giảm chi phí, tăng CTR & chuyển đổi</p>
+                            <p class="text-[10px] text-slate-400">Tinh chỉnh CTA thúc đẩy doanh thu thực tế</p>
                         </div>
                     </div>
                 </div>
             </div>
         </aside>
 
-        <!-- MIDDLE: Chat Area + Prompt Box (Fluid width) -->
-        <main class="flex-1 flex flex-col bg-[#0f172a] border-r border-slate-800 overflow-hidden">
-            <!-- Chat Logs Scroll container -->
+        <!-- KHU VỰC GIỮA: Phòng chat tương tác & Tạo Prompt (Fluid width) -->
+        <main class="flex-1 flex flex-col bg-[#090d16] border-r border-slate-800 overflow-hidden">
+            <!-- Khu vực cuộn tin nhắn chat -->
             <div id="chat-history" class="flex-1 overflow-y-auto p-6 space-y-6">
                 
-                <!-- Initial AI Welcome -->
+                <!-- Tin nhắn chào mừng mặc định -->
                 <div class="flex gap-4 items-start max-w-[85%]">
                     <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-white shrink-0 shadow-md">
                         <i class="fas fa-robot text-sm"></i>
                     </div>
-                    <div class="bg-[#1e293b]/60 border border-slate-800 text-slate-100 rounded-2xl rounded-tl-none p-4 text-sm leading-relaxed shadow-sm">
-                        Chào mừng bạn đến với tổng hành dinh sáng tạo kịch bản chuyển đổi thực chiến. Để AI thiết lập bản mẫu dữ liệu chính xác nhất, <strong>hiện tại bạn đang kinh doanh sản phẩm hoặc lĩnh vực cụ thể nào?</strong>
+                    <div class="bg-[#0f172a]/60 border border-slate-800 text-slate-100 rounded-2xl rounded-tl-none p-4 text-sm leading-relaxed shadow-sm">
+                        Chào bạn, tôi là trợ lý lập chiến lược nội dung video ngắn. Nhiệm vụ của tôi là giúp bạn thiết lập một bộ câu lệnh tối ưu cao để tự sinh kịch bản chuyển đổi chất lượng nhất.<br><br>
+                        Để khởi động bộ não phân tích dữ liệu, <strong>hiện tại bạn đang kinh doanh lĩnh vực hoặc sản phẩm cụ thể nào?</strong>
                     </div>
                 </div>
 
             </div>
 
-            <!-- Input bar bottom -->
-            <div class="p-4 bg-[#111827] border-t border-slate-800">
+            <!-- Khu vực nhập nội dung phía dưới -->
+            <div class="p-4 bg-[#0a0f1d] border-t border-slate-800">
                 <div id="quick-tags" class="flex gap-2 mb-3 overflow-x-auto pb-2">
-                    <button onclick="useTag('Spa & Thẩm mỹ viện công nghệ cao')" class="tag shrink-0 px-3 py-1.5 bg-[#1e293b] hover:bg-[#334155] border border-slate-800 hover:border-slate-700 rounded-lg text-xs font-medium text-slate-300 transition-all">💆‍♀️ Spa / Thẩm Mỹ</button>
-                    <button onclick="useTag('Thời trang local brand thiết kế')" class="tag shrink-0 px-3 py-1.5 bg-[#1e293b] hover:bg-[#334155] border border-slate-800 hover:border-slate-700 rounded-lg text-xs font-medium text-slate-300 transition-all">👗 Thời trang thiết kế</button>
-                    <button onclick="useTag('Đào tạo kỹ năng cốt lõi / Khóa học')" class="tag shrink-0 px-3 py-1.5 bg-[#1e293b] hover:bg-[#334155] border border-slate-800 hover:border-slate-700 rounded-lg text-xs font-medium text-slate-300 transition-all">🎓 Đào tạo / Khóa học</button>
-                    <button onclick="useTag('Phụ kiện & Đồ gia dụng thông minh')" class="tag shrink-0 px-3 py-1.5 bg-[#1e293b] hover:bg-[#334155] border border-slate-800 hover:border-slate-700 rounded-lg text-xs font-medium text-slate-300 transition-all">📦 Đồ gia dụng tiện ích</button>
+                    <button onclick="useTag('Spa & Thẩm mỹ viện công nghệ cao')" class="tag shrink-0 px-3 py-1.5 bg-[#131b2e] hover:bg-[#1e293b] border border-slate-800 hover:border-slate-700 rounded-lg text-xs font-medium text-slate-300 transition-all">💆‍♀️ Spa / Thẩm Mỹ</button>
+                    <button onclick="useTag('Thời trang local brand thiết kế')" class="tag shrink-0 px-3 py-1.5 bg-[#131b2e] hover:bg-[#1e293b] border border-slate-800 hover:border-slate-700 rounded-lg text-xs font-medium text-slate-300 transition-all">👗 Thời trang thiết kế</button>
+                    <button onclick="useTag('Đào tạo kỹ năng cốt lõi / Khóa học')" class="tag shrink-0 px-3 py-1.5 bg-[#131b2e] hover:bg-[#1e293b] border border-slate-800 hover:border-slate-700 rounded-lg text-xs font-medium text-slate-300 transition-all">🎓 Đào tạo / Khóa học</button>
+                    <button onclick="useTag('Phụ kiện & Đồ gia dụng thông minh')" class="tag shrink-0 px-3 py-1.5 bg-[#131b2e] hover:bg-[#1e293b] border border-slate-800 hover:border-slate-700 rounded-lg text-xs font-medium text-slate-300 transition-all">📦 Đồ gia dụng tiện ích</button>
                 </div>
-                <div class="flex items-center gap-3 bg-[#1e293b] border border-slate-700/60 rounded-xl px-4 py-2 focus-within:border-sky-500 focus-within:ring-2 focus-within:ring-sky-500/10 transition-all">
-                    <input type="text" id="user-input" onkeypress="handleEnter(event)" placeholder="Nhập lĩnh vực kinh doanh của bạn... Ví dụ: Khóa học Excel tự động" class="flex-1 bg-transparent text-slate-100 text-sm outline-none border-none placeholder-slate-500">
+                <div class="flex items-center gap-3 bg-[#131b2e] border border-slate-700/60 rounded-xl px-4 py-2 focus-within:border-sky-500 focus-within:ring-2 focus-within:ring-sky-500/10 transition-all">
+                    <input type="text" id="user-input" onkeypress="handleEnter(event)" placeholder="Nhập ngách của bạn... Ví dụ: Khóa học nấu ăn tại nhà cho mẹ bỉm sữa" class="flex-1 bg-transparent text-slate-100 text-sm outline-none border-none placeholder-slate-500">
                     <button id="send-btn" onclick="processUserInput()" class="w-9 h-9 rounded-lg bg-sky-500 hover:bg-sky-600 text-white flex items-center justify-center transition-all shadow-md shadow-sky-500/10">
                         <i class="fas fa-paper-plane text-xs"></i>
                     </button>
@@ -239,27 +234,27 @@
             </div>
         </main>
 
-        <!-- PANEL RIGHT: Sandbox Live Interactive Script Preview (1/3 width) -->
-        <section id="preview-sidebar" class="w-full lg:w-96 bg-[#0b0f19] lg:bg-[#111827] border-t lg:border-t-0 lg:border-l border-slate-800 p-5 flex flex-col overflow-hidden z-10">
+        <!-- BẢNG PHẢI: Bản xem trước kịch bản minh họa (1/3 chiều rộng) -->
+        <section id="preview-sidebar" class="w-full lg:w-96 bg-[#080c14] lg:bg-[#0a0f1d] border-t lg:border-t-0 lg:border-l border-slate-800 p-5 flex flex-col overflow-hidden z-10">
             <div class="flex items-center justify-between mb-4 border-b border-slate-800 pb-3">
                 <h3 class="text-xs font-bold text-slate-200 uppercase tracking-widest flex items-center gap-2">
-                    <i class="fas fa-film text-sky-400"></i> Sandbox: Xem trước kịch bản demo
+                    <i class="fas fa-film text-sky-400"></i> Bản xem trước kịch bản minh họa
                 </h3>
-                <span id="preview-framework-badge" class="text-[10px] bg-sky-500/15 border border-sky-500/30 text-sky-400 font-semibold px-2 py-0.5 rounded-full uppercase">CHƯA KHỞI CHẠY</span>
+                <span id="preview-framework-badge" class="text-[10px] bg-sky-500/15 border border-sky-500/30 text-sky-400 font-semibold px-2 py-0.5 rounded-full uppercase">CHƯA HOẠT ĐỘNG</span>
             </div>
 
-            <!-- Pre-generate empty state -->
+            <!-- Trạng thái trống (Pre-generate empty state) -->
             <div id="preview-empty-state" class="flex-1 flex flex-col items-center justify-center text-center p-6 text-slate-500">
                 <div class="w-16 h-16 rounded-full bg-slate-800/40 border border-slate-700/30 flex items-center justify-center mb-4">
                     <i class="fas fa-magic text-xl"></i>
                 </div>
-                <h4 class="text-xs font-bold text-slate-300 mb-1">Mô phỏng dữ liệu thời gian thực</h4>
-                <p class="text-[11px] leading-relaxed max-w-[220px]">Chọn một Framework chuyển đổi ở cột giữa để AI dựng trước kịch bản mẫu tương thích.</p>
+                <h4 class="text-xs font-bold text-slate-300 mb-1">Mô phỏng kịch bản mẫu</h4>
+                <p class="text-[11px] leading-relaxed max-w-[220px]">Hãy chọn một mô hình kịch bản chuyển đổi ở khung chat, hệ thống sẽ tự động tạo một kịch bản demo mẫu tương ứng để bạn tham khảo tại đây.</p>
             </div>
 
-            <!-- Active Sandbox Preview layout (hidden initially) -->
+            <!-- Trạng thái xem trước hoạt động (Active state) -->
             <div id="preview-active-state" class="flex-1 flex flex-col space-y-4 overflow-y-auto hidden">
-                <div class="p-3 bg-[#1e293b]/40 border border-slate-800/80 rounded-xl space-y-2">
+                <div class="p-3 bg-[#131b2e]/60 border border-slate-800/80 rounded-xl space-y-2">
                     <div class="flex justify-between items-center text-[10px] text-slate-400">
                         <span>Chuyên đề: <b id="preview-industry-title" class="text-slate-200">...</b></span>
                         <span id="preview-time-badge" class="text-emerald-400 font-bold">~ 45 - 60 giây</span>
@@ -269,57 +264,57 @@
                     </div>
                 </div>
 
-                <!-- Video timeline script details container -->
+                <!-- Dòng thời gian phân cảnh của kịch bản -->
                 <div id="script-timeline" class="space-y-4">
-                    <!-- Dynamic segments loaded here -->
+                    <!-- Phân cảnh sẽ tự động nạp qua Javascript -->
                 </div>
             </div>
         </section>
 
     </div>
 
-    <!-- Live Toast Notification (Modern UX replacing native alerts) -->
-    <div id="toast-notify" class="fixed bottom-6 right-6 z-50 bg-slate-900 border border-slate-800 px-4 py-3 rounded-xl shadow-2xl shadow-black flex items-center gap-3 transition-all transform translate-y-20 opacity-0 pointer-events-none">
+    <!-- Hộp thông báo phản hồi (Toast Notification) -->
+    <div id="toast-notify" class="fixed bottom-6 right-6 z-50 bg-slate-950 border border-slate-800 px-4 py-3 rounded-xl shadow-2xl shadow-black flex items-center gap-3 transition-all transform translate-y-20 opacity-0 pointer-events-none">
         <div class="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
             <i class="fas fa-check-circle text-sm"></i>
         </div>
         <div>
             <h5 class="text-xs font-bold text-white">Thành công!</h5>
-            <p id="toast-message" class="text-[10px] text-slate-400">Đã sao chép nội dung vào Clipboard.</p>
+            <p id="toast-message" class="text-[10px] text-slate-400">Đã sao chép nội dung kịch bản thành công.</p>
         </div>
     </div>
 
     <script>
-        // --- STATE MANAGEMENT ---
+        // --- QUẢN LÝ TRẠNG THÁI (STATE MANAGEMENT) ---
         let currentState = 'ask_industry'; // ask_industry, choose_framework, generating
         let userIndustry = '';
         let activeAgent = 'maya'; // default
 
-        // Agents detailed configuration
+        // Bản đồ dữ liệu về các Chuyên gia AI
         const agentsMap = {
-            maya: { name: "Maya", identity: "Trợ lý Phân tích Insight", color: "#ef4444" },
-            leo: { name: "Leo", identity: "Chiến lược gia Phễu Nội dung", color: "#3b82f6" },
-            iris: { name: "Iris", identity: "Đạo diễn Short-form", color: "#a855f7" },
-            kai: { name: "Kai", identity: "Chuyên gia Tối ưu Chuyển đổi", color: "#10b981" }
+            maya: { name: "Maya", identity: "Thấu hiểu Insight & Tâm lý khách hàng", color: "#ef4444" },
+            leo: { name: "Leo", identity: "Thiết lập Phễu Chuyển đổi kịch bản", color: "#3b82f6" },
+            iris: { name: "Iris", identity: "Tối ưu hóa hình ảnh & thị giác B-roll", color: "#a855f7" },
+            kai: { name: "Kai", identity: "Gia tăng tỷ lệ Click & Chuyển đổi CTA", color: "#10b981" }
         };
 
-        // --- INTERACTIVE EVENT LISTENERS ---
-        // Setup Agent selector handlers
+        // --- XỬ LÝ SỰ KIỆN TƯƠNG TÁC GIAO DIỆN ---
+        // Thiết lập bộ chọn Chuyên gia AI
         document.querySelectorAll('.agent-card').forEach(card => {
             card.addEventListener('click', function() {
                 document.querySelectorAll('.agent-card').forEach(c => {
-                    c.classList.remove('bg-[#182032]', 'border-slate-700', 'active-agent');
+                    c.classList.remove('bg-[#131b2e]', 'border-slate-700', 'active-agent');
                     c.classList.add('bg-transparent', 'border-slate-800');
                 });
                 this.classList.remove('bg-transparent', 'border-slate-800');
-                this.classList.add('bg-[#182032]', 'border-slate-700', 'active-agent');
+                this.classList.add('bg-[#131b2e]', 'border-slate-700', 'active-agent');
                 activeAgent = this.getAttribute('data-agent');
                 
-                showToast("Thay đổi đặc vụ AI", `Bạn đã kích hoạt thành công Agent ${agentsMap[activeAgent].name}`);
+                showToast("Thay đổi chuyên gia sáng tạo", `Bạn đã kích hoạt thành công góc nhìn của Chuyên gia ${agentsMap[activeAgent].name}`);
             });
         });
 
-        // Utils
+        // Tham chiếu phần tử trong DOM
         const chatHistory = document.getElementById('chat-history');
         const userInput = document.getElementById('user-input');
         const sendBtn = document.getElementById('send-btn');
@@ -339,7 +334,7 @@
             }
         }
 
-        // Show Custom Toast Notification
+        // Hiện Toast thông báo tuỳ biến thay thế hệ thống cũ
         function showToast(title, message) {
             const toast = document.getElementById('toast-notify');
             const toastMsg = document.getElementById('toast-message');
@@ -352,7 +347,7 @@
             }, 3000);
         }
 
-        // Disable input during generation
+        // Khóa hoặc mở lại khung nhập liệu khi hệ thống AI đang xử lý
         function setInputState(disabled) {
             userInput.disabled = disabled;
             sendBtn.disabled = disabled;
@@ -366,7 +361,7 @@
             }
         }
 
-        // Render user speech bubbles
+        // Tạo hội thoại tin nhắn của người dùng
         function appendUserMessage(text) {
             const html = `
                 <div class="flex gap-4 items-start max-w-[85%] self-end flex-row-reverse ml-auto">
@@ -383,7 +378,7 @@
             scrollToBottom();
         }
 
-        // Render AI Loader thinking bubble
+        // Tạo hiệu ứng chờ phản hồi từ Chuyên gia AI
         function appendAILoading() {
             const id = 'loading-' + Date.now();
             const agent = agentsMap[activeAgent];
@@ -392,9 +387,9 @@
                     <div class="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-sky-400 shrink-0 shadow-md">
                         <i class="fas fa-robot text-sm"></i>
                     </div>
-                    <div class="bg-[#1e293b]/60 border border-slate-800 text-slate-100 rounded-2xl rounded-tl-none p-4 text-sm w-full shadow-sm">
+                    <div class="bg-[#0f172a]/60 border border-slate-800 text-slate-100 rounded-2xl rounded-tl-none p-4 text-sm w-full shadow-sm">
                         <div class="text-[11px] text-slate-400 italic mb-2 flex items-center gap-2" id="${id}-text">
-                            <i class="fas fa-cog animate-spin"></i> Đặc vụ ${agent.name} đang suy nghĩ...
+                            <i class="fas fa-cog animate-spin"></i> Chuyên gia ${agent.name} đang suy nghĩ...
                         </div>
                         <div class="flex gap-1.5 items-center">
                             <span class="w-2 h-2 rounded-full bg-sky-500 animate-bounce" style="animation-delay: -0.32s"></span>
@@ -409,7 +404,7 @@
             return id;
         }
 
-        // --- STEP 1: CAPTURE AND PROCESS INDUSTRY INPUT ---
+        // --- BƯỚC 1: XỬ LÝ LĨNH VỰC/SẢN PHẨM KHÁCH HÀNG NHẬP ---
         function processUserInput() {
             const text = userInput.value.trim();
             if(!text) return;
@@ -419,32 +414,32 @@
                 appendUserMessage(text);
                 setInputState(true);
                 
-                // Simulate deep AI thinking steps
+                // Giả lập các bước phân tích dữ liệu chuyên nghiệp
                 const loadId = appendAILoading();
                 const textElement = document.getElementById(`${loadId}-text`);
-                textElement.innerHTML = `<i class="fas fa-database animate-pulse"></i> Đang nạp cấu trúc mỏ neo và cơ sở dữ liệu chuyển đổi cho lĩnh vực "${userIndustry}"...`;
+                textElement.innerHTML = `<i class="fas fa-database animate-pulse"></i> Đang phân tích tệp khách hàng và cấu trúc kịch bản chuyển đổi cho ngành "${userIndustry}"...`;
                 
                 setTimeout(() => {
                     document.getElementById(loadId).remove();
                     showFrameworkSelection();
-                }, 1800);
+                }, 1500);
             }
         }
 
-        // --- STEP 2: PRESENT CHAT-BASED FRAMEWORK CHOICES ---
+        // --- BƯỚC 2: HIỂN THỊ CÁC KHUNG CHUYỂN ĐỔI PHÙ HỢP ---
         function showFrameworkSelection() {
             const html = `
                 <div class="flex gap-4 items-start max-w-[95%]">
                     <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-white shrink-0 shadow-md">
                         <i class="fas fa-robot text-sm"></i>
                     </div>
-                    <div class="bg-[#1e293b]/60 border border-slate-800 text-slate-100 rounded-2xl rounded-tl-none p-5 text-sm leading-relaxed w-full shadow-md">
+                    <div class="bg-[#0f172a]/60 border border-slate-800 text-slate-100 rounded-2xl rounded-tl-none p-5 text-sm leading-relaxed w-full shadow-md">
                         <div class="mb-4">
-                            Đã nạp thành công mô hình cấu trúc cho ngành <strong>${userIndustry}</strong>. <br>
-                            Dưới đây là 3 hệ khung chuyển đổi kịch bản tối ưu nhất. Bạn muốn sử dụng cơ chế nào để bẻ gãy hành vi mua hàng?
+                            Đã thiết lập thành công mô hình dữ liệu cho ngành: <strong>${userIndustry}</strong>. <br>
+                            Dưới đây là 3 hệ khung chuyển đổi kịch bản tốt nhất hiện nay. Bạn muốn áp dụng cấu trúc nào?
                         </div>
                         
-                        <!-- Premium Action Grid -->
+                        <!-- Hệ thống Card Khung Kịch Bản thực chiến -->
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2">
                             <!-- PAS CARD -->
                             <div class="bg-[#131b2e] border border-slate-800 hover:border-red-500/50 p-4 rounded-xl cursor-pointer hover:-translate-y-1 transition-all flex flex-col items-center text-center gap-3 group" onclick="startGeneration('pas', 'Khung Nỗi đau bứt rứt (P.A.S)')">
@@ -453,7 +448,7 @@
                                 </div>
                                 <div>
                                     <h4 class="text-xs font-bold text-white group-hover:text-red-400 transition-colors">Khung P.A.S</h4>
-                                    <p class="text-[10px] text-slate-400 mt-1 leading-normal">Xoáy sâu bế tắc, nỗi sợ hãi cốt tủy và cơ chế giải cứu cứu sinh.</p>
+                                    <p class="text-[10px] text-slate-400 mt-1 leading-normal">Xoáy sâu bế tắc, nỗi sợ hãi thực tế và đưa ra cơ chế giải cứu tức thì.</p>
                                 </div>
                             </div>
 
@@ -464,7 +459,7 @@
                                 </div>
                                 <div>
                                     <h4 class="text-xs font-bold text-white group-hover:text-emerald-400 transition-colors">Đập tan định kiến</h4>
-                                    <p class="text-[10px] text-slate-400 mt-1 leading-normal">Bẻ khóa tư duy lỗi cũ kỹ, tạo cú hích nhận thức bất ngờ.</p>
+                                    <p class="text-[10px] text-slate-400 mt-1 leading-normal">Bẻ gãy tư duy cũ, thay thế bằng quan điểm mới độc nhất của bạn.</p>
                                 </div>
                             </div>
 
@@ -475,7 +470,7 @@
                                 </div>
                                 <div>
                                     <h4 class="text-xs font-bold text-white group-hover:text-purple-400 transition-colors">Show, Don't Tell</h4>
-                                    <p class="text-[10px] text-slate-400 mt-1 leading-normal">Minh chứng quang học bằng quy trình tỉ mỉ chân thực từ máy quay.</p>
+                                    <p class="text-[10px] text-slate-400 mt-1 leading-normal">Chứng minh quy trình sản xuất tỉ mỉ giúp dập tắt mọi hoài nghi về chất lượng.</p>
                                 </div>
                             </div>
                         </div>
@@ -487,7 +482,7 @@
             currentState = 'choose_framework';
         }
 
-        // --- STEP 3: SIMULATE WRITING STEPS WITH SELECTED SETTINGS ---
+        // --- BƯỚC 3: MÔ PHỎNG QUÁ TRÌNH TẠO KỊCH BẢN DỰA TRÊN CẤU HÌNH ---
         function startGeneration(type, name) {
             if(currentState === 'generating') return;
             currentState = 'generating';
@@ -499,16 +494,15 @@
             const loadId = appendAILoading();
             const textElement = document.getElementById(`${loadId}-text`);
             
-            // Dynamic thinking steps matching user sidebar configurations
             const channelVal = document.getElementById('setting-channel').value.toUpperCase();
             const toneVal = document.getElementById('setting-tone').selectedOptions[0].text;
             const hookVal = document.getElementById('setting-hook').selectedOptions[0].text;
 
             const steps = [
-                `Đang phối hợp cùng đặc vụ [${agent.name}] và dữ liệu ngách [${userIndustry}]...`,
-                `Đã áp dụng thông số kênh [${channelVal}], giọng điệu [${toneVal}]`,
-                `Tích hợp cấu trúc Hook: [${hookVal}]...`,
-                `Đóng gói lệnh Mega Prompt độc quyền...`
+                `Đang phối hợp cùng Chuyên gia [${agent.name}] và dữ liệu sản phẩm [${userIndustry}]...`,
+                `Đã nạp cài đặt kênh [${channelVal}], giọng điệu chủ đạo [${toneVal}]`,
+                `Đã tích hợp cơ chế khơi gợi cảm xúc và phong cách Hook: [${hookVal}]...`,
+                `Đang tiến hành biên dịch Mega Prompt thế hệ mới...`
             ];
             
             let stepIndex = 0;
@@ -524,15 +518,15 @@
             }, 1000);
         }
 
-        // --- STEP 4: GENERATE OUTPUT PROMPT (COPYABLE) & DEPLOYS SANDBOX PREVIEW ---
+        // --- BƯỚC 4: HIỂN THỊ MEGA PROMPT & KỊCH BẢN MINH HỌA THỜI GIAN THỰC ---
         function streamMegaPromptAndSandbox(type) {
             const promptId = 'prompt-box-' + Date.now();
             const agent = agentsMap[activeAgent];
             
             const intros = [
-                `Hoàn tất bóc tách thuật toán! Dưới đây là <b>Mega Prompt</b> đã được cá nhân hóa chuyên sâu dựa trên các thuộc tính cấu hình bạn chọn. Hãy dán đoạn lệnh này vào ChatGPT để khởi tạo chiến dịch:`,
-                `Cơ cấu đã được đồng bộ tối ưu! Hãy sao chép <b>Mega Prompt</b> dưới đây để cấp quyền kích hoạt tư duy cho AI:`,
-                `Đặc vụ ${agent.name} đã hoàn tất thiết lập lệnh đặc hiệu. Sao chép và khai thác ngay lập tức:`
+                `Đã đóng gói bộ câu lệnh tối ưu cao! Dưới đây là <b>Mega Prompt</b> đã được thiết kế chuyên biệt cho mảng ${userIndustry} của bạn. Hãy sao chép nó và dán vào ChatGPT hoặc bất kỳ AI ngôn ngữ lớn nào để tạo kịch bản:`,
+                `Hệ thống đã đồng bộ hóa toàn diện tham số! Bạn hãy sao chép đoạn <b>Mega Prompt</b> dưới đây để bắt đầu làm việc chuyên sâu với AI:`,
+                `Chuyên gia ${agent.name} đã hoàn tất thiết lập câu lệnh đặc hiệu. Hãy bấm sao chép đoạn lệnh này để kích hoạt quy trình sản xuất nội dung:`
             ];
             const randomIntro = intros[Math.floor(Math.random() * intros.length)];
 
@@ -541,52 +535,52 @@
                     <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-purple-500 to-indigo-600 flex items-center justify-center text-white shrink-0 shadow-md">
                         <i class="fas fa-magic text-sm"></i>
                     </div>
-                    <div class="bg-[#1e293b]/60 border border-slate-800 text-slate-100 rounded-2xl rounded-tl-none p-5 text-sm leading-relaxed w-full shadow-md">
+                    <div class="bg-[#0f172a]/60 border border-slate-800 text-slate-100 rounded-2xl rounded-tl-none p-5 text-sm leading-relaxed w-full shadow-md">
                         <p class="mb-3 text-slate-300 text-xs">${randomIntro}</p>
                         
-                        <!-- Copiable Text Container -->
-                        <div class="bg-[#0b0f19] border border-slate-800 rounded-xl p-4 font-mono text-[11px] leading-relaxed relative overflow-hidden glowing-indigo group">
+                        <!-- Khung Chứa Đoạn Mã Để Sẵn Sàng Sao Chép -->
+                        <div class="bg-[#080c14] border border-slate-800 rounded-xl p-4 font-mono text-[11px] leading-relaxed relative overflow-hidden glowing-indigo group">
                             <button id="btn-${promptId}" onclick="copyTextToClipboard('${promptId}')" class="absolute top-3 right-3 bg-slate-800/80 hover:bg-sky-500 border border-slate-700/50 hover:border-sky-400 text-[10px] text-slate-300 hover:text-white px-2.5 py-1.5 rounded-lg transition-all flex items-center gap-1.5 z-10 shadow-lg">
-                                <i class="fas fa-copy"></i> Sao chép lệnh
+                                <i class="fas fa-copy"></i> Sao chép Prompt
                             </button>
-                            <div class="text-slate-300 max-h-72 overflow-y-auto pr-2 select-text" id="${promptId}">
-                                <!-- Raw Text Content -->
+                            <div class="text-slate-300 max-h-72 overflow-y-auto pr-2 select-text whitespace-pre-wrap" id="${promptId}">
+                                <!-- Đoạn text sinh chữ tự động (Typewriter) sẽ hiển thị tại đây -->
                             </div>
                         </div>
                         
                         <p class="mt-4 text-[11px] text-slate-400 flex items-center gap-1.5">
-                            <i class="fas fa-info-circle text-sky-400"></i> Xem phân tích kịch bản mẫu tương ứng tại cột <b>Sandbox</b> kế bên!
+                            <i class="fas fa-info-circle text-sky-400"></i> Hãy theo dõi <b>Bản xem trước kịch bản minh họa</b> ở cột bên phải để xem kịch bản mẫu cực kỳ trực quan!
                         </p>
                     </div>
                 </div>
             `;
             chatHistory.insertAdjacentHTML('beforeend', html);
             
-            // Build dynamic text
+            // Lấy nội dung cấu trúc Mega Prompt
             const targetText = generateRawPromptText(type);
             const targetElement = document.getElementById(promptId);
             
-            // Typewriter effect simulation (fast for premium performance)
+            // Mô phỏng hiệu ứng hiển thị chữ cực kỳ tốc độ
             let i = 0;
             function typeWriter() {
                 if (i < targetText.length) {
-                    targetElement.textContent += targetText.charAt(i);
-                    i += 3; // Type 3 chars at a time for high-performance feel
+                    targetElement.textContent += targetText.substring(i, i + 4);
+                    i += 4; 
                     scrollToBottom();
                     setTimeout(typeWriter, 1);
                 } else {
-                    targetElement.textContent = targetText; // Ensure full text is loaded
+                    targetElement.textContent = targetText; // Đảm bảo nạp đầy đủ 100% text
                     scrollToBottom();
                     
-                    // Trigger Sandbox Demo rendering synchronously
+                    // Kích hoạt nạp kịch bản mẫu tương thích trực quan lên cột bên phải
                     deploySandboxPreview(type);
                     
-                    // Reset UI State for another session
+                    // Reset lại giao diện sẵn sàng cho chiến dịch tiếp theo
                     currentState = 'ask_industry';
                     setInputState(false);
                     document.getElementById('quick-tags').innerHTML = `
-                        <button onclick="resetApp()" class="px-3 py-1.5 bg-[#1e293b] hover:bg-sky-500/10 border border-slate-800 hover:border-sky-500/20 text-slate-300 hover:text-sky-400 rounded-lg text-xs font-bold transition-all flex items-center gap-2">
-                            <i class="fas fa-redo"></i> Khởi tạo chiến dịch mới
+                        <button onclick="resetApp()" class="px-3 py-1.5 bg-[#131b2e] hover:bg-sky-500/10 border border-slate-800 hover:border-sky-500/20 text-slate-300 hover:text-sky-400 rounded-lg text-xs font-bold transition-all flex items-center gap-2">
+                            <i class="fas fa-redo"></i> Bắt đầu chiến dịch kịch bản mới
                         </button>
                     `;
                 }
@@ -594,52 +588,59 @@
             typeWriter();
         }
 
-        // --- DYNAMIC META PROMPT TEXT BUILDER ---
+        // --- HỆ THỐNG PHÁT TRIỂN CẤU TRÚC MEGA PROMPT ĐỘC QUYỀN ---
         function generateRawPromptText(type) {
             const agent = agentsMap[activeAgent];
             const channelText = document.getElementById('setting-channel').selectedOptions[0].text;
             const toneText = document.getElementById('setting-tone').selectedOptions[0].text;
             const hookText = document.getElementById('setting-hook').selectedOptions[0].text;
 
-            let prompt = `Hãy đóng vai là "${agent.name}" - Chuyên gia ${agent.identity} bậc cao với hơn 10 năm kinh nghiệm trong ngành tiếp thị nội dung số.\n`;
-            prompt += `Ngữ cảnh sản phẩm cần phục vụ: Lĩnh vực [${userIndustry.toUpperCase()}]\n`;
-            prompt += `Cấu hình đầu ra kịch bản bắt buộc:\n`;
-            prompt += `- Kênh phân phối tối ưu: ${channelText}\n`;
-            prompt += `- Giọng điệu chủ đạo: ${toneText}\n`;
-            prompt += `- Kiểu Hook 3 giây khai cuộc: ${hookText}\n\n`;
+            let prompt = `Bạn đóng vai trò là Chuyên gia sáng tạo nội dung video ngắn cao cấp [Chuyên gia ${agent.name}] - người có năng lực thực chiến xuất sắc về [${agent.identity}].\n`;
+            prompt += `Nhiệm vụ: Đồng hành cùng tôi thiết kế chuỗi kịch bản video ngắn tối ưu chuyển đổi đột phá cho sản phẩm/dịch vụ: [${userIndustry.toUpperCase()}]\n\n`;
             
-            prompt += `[🚨 NGUYÊN TẮC VẬN HÀNH BẮT BUỘC]:\n`;
-            prompt += `1. TIẾN TRÌNH TỪNG BƯỚC: Phải hỏi tôi từng câu hỏi một để lấy chất liệu. Cấm tự động viết tiếp bước sau khi tôi chưa phản hồi. Kết thúc mỗi câu hỏi bằng lệnh [🛑 ĐẶC VỤ ${agent.name.toUpperCase()} ĐANG CHỜ BẠN TRẢ LỜI].\n`;
-            prompt += `2. CUNG CẤP CẢM HỨNG: Tại mỗi bước, hãy tự đặt mình là một khách hàng đang bế tắc hoặc chuyên gia thực tế để đề xuất 3 gợi ý định hướng thông minh cho tôi chọn.\n`;
-            prompt += `3. THỜI LƯỢNG NGHIÊM NGẶT: Thiết kế kịch bản kịch tính không dài dòng dư thừa từ, khống chế lời thoại dưới 75 giây để tránh tỷ lệ rớt người xem.\n\n`;
+            prompt += `[🚨 NGUYÊN TẮC PHỐI HỢP CHIẾN THUẬT - TUÂN THỦ TUYỆT ĐỐI]:\n`;
+            prompt += `1. HỎI TỪNG CÂU MỘT: Chỉ đưa ra đúng câu hỏi của bước hiện tại và dừng lại chờ tôi phản hồi. Nghiêm cấm tự động trả lời thay, nhảy cóc hoặc viết trước các bước sau. Cuối mỗi phản hồi, luôn chèn chính xác dòng chữ: "🛑 CHUYÊN GIA ${agent.name.toUpperCase()} ĐANG CHỜ BẠN TRẢ LỜI".\n`;
+            prompt += `2. CÂU HỎI KHAI THÁC SIÊU NỔI BẬT: Để tránh việc các câu hỏi chính bị chìm nghỉm trong các đoạn văn bản dài, bạn bắt buộc phải VIẾT HOA TOÀN BỘ CÂU HỎI CHÍNH, IN ĐẬM và dùng định dạng tiêu đề Markdown cấp 3 (###) để làm nổi bật và phóng to cỡ chữ tối đa. Ví dụ:\n`;
+            prompt += `   ### **BƯỚC X: [TÊN BƯỚC KHAI THÁC TRỌNG TÂM]**\n`;
+            prompt += `3. Ý TƯỞNG GỢI Ý ĐI KÈM: Tại mỗi câu hỏi, hãy luôn chủ động phân tích góc độ sản phẩm [${userIndustry}] để đưa ra 3 phương án gợi ý thông minh được đánh số (1, 2, 3) để tôi chỉ cần lựa chọn nhanh hoặc tùy biến.\n\n`;
 
-            if(type === 'pas') {
-                prompt += `--- QUY TRÌNH THIẾT KẾ KỊCH BẢN (KHUNG P.A.S) ---\n`;
-                prompt += `BƯỚC 1: XÁC ĐỊNH VẤN ĐỀ (P) - Đâu là nỗi khổ thầm kín nhất khiến đối tượng trong mảng ${userIndustry} mất ngủ? Hãy đưa ra 3 phương án gợi ý.\n`;
-                prompt += `BƯỚC 2: KHAI THÁC BI KỊCH (A) - Nếu họ cứ mặc kệ không xử lý, 3 hậu quả cay đắng, tốn tiền nhất sẽ xảy ra ngay là gì?\n`;
-                prompt += `BƯỚC 3: GIẢI PHÁP CỨU CÁNH (S) - Giới thiệu sản phẩm của tôi. Chỉ ra đúng chi tiết "Wow" hiển thị cụ thể trên camera chứng minh điều đó là thật.\n`;
-                prompt += `BƯỚC 4: LỜI KÊU GỌI (CTA) - Khởi tạo một cú chốt mua hàng hoặc tương tác tự nhiên, xóa bỏ phòng vệ khách hàng.\n`;
-                prompt += `BƯỚC 5: TỔNG HỢP bảng kịch bản gồm 4 cột: [Giây] | [B-roll góc quay] | [Lớp chữ hiển thị màn hình] | [Lời thoại chi tiết].`;
+            prompt += `--- QUY TRÌNH THỰC HIỆN TỪNG BƯỚC ---\n\n`;
+            
+            prompt += `### **BƯỚC 1: LỰA CHỌN PHONG CÁCH CẢM XÚC CHỦ ĐẠO**\n`;
+            prompt += `Hãy yêu cầu tôi lựa chọn 1 trong 5 phong cách cảm xúc cốt lõi dưới đây cho video quảng cáo này. Phân tích ngắn gọn xem từng phong cách này sẽ được áp dụng như thế nào đối với sản phẩm [${userIndustry}]:\n`;
+            prompt += `1. **Đồng cảm - Thấu hiểu (Empathy)**: Chạm trực tiếp vào sự vất vả, mệt mỏi thầm kín hoặc khao khát thực sự của khách hàng.\n`;
+            prompt += `2. **Kích thích - Tò mò (Curiosity)**: Tạo cảm giác bí ẩn, kích thích trí tò mò của người xem về một "bí mật" sắp được bật mí.\n`;
+            prompt += `3. **Phẫn nộ - Bức bối (Frustration)**: Xoáy sâu vào sự lãng phí tiền bạc, thời gian hoặc những bất tiện vô lý mà khách hàng đang cam chịu.\n`;
+            prompt += `4. **Hài hước - Châm biếm (Humor)**: Đùa nhẹ nhàng về các thói quen lỗi thời, tạo tiếng cười thông minh giúp lan tỏa tự nhiên.\n`;
+            prompt += `5. **Truyền cảm hứng - Động lực (Inspirational)**: Đánh vào lòng tự hào, khao khát tự lột xác và nâng cấp bản thân của người xem.\n\n`;
+
+            prompt += `### **BƯỚC 2: KHAI THÁC CHI TIẾT THEO CÔNG THỨC KỊCH BẢN**\n`;
+            prompt += `Dựa trên phong cách cảm xúc tôi chọn ở Bước 1 và khung kịch bản [${type.toUpperCase()}], hãy đưa ra câu hỏi lớn nổi bật để khai thác thông tin chi tiết.\n`;
+            if (type === 'pas') {
+                prompt += `(Yêu cầu tôi làm rõ: Vấn đề bế tắc nhất (P) -> Hậu quả nghiêm trọng nếu không sửa đổi (A) -> Giải pháp cứu giải từ sản phẩm [${userIndustry}] (S) cùng một chi tiết minh chứng thực tế trên camera).\n`;
             } else if (type === 'myth') {
-                prompt += `--- QUY TRÌNH THIẾT KẾ KỊCH BẢN (KHUNG ĐẬP TAN ĐỊNH KIẾN) ---\n`;
-                prompt += `BƯỚC 1: SAI LẦM PHỔ BIẾN - Chỉ ra niềm tin sai lầm bấy lâu nay của số đông trong việc tiếp cận ${userIndustry} khiến họ mất sạch tiền mà không hiệu quả. Đưa ra 3 gợi ý táo bạo.\n`;
-                prompt += `BƯỚC 2: TIẾT LỘ SỰ THẬT - Chứng minh vì sao cách làm đó đã lỗi thời bằng một cơ chế khoa học hoặc logic sản phẩm mới bên tôi.\n`;
-                prompt += `BƯỚC 3: QUANG HỌC SOI SÁNG - Hướng dẫn quay góc máy so sánh Trước/Sau hoặc dữ liệu số liệu hiển thị trực diện trên màn hình.\n`;
-                prompt += `BƯỚC 4: CTA CHỐT ĐƠN - Kêu gọi hành động kích hoạt động cơ hành vi.\n`;
-                prompt += `BƯỚC 5: XUẤT BẢNG KỊCH BẢN kịch tính chia nhỏ từng giây.`;
+                prompt += `(Yêu cầu tôi làm rõ: Quan điểm/Sai lầm tốn kém phổ biến -> Sự thật cơ chế mới từ sản phẩm của tôi giải trừ định kiến đó -> Hướng quay video so sánh Trước/Sau trực quan).\n`;
             } else {
-                prompt += `--- QUY TRÌNH THIẾT KẾ KỊCH BẢN (KHUNG SHOW, DON'T TELL) ---\n`;
-                prompt += `BƯỚC 1: ĐIỂM NGHI NGỜ LỚN NHẤT - Đối thủ thường làm dối trá điều gì khiến khách hàng chê đắt hoặc không tin cậy trong ngách ${userIndustry}?\n`;
-                prompt += `BƯỚC 2: KHAI THÁC QUY TRÌNH THỰC TẾ - Chọn ra 1 công đoạn vận hành hoặc chế tác tinh xảo, nghiêm ngặt nhất của sản phẩm để chứng minh độ uy tín tối đa. Đưa ra 3 gợi ý thực chứng.\n`;
-                prompt += `BƯỚC 3: CHỈ ĐẠO CẬN CẢNH - Mô tả các góc máy macro siêu cận cảnh, hiệu ứng âm thanh ASMR sinh động để kích thích xúc giác người xem.\n`;
-                prompt += `BƯỚC 4: LỜI KÊU GỌI HÀNH ĐỘNG.\n`;
-                prompt += `BƯỚC 5: XUẤT BẢNG KỊCH BẢN siêu tối giản lời nói, tập trung vào thị giác thị uy đỉnh cao.`;
+                prompt += `(Yêu cầu tôi làm rõ: Điểm bị khách hàng chê đắt hoặc nghi ngờ chất lượng nhất -> Công đoạn gia công, chọn lọc nguyên liệu tỉ mỉ hoặc chế tác thực tế nghiêm ngặt nhất bên tôi để đập tan nghi ngờ).\n`;
             }
+            prompt += `\n`;
+
+            prompt += `### **BƯỚC 3: XUẤT 3 PHƯƠNG ÁN KỊCH BẢN CHUYỂN ĐỔI KHÁC NHAU**\n`;
+            prompt += `Sau khi nhận được phản hồi, hãy thiết lập và xuất ra đúng **3 kịch bản video ngắn hoàn chỉnh khác nhau** cùng dựa trên phong cách cảm xúc đã chọn, nhưng ứng dụng 3 cách tiếp cận sáng tạo hoàn toàn riêng biệt.\n`;
+            prompt += `Yêu cầu chi tiết đối với mỗi phương án kịch bản:\n`;
+            prompt += `- **Tên phương án & Cách tiếp cận** (Ví dụ: Kể chuyện góc nhìn thứ ba, Đóng vai tình huống kịch tính, Đối thoại trực diện phá băng...).\n`;
+            prompt += `- **Logic thiết kế**: Giải thích rõ ràng tại sao lại áp dụng hướng tiếp cận này cho sản phẩm [${userIndustry}] nhằm khơi dậy cảm xúc chủ đạo đã thống nhất.\n`;
+            prompt += `- **Tác động tâm lý**: Phân tích cảm xúc người xem biến đổi thế nào ở các mốc thời gian quan trọng (giây 3, giây 15, giây 45...).\n`;
+            prompt += `- **Bảng kịch bản chi tiết**: Cấu hình chuẩn xác cho kênh đăng ${channelText}, giọng điệu truyền tải: ${toneText}, sử dụng đúng cú mở đầu Hook: ${hookText}. Bảng gồm các cột: [Thời gian] | [Hình ảnh & B-roll góc máy] | [Lớp chữ hiển thị màn hình] | [Lời thoại chi tiết].\n\n`;
+
+            prompt += `### **BƯỚC 4: VÒNG LẶP HOÀN THIỆN ĐA CHIỀU (FEEDBACK LOOP)**\n`;
+            prompt += `Sau khi gửi 3 kịch bản mẫu, hãy đưa ra một câu hỏi mở thân thiện để khởi động vòng lặp tinh chỉnh:\n`;
+            prompt += `"Bạn muốn điều chỉnh lại phân đoạn nào ở kịch bản số mấy? Bạn có muốn đổi sang phong cách cảm xúc khác hay muốn thay đổi định vị cú Hook không? Hãy cho tôi biết để tôi tối ưu lại ngay lập tức cho đến khi bạn hoàn toàn ưng ý!"`;
 
             return prompt;
         }
 
-        // --- STEP 5: DEPLOY LIVE SANDBOX PREVIEW (DỰNG KỊCH BẢN DEMO THỜI GIAN THỰC) ---
+        // --- BƯỚC 5: ĐỒNG BỘ HOÀN TOÀN KỊCH BẢN MẪU LÊN BẢNG MINH HỌA ---
         function deploySandboxPreview(type) {
             const previewEmpty = document.getElementById('preview-empty-state');
             const previewActive = document.getElementById('preview-active-state');
@@ -648,71 +649,70 @@
             const previewHookText = document.getElementById('preview-hook-text');
             const timelineContainer = document.getElementById('script-timeline');
             
-            // Toggle panels
             previewEmpty.classList.add('hidden');
             previewActive.classList.remove('hidden');
             
             previewIndustry.innerText = userIndustry;
-            previewBadge.innerText = type.toUpperCase() + " ACTIVE";
+            previewBadge.innerText = type.toUpperCase() + " HOẠT ĐỘNG";
             
             const hookSelectionText = document.getElementById('setting-hook').selectedOptions[0].text;
             previewHookText.innerText = hookSelectionText;
 
-            // Generate contextual micro-scripts based on Chosen Framework & Industry
+            // Xây dựng kịch bản thực tế dựa trên Khung kịch bản & ngách kinh doanh của người dùng
             let scriptSteps = [];
 
             if(type === 'pas') {
                 scriptSteps = [
                     {
                         time: "00:00 - 00:05",
-                        broll: "Góc máy cận quay biểu cảm mệt mỏi, bất lực của nhân vật chính đang ôm đầu hoặc vứt đồ đạc sang một bên.",
-                        screenText: "ĐỪNG MẤT THÊM TIỀN NGU NỮA!",
-                        voice: `Có phải bạn đang ngày đêm đánh đổi toàn bộ sức khỏe để gồng gánh cái mô hình ${userIndustry} này mà không ra nổi một đồng lợi nhuận?`
+                        broll: "Cận cảnh gương mặt mệt mỏi, bất lực của nhân vật chính đang ngồi bên chiếc máy tính hoặc sản phẩm ngách.",
+                        screenText: "ĐỪNG NÉM TIỀN QUA CỬA SỔ NỮA!",
+                        voice: `Có phải bạn đang liên tục dồn toàn lực vốn liếng vào mảng ${userIndustry} này mà không thể ra nổi lợi nhuận như kỳ vọng?`
                     },
                     {
                         time: "00:05 - 00:15",
-                        broll: "Chuyển cảnh nhanh sang đống sổ sách ngập đầu, hóa đơn chi phí hiện liên tục hoặc đồ dùng bám bụi.",
-                        screenText: "CÀNG GỒNG - CÀNG LỖ",
-                        voice: "Cứ tiếp tục gồng lỗ bằng niềm tin thế này, chỉ 3 tháng nữa thôi bạn sẽ mất trắng cả vốn lẫn uy tín, tệ hơn là gia đình rạn nứt vì nợ nần chồng chất."
+                        broll: "Chuyển cảnh nhanh sang đống tài liệu lộn xộn, biểu đồ doanh thu đi xuống hoặc hình ảnh khách hàng bỏ đi.",
+                        screenText: "ĐÂY LÀ HẬU QUẢ!",
+                        voice: "Nếu tiếp tục giữ nguyên quy trình cũ kỹ này, chỉ trong vài tháng tới, bạn sẽ rơi vào cảnh kiệt quệ tài chính và mất dần tệp khách hàng trung thành."
                     },
                     {
                         time: "00:15 - 00:30",
-                        broll: "Góc máy góc rộng, sáng bừng. Nhân vật cầm điện thoại mở app hiển thị biểu đồ doanh thu tăng vùn vụt, sau đó quay cận sản phẩm/quy trình thông minh.",
-                        screenText: "CƠ CHẾ TỰ ĐỘNG KHAI PHÁ DOANH THU",
-                        voice: "Dừng lại đi! Đây chính là giải pháp tối ưu hệ thống dành riêng cho ngách của bạn. Chỉ với 3 bước chuẩn hóa quy trình, loại bỏ 80% chi phí thừa."
+                        broll: "Góc máy trung cận, nhân vật chính mở ứng dụng hoặc cầm sản phẩm mới cải tiến lên, cười tự tin, ánh sáng rực rỡ.",
+                        screenText: "CÔNG THỨC CHUYỂN ĐỔI MỚI TẠI ĐÂY",
+                        voice: "Dừng lại và tái thiết kế ngay! Đây là phương thức giúp chuẩn hóa mô hình của bạn. Tiết kiệm 70% chi phí thừa và gia tăng trải nghiệm vượt trội."
                     },
                     {
                         time: "00:30 - 00:45",
-                        broll: "Góc trung cận, nhân vật chỉ tay hướng về nút nhấn hoặc màn hình, cười tự tin.",
-                        screenText: "NHẤN VÀO LINK ĐỂ NHẬN QUY TRÌNH",
-                        voice: "Tôi đã đóng gói toàn bộ bản đồ quy trình này thành một file tài liệu chi tiết. Nhấp vào nút đăng ký dưới đây để nhận ngay hôm nay!"
+                        broll: "Nhân vật hướng tay chỉ về liên kết đăng ký, nụ cười thân thiện tự tin.",
+                        screenText: "ĐĂNG KÝ NHẬN BẢN ĐỒ MIỄN PHÍ",
+                        voice: "Tôi đã hệ thống hóa toàn bộ công thức này thành một bộ tài liệu tối ưu. Nhấp vào liên kết bên dưới để nhận ngay!"
                     }
                 ];
             } else if (type === 'myth') {
                 scriptSteps = [
                     {
                         time: "00:00 - 00:05",
-                        broll: "Góc máy trung, nhân vật lắc đầu quầy quậy, tay gạt phắt một đồ vật đại diện cho cách làm cũ sang một bên.",
-                        screenText: "SỰ THẬT TÀN NHẪN VỀ " + userIndustry.toUpperCase(),
-                        voice: `90% mọi người làm ${userIndustry} đều tin rằng phải bỏ thật nhiều tiền quảng cáo mới có khách. Sai lầm hoàn toàn!`
+                        broll: "Nhân vật chính cầm một cuốn sổ gạch bỏ một dòng chữ đại diện cho lý thuyết sai lầm trong ngách.",
+                        screenText: "SAI LẦM TỐN TIỀN NHẤT TRONG " + userIndustry.toUpperCase(),
+                        voice: `90% mọi người bắt tay làm ${userIndustry} đều nghĩ cứ giảm giá kịch sàn là kéo được khách. Hoàn toàn sai lầm!`
                     },
                     {
                         time: "00:05 - 00:18",
-                        broll: "Chia đôi màn hình. Bên trái là hình hoạt ảnh hoặc video tối tăm, bên phải là quy trình tối ưu thông minh gọn gàng.",
-                        screenText: "CÁCH CŨ vs CÁCH MỚI",
-                        voice: "Thực tế, chiêu trò cũ đó chỉ béo các nền tảng quảng cáo. Bạn đang ném tiền qua cửa sổ mà không hay biết cơ chế thu hút tự nhiên này."
+                        broll: "Màn hình so sánh đồ thị: Cách cũ (Giảm giá khiến doanh nghiệp tự sập nguồn) vs Cách mới (Tạo giá trị cao giữ chân khách).",
+                        screenText: "GIẢM GIÁ LÀ TỰ SÁT!",
+                        voice: "Càng đua nhau giảm giá, khách hàng càng nghi ngờ chất lượng và định vị thương hiệu của bạn sẽ bị hủy hoại vĩnh viễn."
                     },
                     {
                         time: "00:18 - 00:32",
-                        broll: "Góc quay cận cảnh thao tác thật tại xưởng/cửa hàng/màn hình điều khiển. Rõ ràng, sạch sẽ, đáng kinh ngạc.",
-                        screenText: "MINH CHỨNG 100% HIỆU QUẢ",
-                        voice: "Hãy nhìn cách chúng tôi cắt giảm triệt để khâu trung gian này. Khách hàng tự tìm đến nhờ thuật toán phân phối nội dung tự nhiên."
+                        broll: "Quay cận quy trình chuẩn bị chu đáo, quy cách phục vụ 5 sao của sản phẩm/dịch vụ.",
+                        screenText: "CƠ CHẾ GIỮ CHÂN KHÁCH BẰNG GIÁ TRỊ",
+                        voice: "Đây là cách chúng tôi nâng tầm vị thế sản phẩm: tạo cho khách hàng trải nghiệm xứng đáng từng đồng thay vì cạnh tranh giá rẻ."
                     },
                     {
                         time: "00:32 - 00:45",
-                        broll: "Nhân vật vẫy tay nhẹ nhàng chào đón người xem, chuyển cảnh sang logo thương hiệu và thông điệp chốt.",
-                        screenText: "BẮT ĐẦU NGAY TRƯỚC KHI ĐỐI THỦ BIẾT ĐƯỢC!",
-                        voice: "Đừng để đối thủ của bạn phát hiện ra bí mật này trước. Inbox ngay để tôi tư vấn chiến lược cá nhân hóa miễn phí!"
+                        broll: "Nhân vật chính tự tin nhìn thẳng vào ống kính và gửi lời mời tương tác.",
+                        screenText: "BẮT ĐẦU ĐỊNH VỊ LẠI THƯƠNG HIỆU",
+                        voice: "Hãy inbox trực tiếp để được tư vấn lộ trình định hình giá trị thương hiệu ngay hôm nay!"
                     }
                 ];
             } else {
@@ -720,32 +720,32 @@
                 scriptSteps = [
                     {
                         time: "00:00 - 00:07",
-                        broll: "Góc quay Macro siêu cận (Extreme Close-up) tiếng động cực lớn: Tiếng gạt công tắc, tiếng cắt kéo xẹt xẹt, hoặc hơi nước bay lên.",
-                        screenText: "TẠI SAO GIÁ LẠI ĐẮT?",
-                        voice: `Nhiều người nói dịch vụ của bên tôi có giá quá cao so với mặt bằng chung. Nhưng họ đâu biết...`
+                        broll: "Góc quay cận cảnh macro cực nét (mô tả thao tác chân thực kèm âm thanh sột soạt, chạm bấm tinh xảo từ thiết bị).",
+                        screenText: "TIỀN NÀO CỦA NẤY!",
+                        voice: `Khách hàng thường thắc mắc vì sao sản phẩm bên tôi lại có mức giá chênh lệch hẳn so với thị trường. Hãy xem...`
                     },
                     {
                         time: "00:07 - 00:20",
-                        broll: "Cận cảnh bàn tay đeo găng chuyên nghiệp tỉ mỉ lau chùi từng linh kiện, tinh chỉnh từng mm sản phẩm với độ tập trung cao độ.",
-                        screenText: "TIÊU CHUẨN KHẮT KHE 1/1000",
-                        voice: "Từng chi tiết nhỏ nhất trong chuỗi vận hành này đều phải trải qua kiểm định 3 vòng nghiêm ngặt trước khi đến tay bạn."
+                        broll: "Lia máy quay mượt mà dọc theo quy trình đóng gói/vận hành thủ công vô cùng sạch sẽ, chuẩn chỉ từng chi tiết nhỏ.",
+                        screenText: "QUY CHUẨN KIỂM ĐỊNH KHẮT KHE",
+                        voice: "Để đạt được sự hoàn thiện tối đa, mỗi chi tiết nhỏ đều phải trải qua 3 vòng kiểm tra nghiêm ngặt bằng tay."
                     },
                     {
                         time: "00:20 - 00:35",
-                        broll: "Góc quay lia máy từ dưới lên (Low-angle) tôn vinh vẻ đẹp hoàn thiện của sản phẩm. Ánh sáng studio đánh bóng loáng lung linh.",
-                        screenText: "SỰ HOÀN MỸ ĐÁNG GIÁ TỪNG ĐỒNG",
-                        voice: "Chúng tôi bán sự an tâm tuyệt đối và độ bền bỉ theo năm tháng, chứ không bán những sản phẩm giá rẻ dùng một lần rồi bỏ."
+                        broll: "Góc quay nghiêng tôn vinh tính sang trọng và độ hoàn mỹ của sản phẩm dưới ánh đèn phản chiếu sắc sảo.",
+                        screenText: "CHẤT LƯỢNG ĐỒNG NHẤT 100%",
+                        voice: "Chúng tôi không bán sản phẩm đại trà. Chúng tôi mang đến cho bạn độ bền bỉ vượt trội và dịch vụ chăm sóc hoàn hảo."
                     },
                     {
                         time: "00:35 - 00:45",
-                        broll: "Cận cảnh bàn tay giao sản phẩm tận tay khách hàng kèm nụ cười rạng rỡ của người nhận.",
-                        screenText: "TRẢI NGHIỆM ĐẲNG CẤP",
-                        voice: "Hãy đến trực tiếp để tự mình chạm và cảm nhận sự khác biệt đích thực."
+                        broll: "Nhân vật chính trao sản phẩm và nụ cười rạng rỡ chào tạm biệt khách hàng.",
+                        screenText: "TRẢI NGHIỆM SỰ KHÁC BIỆT THỰC SỰ",
+                        voice: "Hãy trực tiếp ghé qua cửa hàng của chúng tôi để tự mình cảm nhận sự tinh xảo này nhé!"
                     }
                 ];
             }
 
-            // Render steps visually
+            // Kết xuất hiển thị trực quan lên Dòng thời gian phân cảnh
             timelineContainer.innerHTML = '';
             scriptSteps.forEach((step, idx) => {
                 const borderAccent = idx === 0 ? 'border-sky-500/50 bg-[#1e293b]/50' : 'border-slate-800 bg-[#131b2e]/40';
@@ -756,16 +756,16 @@
                             <span class="text-[10px] text-slate-400 font-medium"><i class="far fa-clock"></i> ${step.time}</span>
                         </div>
                         <div class="text-[11px] leading-relaxed text-slate-300">
-                            <span class="font-bold text-slate-200 block mb-0.5"><i class="fas fa-video text-[10px] text-purple-400"></i> B-Roll Góc quay:</span>
+                            <span class="font-bold text-slate-200 block mb-0.5"><i class="fas fa-video text-[10px] text-purple-400"></i> Góc quay thị giác (B-Roll):</span>
                             <span class="italic text-slate-400">${step.broll}</span>
                         </div>
                         <div class="grid grid-cols-2 gap-2 text-[11px] border-t border-slate-800/80 pt-2">
                             <div>
-                                <span class="font-bold text-slate-200 block mb-0.5 text-[10px] uppercase text-slate-400">Chữ trên màn:</span>
+                                <span class="font-bold text-slate-200 block mb-0.5 text-[10px] uppercase text-slate-400">Chữ chạy trên màn:</span>
                                 <span class="text-amber-400 font-bold">${step.screenText}</span>
                             </div>
                             <div>
-                                <span class="font-bold text-slate-200 block mb-0.5 text-[10px] uppercase text-slate-400">Lời thoại (Voiceover):</span>
+                                <span class="font-bold text-slate-200 block mb-0.5 text-[10px] uppercase text-slate-400">Lời thoại chi tiết:</span>
                                 <span class="text-slate-300">${step.voice}</span>
                             </div>
                         </div>
@@ -775,11 +775,11 @@
             });
         }
 
-        // Safe Clipboard copy helper suited for iFrame constraints
+        // Trích xuất sao chép an toàn vào khay nhớ tạm (Clipboard)
         function copyTextToClipboard(id) {
             const textToCopy = document.getElementById(id).innerText;
             
-            // Standard fallback as per system directives for seamless execution in isolated environment
+            // Xử lý bằng thẻ textarea phụ trợ nhằm vượt qua các lớp bảo mật khắt khe của iframe
             const dummy = document.createElement("textarea");
             document.body.appendChild(dummy);
             dummy.value = textToCopy;
@@ -787,14 +787,14 @@
             document.execCommand("copy");
             document.body.removeChild(dummy);
 
-            // Change button UI state temporary
+            // Cập nhật tạm thời trạng thái trực quan trên nút bấm
             const copyBtn = document.getElementById(`btn-${id}`);
             const originalHtml = copyBtn.innerHTML;
-            copyBtn.innerHTML = '<i class="fas fa-check"></i> Đã sao chép!';
+            copyBtn.innerHTML = '<i class="fas fa-check"></i> Đã lưu lệnh!';
             copyBtn.classList.remove('bg-slate-800/80', 'border-slate-700/50');
             copyBtn.classList.add('bg-emerald-600', 'border-emerald-500', 'text-white');
 
-            showToast("Đã copy thành công", "Mega Prompt đã được lưu vào khay nhớ tạm. Dán vào ChatGPT ngay!");
+            showToast("Sao chép thành công", "Mega Prompt đã được sao chép thành công. Hãy dán vào cửa sổ ChatGPT của bạn!");
 
             setTimeout(() => {
                 copyBtn.innerHTML = originalHtml;
@@ -803,39 +803,38 @@
             }, 2500);
         }
 
-        // Reset system to factory settings
+        // Khôi phục cài đặt gốc của toàn bộ ứng dụng
         function resetApp() {
             document.getElementById('quick-tags').innerHTML = `
-                <button onclick="useTag('Spa & Thẩm mỹ viện công nghệ cao')" class="tag shrink-0 px-3 py-1.5 bg-[#1e293b] hover:bg-[#334155] border border-slate-800 hover:border-slate-700 rounded-lg text-xs font-medium text-slate-300 transition-all">💆‍♀️ Spa / Thẩm Mỹ</button>
-                <button onclick="useTag('Thời trang local brand thiết kế')" class="tag shrink-0 px-3 py-1.5 bg-[#1e293b] hover:bg-[#334155] border border-slate-800 hover:border-slate-700 rounded-lg text-xs font-medium text-slate-300 transition-all">👗 Thời trang thiết kế</button>
-                <button onclick="useTag('Đào tạo kỹ năng cốt lõi / Khóa học')" class="tag shrink-0 px-3 py-1.5 bg-[#1e293b] hover:bg-[#334155] border border-slate-800 hover:border-slate-700 rounded-lg text-xs font-medium text-slate-300 transition-all">🎓 Đào tạo / Khóa học</button>
-                <button onclick="useTag('Phụ kiện & Đồ gia dụng thông minh')" class="tag shrink-0 px-3 py-1.5 bg-[#1e293b] hover:bg-[#334155] border border-slate-800 hover:border-slate-700 rounded-lg text-xs font-medium text-slate-300 transition-all">📦 Đồ gia dụng tiện ích</button>
+                <button onclick="useTag('Spa & Thẩm mỹ viện công nghệ cao')" class="tag shrink-0 px-3 py-1.5 bg-[#131b2e] hover:bg-[#1e293b] border border-slate-800 hover:border-slate-700 rounded-lg text-xs font-medium text-slate-300 transition-all">💆‍♀️ Spa / Thẩm Mỹ</button>
+                <button onclick="useTag('Thời trang local brand thiết kế')" class="tag shrink-0 px-3 py-1.5 bg-[#131b2e] hover:bg-[#1e293b] border border-slate-800 hover:border-slate-700 rounded-lg text-xs font-medium text-slate-300 transition-all">👗 Thời trang thiết kế</button>
+                <button onclick="useTag('Đào tạo kỹ năng cốt lõi / Khóa học')" class="tag shrink-0 px-3 py-1.5 bg-[#131b2e] hover:bg-[#1e293b] border border-slate-800 hover:border-slate-700 rounded-lg text-xs font-medium text-slate-300 transition-all">🎓 Đào tạo / Khóa học</button>
+                <button onclick="useTag('Phụ kiện & Đồ gia dụng thông minh')" class="tag shrink-0 px-3 py-1.5 bg-[#131b2e] hover:bg-[#1e293b] border border-slate-800 hover:border-slate-700 rounded-lg text-xs font-medium text-slate-300 transition-all">📦 Đồ gia dụng tiện ích</button>
             `;
             userInput.placeholder = "Nhập lĩnh vực kinh doanh của bạn...";
             userInput.value = '';
             
-            // Empty chat logs
             chatHistory.innerHTML = `
                 <div class="flex gap-4 items-start max-w-[85%]">
                     <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-white shrink-0 shadow-md">
                         <i class="fas fa-robot text-sm"></i>
                     </div>
-                    <div class="bg-[#1e293b]/60 border border-slate-800 text-slate-100 rounded-2xl rounded-tl-none p-4 text-sm leading-relaxed shadow-sm">
-                        Chào mừng bạn quay trở lại hệ thống sáng tạo kịch bản. Để tôi lấy dữ liệu mỏ neo chính xác nhất, <strong>hiện tại bạn đang kinh doanh lĩnh vực nào?</strong>
+                    <div class="bg-[#0f172a]/60 border border-slate-800 text-slate-100 rounded-2xl rounded-tl-none p-4 text-sm leading-relaxed shadow-sm">
+                        Chào bạn, tôi là trợ lý lập chiến lược nội dung video ngắn. Nhiệm vụ của tôi là giúp bạn thiết lập một bộ câu lệnh tối ưu cao để tự sinh kịch bản chuyển đổi chất lượng nhất.<br><br>
+                        Để khởi động bộ não phân tích dữ liệu, <strong>hiện tại bạn đang kinh doanh lĩnh vực hoặc sản phẩm cụ thể nào?</strong>
                     </div>
                 </div>
             `;
             
-            // Hide preview panels
             document.getElementById('preview-empty-state').classList.remove('hidden');
             document.getElementById('preview-active-state').classList.add('hidden');
-            document.getElementById('preview-framework-badge').innerText = "CHƯA KHỞI CHẠY";
+            document.getElementById('preview-framework-badge').innerText = "CHƯA HOẠT ĐỘNG";
 
             userIndustry = '';
             currentState = 'ask_industry';
             setInputState(false);
             
-            showToast("Hệ thống đặt lại", "Đã khởi tạo phiên làm việc mới thành công.");
+            showToast("Hệ thống khởi đặt lại", "Ứng dụng đã được làm mới thành công.");
         }
     </script>
 </body>
