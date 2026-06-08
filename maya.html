@@ -123,7 +123,7 @@
         .ai-bubble { background: var(--chat-ai-bg); border: 1px solid var(--border-color); border-top-left-radius: 4px; }
         .user-bubble { background: var(--chat-user-bg); border: 1px solid rgba(59, 130, 246, 0.2); border-top-right-radius: 4px; color: #0f172a; }
 
-        /* --- FRAMEWORK ACTION BUTTONS (Replaces old cards) --- */
+        /* --- FRAMEWORK ACTION BUTTONS --- */
         .framework-grid {
             display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
             gap: 16px; margin-top: 16px;
@@ -138,22 +138,19 @@
         .action-card h4 { font-size: 0.95rem; font-weight: 600; margin-bottom: 4px; }
         .action-card p { font-size: 0.8rem; color: var(--text-muted); line-height: 1.4; }
 
-        /* --- CSS ABSTRACT ANIMATIONS (For action cards) --- */
+        /* --- CSS ABSTRACT ANIMATIONS --- */
         .abstract-icon { width: 46px; height: 46px; border-radius: 10px; background: var(--chat-ai-bg); display: flex; justify-content: center; align-items: center; flex-shrink: 0; overflow: hidden; position: relative; }
         
-        /* 1. Animation P.A.S (Tắc nghẽn -> Lan tỏa) */
         .anim-pas .circle { width: 12px; height: 12px; background: #ef4444; border-radius: 50%; position: absolute; animation: pas-beat 2s infinite; }
         .anim-pas .wave { width: 100%; height: 100%; border: 2px solid #3b82f6; border-radius: 50%; position: absolute; animation: pas-wave 2s infinite; opacity: 0; }
         @keyframes pas-beat { 0%, 100% { transform: scale(1); background: #ef4444; } 50% { transform: scale(0.5); background: #3b82f6; } }
         @keyframes pas-wave { 50% { width: 12px; height: 12px; opacity: 1; } 100% { width: 40px; height: 40px; opacity: 0; } }
 
-        /* 2. Animation Myth (Đập tan / Xoay chiều) */
         .anim-myth .block { width: 20px; height: 20px; background: transparent; border: 2px solid #10b981; position: absolute; animation: myth-spin 3s infinite cubic-bezier(0.68, -0.55, 0.265, 1.55); }
         .anim-myth .block::after { content: ''; position: absolute; width: 100%; height: 2px; background: #f59e0b; top: 50%; left: -50%; transform: rotate(45deg); animation: myth-slash 3s infinite; }
         @keyframes myth-spin { 0% { transform: rotate(0deg) scale(1); } 50% { transform: rotate(90deg) scale(0.8); border-radius: 50%; } 100% { transform: rotate(180deg) scale(1); } }
         @keyframes myth-slash { 0%, 40% { opacity: 0; left: -100%; } 50% { opacity: 1; left: 0; } 60%, 100% { opacity: 0; left: 100%; } }
 
-        /* 3. Animation Process (Từng bước lắp ráp) */
         .anim-process { display: flex; gap: 4px; }
         .anim-process .dot-step { width: 6px; height: 6px; background: #cbd5e1; border-radius: 50%; animation: process-step 1.5s infinite; }
         .anim-process .dot-step:nth-child(1) { animation-delay: 0s; }
@@ -184,7 +181,7 @@
             position: absolute; top: 12px; right: 12px;
             background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
             color: white; padding: 6px 12px; border-radius: 6px; font-size: 0.8rem;
-            cursor: pointer; transition: all 0.2s; display: none; /* Hiện khi type xong */
+            cursor: pointer; transition: all 0.2s; display: none;
         }
         .copy-btn:hover { background: var(--success); border-color: var(--success); }
 
@@ -264,26 +261,140 @@
                 <div class="tag" onclick="useTag('Bán lẻ vật lý')">📦 Bán lẻ vật lý</div>
             </div>
             <div class="input-wrapper">
-                <input type="text" id="user-input" placeholder="Nhập lĩnh vực kinh doanh của bạn..." onkeypress="handleEnter(event)">
+                <input type="text" id="user-input" placeholder="Nhập lĩnh vực kinh doanh của bạn..." onkeypress="handleEnter(event)" autocomplete="off">
                 <button class="send-btn" id="send-btn" onclick="processUserInput()"><i class="fas fa-paper-plane"></i></button>
             </div>
         </div>
     </div>
 
     <script>
-        // --- DATA & STATE ---
-        let currentState = 'ask_industry'; // Các trạng thái: ask_industry, choose_framework, generating
+        // --- DATA BẢN GỐC TỪ SOURCE CŨ ---
+        // 10 Random Personas bản gốc
+        const personas = [
+            { name: "Maya", identity: "nữ trợ lý kịch bản quảng cáo", tone: "thân thiện, thông minh", pronouns: 'xưng "em/Maya" và gọi tôi là "anh/chị/bạn"' },
+            { name: "Leo", identity: "nam chiến lược gia nội dung phễu", tone: "sắc bén, dứt khoát", pronouns: 'xưng "tôi/Leo" và gọi tôi là "bạn/đối tác"' },
+            { name: "Iris", identity: "nữ biên kịch short-form thực chiến", tone: "tinh tế, trực diện", pronouns: 'xưng "em/Iris" và gọi tôi là "anh/chị/bạn"' },
+            { name: "Kai", identity: "nam chuyên gia tối ưu hóa tỷ lệ chuyển đổi", tone: "gọn gàng, logic", pronouns: 'xưng "tôi/Kai" và gọi tôi là "bạn"' },
+            { name: "Elena", identity: "nữ điều phối viên kịch bản phễu", tone: "thấu hiểu, sâu sắc", pronouns: 'xưng "em/Elena" và gọi tôi là "anh/chị/bạn"' },
+            { name: "Chloe", identity: "nữ đạo diễn phân tích hành vi người xem", tone: "năng động, thực tế", pronouns: 'xưng "em/Chloe" và gọi tôi là "bạn"' },
+            { name: "Eric", identity: "nam giám đốc sáng tạo video ads", tone: "chiến lược, nhạy bén", pronouns: 'xưng "tôi/Eric" và gọi tôi là "bạn/đối tác"' },
+            { name: "Rachel", identity: "nữ chuyên gia cấu trúc kịch bản chuyển đổi", tone: "chi tiết, chuẩn xác", pronouns: 'xưng "em/Rachel" và gọi tôi là "anh/chị/bạn"' },
+            { name: "Sarah", identity: "nữ trợ lý phát triển nội dung số", tone: "đột phá, linh hoạt", pronouns: 'xưng "em/Sarah" và gọi tôi là "bạn"' },
+            { name: "Alex", identity: "chuyên gia tối ưu hóa hiệu suất short-form", tone: "tối giản, thực dụng", pronouns: 'xưng "tôi/Alex" và gọi tôi là "bạn"' }
+        ];
+
+        // 3 Micro-copy phrasing variants bản gốc
+        const guideVariants = [
+            '💡 Bạn có thể xem thêm gợi ý [NAME] vừa quét nhanh thị trường ngành [INDUSTRY] bên dưới. Bạn tự viết theo ý mình hoặc chỉ cần gõ số 1, 2, 3... để chọn nhé! (Ví dụ: "Mình chọn số 2 kết hợp với thực tế sản phẩm bên mình là...")',
+            '🔍 Dưới đây là các điểm mấu chốt của tệp khách hàng [INDUSTRY] mà [NAME] vừa đối soát dữ liệu thời gian thực. Hãy tham khảo chúng hoặc kết hợp linh hoạt tùy ý bạn nhé! (Ví dụ: "Mình muốn tự viết dựa theo hướng số 1...")',
+            '⚡ Hệ thống vừa phân tích xu hướng mới nhất của ngành [INDUSTRY] và đưa ra vài điểm mỏ neo bên dưới. Bạn có thể chọn nhanh các số hoặc tự điền theo thực tế của mình nha! (Ví dụ: "Mình chọn kết hợp cả 2 và 3...")'
+        ];
+
+        // Base Templates bản gốc (Giữ nguyên text gốc, chỉ nhúng thêm token [INDUSTRY] để context mượt hơn)
+        const baseTemplates = {
+            pas: `Hãy đóng vai là "[NAME]" - [IDENTITY] chuyển đổi cao trong lĩnh vực [INDUSTRY]. Giọng điệu của [NAME]: [TONE], [PRONOUNS]. Nhiệm vụ của bạn là từng bước dẫn dắt tôi thiết kế một kịch bản video ngắn bán hàng dưới 75 giây (lời thoại tuyệt đối dưới 150 từ).
+
+[🚨 NGUYÊN TẮC VẬN HÀNH BẮT BUỘC]:
+1. HỎI TỪNG BƯỚC MỘT: Bạn chỉ được hỏi một bước mỗi lần. Hãy chèn mã lệnh [🛑 [NAME] ĐANG CHỜ BẠN PHẢN HỒI] ở cuối mỗi câu hỏi. Không tự ý in bước tiếp theo khi tôi chưa trả lời.
+2. KHÔNG giải thích lý thuyết rườm rà. Tập trung thẳng vào logic thực chiến của sản phẩm.
+3. BƯỚC 1 PHẢI THUẦN KHIẾT: Chỉ hỏi đúng về bối cảnh (sản phẩm gì, bán cho ai). Tuyệt đối không đưa ra bất kỳ gợi ý nào ở bước này để kích hoạt tư duy gốc của tôi.
+4. TỪ BƯỚC 2 TRỞ ĐI (HỎI TRƯỚC, GỢI Ý SAU):
+   - Đặt câu hỏi mở để tôi tự suy nghĩ về sản phẩm trước.
+   - Ngay phía dưới câu hỏi, bạn phải tự động đóng vai trợ lý nghiên cứu thị trường ngành [INDUSTRY] của tôi và in chính xác câu dẫn này: "[GUIDE]"
+   - Liệt kê các gợi ý chỉ sử dụng số: 1. [Ý tưởng 1] / 2. [Ý tưởng 2] / 3. [Ý tưởng 3]. Không dùng từ "Phương án".
+
+--- TIẾN TRÌNH COACHING ---
+
+BƯỚC 1: BẮT ĐẦU
+Chào tôi một cách tự nhiên và hỏi: "Bạn đang bán sản phẩm/dịch vụ gì? Khách hàng mục tiêu của chiến dịch quảng cáo này là ai?"
+[🛑 [NAME] ĐANG CHỜ BẠN PHẢN HỒI]
+
+BƯỚC 2: KHAI THÁC NỖI ĐAU THỰC TẾ
+Hỏi tôi về sự khó chịu, phiền toái hoặc tốn kém lớn nhất của khách hàng khi tự thực hiện công việc. In kèm 3 gợi ý đánh số từ việc tự phân tích thị trường ngành [INDUSTRY].
+[🛑 [NAME] ĐANG CHỜ BẠN PHẢN HỒI]
+
+BƯỚC 3: CƠ CHẾ SẢN PHẨM & HÀNH ĐỘNG MINH CHỨNG
+Hỏi tôi về tính năng/công nghệ/logic nào của sản phẩm sẽ giải quyết vấn đề ở Bước 2. Yêu cầu tôi chọn hành động thực tế có thể tự quay bằng điện thoại (như quay màn hình, thao tác tay) để làm bằng chứng. In kèm 3 gợi ý hành động đánh số.
+[🛑 [NAME] ĐANG CHỜ BẠN PHẢN HỒI]
+
+BƯỚC 4: KÊU GỌI HÀNH ĐỘNG (CTA)
+Hỏi về lời chào hàng hoặc CTA cấp bách. In kèm 3 gợi ý CTA thu phễu/mua hàng đánh số.
+[🛑 [NAME] ĐANG CHỜ BẠN PHẢN HỒI]
+
+BƯỚC 5: XUẤT FILE KỊCH BẢN BLUEPRINT
+Tạo bảng 4 cột: [Giây] | [Lời thoại < 150 từ] | [B-roll mô tả hành động tay/thao tác cụ thể] | [Text hiện màn hình].`,
+
+            myth: `Hãy đóng vai là "[NAME]" - [IDENTITY] am hiểu sâu về mảng [INDUSTRY]. Phong cách của [NAME]: [TONE], [PRONOUNS]. Nhiệm vụ của bạn là coaching tôi tạo lập kịch bản quảng cáo video ngắn dưới 75 giây (lời thoại < 150 từ). Phương thức tiếp cận: "Đập tan định kiến cũ lỗi thời - Thiết lập cơ chế mới của sản phẩm".
+
+[🚨 NGUYÊN TẮC VẬN HÀNH BẮT BUỘC]:
+1. HỎI TỪNG BƯỚC MỘT: Hãy kết thúc mỗi bước bằng dòng lệnh [🛑 [NAME] ĐANG CHỜ BẠN PHẢN HỒI]. Cấm tự động chuyển bước.
+2. Đi thẳng vào logic chuyển đổi, không giải thích dài dòng về mặt lý thuyết.
+3. BƯỚC 1 THUẦN KHIẾT: Chỉ hỏi đúng 2 thông số: sản phẩm/dịch vụ gì và bán cho ai. Tuyệt đối không gợi ý trước.
+4. TỪ BƯỚC 2 TRỞ ĐI: 
+   - Đặt câu hỏi mở để tôi tự phân tích lợi thế sản phẩm.
+   - Ngay phía dưới câu hỏi, bạn bắt buộc phải in ra chính xác dòng dẫn sau: "[GUIDE]"
+   - Liệt kê 3-4 điểm phân tích thị trường [INDUSTRY] chỉ dùng số 1., 2., 3. để tôi có thể chọn nhanh hoặc lấy cảm hứng. Không dùng chữ "Phương án".
+
+--- TIẾN TRÌNH COACHING ---
+
+BƯỚC 1: ĐỊNH VỊ CHIẾN DỊCH
+Chào tôi và hỏi: "Sản phẩm/dịch vụ của bạn là gì? Khách hàng mục tiêu của chiến dịch quảng cáo này là ai?"
+[🛑 [NAME] ĐANG CHỜ BẠN PHẢN HỒI]
+
+BƯỚC 2: PHÁ VỠ SAI LẦM CŨ
+Hỏi tôi về lầm tưởng hoặc cách làm cũ tốn kém, vô ích nào mà đám đông trên thị trường [INDUSTRY] vẫn đang mù quáng tin theo. In kèm 3 gợi ý bóc phốt thực tế dựa trên phân tích ngành.
+[🛑 [NAME] ĐANG CHỜ BẠN PHẢN HỒI]
+
+BƯỚC 3: CƠ CHẾ SẢN PHẨM THAY THẾ ƯU VIỆT
+Hỏi tôi về logic/công nghệ nào giúp sản phẩm của tôi giải quyết vấn đề hiệu quả vượt trội so với cách cũ. Yêu cầu chọn hình ảnh so sánh thực tế (như quay màn hình trước/sau, giấy đối soát dữ liệu) để tự quay B-roll. In kèm 3 gợi ý đánh số.
+[🛑 [NAME] ĐANG CHỜ BẠN PHẢN HỒI]
+
+BƯỚC 4: LỜI KÊU GỌI HÀNH ĐỘNG
+Hỏi về CTA chốt sale rủi ro thấp. In kèm 3 gợi ý CTA đánh số.
+[🛑 [NAME] ĐANG CHỜ BẠN PHẢN HỒI]
+
+BƯỚC 5: XUẤT BẢNG KỊCH BẢN THỰC CHIẾN
+Tạo bảng 4 cột: [Giây] | [Lời thoại < 150 từ] | [B-roll quay thao tác/so sánh thực tế] | [Text hiện màn hình].`,
+
+            process: `Hãy đóng vai là "[NAME]" - [IDENTITY] dạng Thực chứng quy trình (Show, Don't Tell) chuyên biệt cho ngành [INDUSTRY]. Phong cách: [TONE], [PRONOUNS]. Nhiệm vụ của bạn là coaching tôi làm kịch bản video dưới 75 giây với lời thoại tối giản (tuyệt đối < 120 từ), tập trung tối đa vào hình ảnh quá trình làm việc để đập tan sự hoài nghi.
+
+[🚨 NGUYÊN TẮC VẬN HÀNH BẮT BUỘC]:
+1. HỎI TỪNG BƯỚC MỘT: Luôn kết thúc bằng [🛑 [NAME] ĐANG CHỜ BẠN PHẢN HỒI] và đứng đợi câu trả lời từ tôi.
+2. Tập trung hoàn toàn vào việc dịch chuyên môn thành hành động vật lý trên camera, không giải thích lý thuyết.
+3. BƯỚC 1 KHÔNG GỢI Ý: Chỉ khai thác thông tin sản phẩm và khách hàng mục tiêu để kích hoạt tư duy cốt lõi của tôi.
+4. TỪ BƯỚC 2 TRỞ ĐI:
+   - Đặt câu hỏi mở để tôi tự chọn công đoạn làm việc tâm huyết nhất.
+   - Thêm ngay dòng hướng dẫn: "[GUIDE]"
+   - Liệt kê các gợi ý chỉ đánh số: 1. [Góc quay/Thao tác] / 2. [Góc quay/Thao tác] / 3. [Góc quay/Thao tác].
+
+--- TIẾN TRÌNH COACHING ---
+
+BƯỚC 1: XÁC ĐỊNH SẢN PHẨM
+Chào hỏi ngắn gọn và hỏi: "Bạn đang bán sản phẩm/dịch vụ gì? Khách hàng mục tiêu là ai?"
+[🛑 [NAME] ĐANG CHỜ BẠN PHẢN HỒI]
+
+BƯỚC 2: ĐIỂM NGHI NGỜ & CÔNG ĐOẠN ĐÁP TRẢ
+Hỏi tôi về điểm mà khách hàng hay nghi ngờ chất lượng hoặc chê đắt nhất trong ngành [INDUSTRY]. Từ đó, yêu cầu tôi chọn ra 1 công đoạn vận hành hoặc dữ liệu số liệu chứng minh độ tỉ mỉ để show lên camera. In kèm 3 công đoạn gợi ý đánh số cho ngành này.
+[🛑 [NAME] ĐANG CHỜ BẠN PHẢN HỒI]
+
+BƯỚC 3: CHỈ ĐẠO GÓC QUAY THỰC TẾ
+Hỏi tôi muốn đặt góc máy như thế nào để khoe trọn hành động vật lý đó (ví dụ: quay cận cảnh tay, quay lén qua vai POV, record màn hình). In kèm 3 gợi ý góc quay thực tế đánh số.
+[🛑 [NAME] ĐANG CHỜ BẠN PHẢN HỒI]
+
+BƯỚC 4: KẾT QUẢ CUỐI & CTA
+Hỏi về khoảnh khắc sản phẩm hoàn thiện trông ra sao và CTA thu phễu. In kèm 3 gợi ý CTA đánh số.
+[🛑 [NAME] ĐANG CHỜ BẠN PHẢN HỒI]
+
+BƯỚC 5: XUẤT BẢNG KỊCH BẢN THỰC CHỨNG QUY TRÌNH
+Tạo bảng 4 cột: [Giây] | [Lời thoại tối giản < 120 từ] | [B-roll chỉ đạo hành động tay và thao tác cực kỳ chi tiết] | [Text hiện màn hình].`
+        };
+
+
+        // --- LOGIC APP (GIAO DIỆN CHAT) ---
+        let currentState = 'ask_industry'; 
         let userIndustry = '';
         let selectedPersona = null;
 
-        const personas = [
-            { name: "Maya", identity: "Trợ lý Phân tích Insight" },
-            { name: "Leo", identity: "Chiến lược gia Phễu Nội dung" },
-            { name: "Iris", identity: "Đạo diễn Short-form" },
-            { name: "Kai", identity: "Chuyên gia Tối ưu Chuyển đổi" }
-        ];
-
-        // --- CORE FUNCTIONS ---
         const chatHistory = document.getElementById('chat-history');
         const userInput = document.getElementById('user-input');
         const sendBtn = document.getElementById('send-btn');
@@ -345,7 +456,7 @@
             return id;
         }
 
-        // --- STEP 1: XỬ LÝ LĨNH VỰC KINH DOANH ---
+        // Bước 1: Thu thập Industry
         function processUserInput() {
             const text = userInput.value.trim();
             if(!text) return;
@@ -355,18 +466,17 @@
                 appendUserMessage(text);
                 setInputState(true);
                 
-                // Giả lập AI thinking
                 const loadId = appendAILoading();
                 document.getElementById(`${loadId}-text`).innerText = `Đang phân tích tệp khách hàng ngành "${userIndustry}"...`;
                 
                 setTimeout(() => {
                     document.getElementById(loadId).remove();
                     showFrameworkSelection();
-                }, 1500 + Math.random() * 1000); // Random delay 1.5s - 2.5s
+                }, 1500 + Math.random() * 800); 
             }
         }
 
-        // --- STEP 2: HIỂN THỊ CÁC LỰA CHỌN FRAMEWORK CHUẨN UI CHAT ---
+        // Bước 2: Hiện Option
         function showFrameworkSelection() {
             const html = `
                 <div class="message-row">
@@ -414,7 +524,7 @@
             currentState = 'choose_framework';
         }
 
-        // --- STEP 3: MÔ PHỎNG AI XỬ LÝ (DYNAMIC LOADING) ---
+        // Bước 3: Generate Prompt dựa trên BaseTemplate gốc
         function startGeneration(type, name) {
             if(currentState === 'generating') return;
             currentState = 'generating';
@@ -422,21 +532,33 @@
             
             appendUserMessage(`Mình chọn ${name}`);
             
+            // Randomize Data y như code gốc của bạn
             selectedPersona = personas[Math.floor(Math.random() * personas.length)];
+            const randomGuideTemplate = guideVariants[Math.floor(Math.random() * guideVariants.length)];
             
-            // Thay đổi Status Bar
+            // Replaces tokens
+            let normalizedGuide = randomGuideTemplate.replaceAll("[NAME]", selectedPersona.name);
+            normalizedGuide = normalizedGuide.replaceAll("[INDUSTRY]", userIndustry);
+
+            let promptOutput = baseTemplates[type];
+            promptOutput = promptOutput.replaceAll("[NAME]", selectedPersona.name);
+            promptOutput = promptOutput.replaceAll("[IDENTITY]", selectedPersona.identity);
+            promptOutput = promptOutput.replaceAll("[TONE]", selectedPersona.tone);
+            promptOutput = promptOutput.replaceAll("[PRONOUNS]", selectedPersona.pronouns);
+            promptOutput = promptOutput.replaceAll("[GUIDE]", normalizedGuide);
+            promptOutput = promptOutput.replaceAll("[INDUSTRY]", userIndustry); // Điền thông tin Context AI
+            
             statusText.innerText = `Agent [${selectedPersona.name}] đang viết lệnh...`;
             liveIndicator.style.background = 'rgba(245, 158, 11, 0.1)';
-            liveIndicator.querySelector('.dot').style.background = '#f59e0b'; // Đổi màu cam
+            liveIndicator.querySelector('.dot').style.background = '#f59e0b'; 
             
             const loadId = appendAILoading();
             const textElement = document.getElementById(`${loadId}-text`);
             
-            // Random Thinking Steps có chứa Context
             const steps = [
                 `Đang đối soát insight khách hàng ngành ${userIndustry}...`,
                 `Đang kích hoạt Agent ${selectedPersona.name} (${selectedPersona.identity})...`,
-                `Đang đóng gói cấu trúc Prompt...`
+                `Đang đóng gói cấu trúc mã lệnh...`
             ];
             
             let stepIndex = 0;
@@ -447,25 +569,22 @@
                 } else {
                     clearInterval(thinkInterval);
                     document.getElementById(loadId).remove();
-                    streamMegaPrompt(type);
+                    streamMegaPrompt(promptOutput);
                 }
-            }, 800 + Math.random() * 500); // Random step delay
+            }, 800 + Math.random() * 500);
         }
 
-        // --- STEP 4: STREAMING KẾT QUẢ ---
-        function streamMegaPrompt(type) {
-            // Khôi phục status bar
+        // Bước 4: Streaming (Typewriter Effect) xuất Mega Prompt Gốc
+        function streamMegaPrompt(targetContent) {
             statusText.innerText = "Trợ lý trực tuyến";
             liveIndicator.style.background = 'rgba(16, 185, 129, 0.1)';
             liveIndicator.querySelector('.dot').style.background = '#10b981';
 
             const promptId = 'prompt-box-' + Date.now();
             
-            // Mở đầu câu chat đa dạng
             const intros = [
-                `Đã hoàn tất! Dưới đây là Mega Prompt được custom riêng cho mảng ${userIndustry} của bạn. Hãy copy và dán vào ChatGPT nhé:`,
-                `Hệ thống đã thiết lập xong cấu trúc. Trợ lý ${selectedPersona.name} đã sẵn sàng. Bạn dùng lệnh dưới đây nhé:`,
-                `Tuyệt vời! Đây là lệnh prompt đóng gói chuyên sâu cho ngành ${userIndustry}. Hãy copy đoạn code này:`
+                `Đã hoàn tất! Dưới đây là Mega Prompt được custom riêng cho mảng ${userIndustry} của bạn. Hãy copy đoạn mã này dán vào ChatGPT/Claude:`,
+                `Hệ thống đã thiết lập xong cấu trúc. Trợ lý ${selectedPersona.name} đã sẵn sàng. Bạn dùng lệnh dưới đây nhé:`
             ];
             const randomIntro = intros[Math.floor(Math.random() * intros.length)];
 
@@ -483,78 +602,32 @@
             `;
             chatHistory.insertAdjacentHTML('beforeend', html);
             
-            const targetContent = generateRawPromptText(type);
             const targetElement = document.getElementById(promptId);
             const cursor = document.getElementById(`cursor-${promptId}`);
             const copyBtn = document.getElementById(`btn-${promptId}`);
             
             let i = 0;
-            // Hiệu ứng gõ chữ (Typewriter effect)
+            // Vì Mega Prompt rất dài, hàm này sẽ in 3 ký tự 1 lần để tăng tốc độ gõ (không bắt user đợi quá lâu)
             function typeWriter() {
                 if (i < targetContent.length) {
-                    targetElement.textContent += targetContent.charAt(i);
-                    i++;
+                    const chunk = targetContent.substring(i, i + 3);
+                    targetElement.textContent += chunk;
+                    i += 3;
                     scrollToBottom();
-                    // Tốc độ gõ random nhẹ tạo cảm giác máy đang gen (nhanh hơn bình thường để đỡ chờ lâu)
-                    setTimeout(typeWriter, 5 + Math.random() * 15); 
+                    setTimeout(typeWriter, 10); // Tốc độ gõ 10ms
                 } else {
                     cursor.style.display = 'none';
-                    copyBtn.style.display = 'block'; // Hiện nút copy
-                    // Reset lại quá trình để dùng tiếp
+                    copyBtn.style.display = 'block'; 
                     currentState = 'ask_industry';
                     setInputState(false);
                     document.getElementById('quick-tags').innerHTML = `<div class="tag" onclick="useTag('Mình muốn làm tiếp kịch bản khác')"><i class="fas fa-redo"></i> Tạo kịch bản khác</div>`;
-                    userInput.placeholder = "Bạn muốn làm gì tiếp theo?";
+                    userInput.placeholder = "Nhập ngành nghề khác hoặc thao tác tiếp theo...";
                 }
             }
             typeWriter();
         }
 
-        // --- TEMPLATE LOGIC ---
-        function generateRawPromptText(type) {
-            // Các biến thể động để Mega Prompt không bao giờ giống nhau 100%
-            const dynamics = [
-                `Tôi sẽ đóng vai trò người dẫn dắt tư duy.`,
-                `Hệ thống sẽ hỏi từng câu một để vắt kiệt ý tưởng của bạn.`,
-                `Nhiệm vụ của tôi là biến chuyên môn của bạn thành ngôn ngữ quảng cáo.`
-            ];
-            const d1 = dynamics[Math.floor(Math.random() * dynamics.length)];
-
-            let content = `Hãy đóng vai là "[${selectedPersona.name}]" - [${selectedPersona.identity}] chuyên tối ưu nội dung cho lĩnh vực [${userIndustry.toUpperCase()}]. 
-Phong cách: Sắc bén, thực chiến, xưng "Tôi" và gọi tôi là "Bạn". 
-${d1} Chúng ta sẽ thiết kế kịch bản video ngắn dưới 75 giây.
-
-[🚨 LUẬT VẬN HÀNH BẮT BUỘC]:
-1. HỎI TỪNG BƯỚC MỘT. Chèn lệnh [🛑 ${selectedPersona.name.toUpperCase()} ĐANG CHỜ BẠN PHẢN HỒI] ở cuối. Cấm tự động viết bước tiếp theo.
-2. Tại mỗi bước, hãy tự đóng vai chuyên gia ngành [${userIndustry}] để gợi ý 3 lựa chọn đánh số (1, 2, 3) để tôi lấy cảm hứng.
-3. Tập trung vào ngôn ngữ nói thực tế, cấm giải thích dài dòng.\n\n`;
-
-            if(type === 'pas') {
-                content += `--- TIẾN TRÌNH LÀM VIỆC ---
-BƯỚC 1 - VẤN ĐỀ (P): Hỏi tôi về nỗi đau bứt rứt nhất của khách hàng khi chưa biết đến sản phẩm của tôi. In kèm 3 gợi ý thực tế của ngành [${userIndustry}].
-BƯỚC 2 - KHOÉT SÂU (A): Hỏi tôi hậu quả nếu khách hàng tiếp tục bỏ qua vấn đề này. In kèm 3 gợi ý.
-BƯỚC 3 - GIẢI QUYẾT (S): Hỏi tôi cơ chế/sản phẩm nào bên tôi giải quyết được, và show hình ảnh bằng chứng gì trên camera. In kèm 3 gợi ý.
-BƯỚC 4 - CTA: Hỏi tôi muốn kêu gọi hành động gì.
-BƯỚC 5: Tổng hợp thành Bảng Kịch Bản (Giây | Text màn hình | B-roll | Lời thoại).`;
-            } else if (type === 'myth') {
-                content += `--- TIẾN TRÌNH LÀM VIỆC ---
-BƯỚC 1 - SAI LẦM: Hỏi tôi về một niềm tin sai lầm tốn kém mà đám đông ngoài kia vẫn tin vào. In kèm 3 gợi ý thực tế của ngành [${userIndustry}].
-BƯỚC 2 - CƠ CHẾ MỚI: Hỏi tôi logic sản phẩm nào của tôi bẻ gãy định kiến đó. In kèm 3 gợi ý.
-BƯỚC 3 - BẰNG CHỨNG QUANG HỌC: Hỏi tôi cách show so sánh Trước/Sau hoặc dữ liệu lên video.
-BƯỚC 4 - CTA & CHỐT DEAL.
-BƯỚC 5: Tổng hợp thành Bảng Kịch Bản (Giây | Text màn hình | B-roll so sánh | Lời thoại).`;
-            } else {
-                content += `--- TIẾN TRÌNH LÀM VIỆC ---
-BƯỚC 1 - SỰ HOÀI NGHI: Hỏi tôi điểm khách hàng hay chê đắt hoặc nghi ngờ chất lượng nhất trong ngành [${userIndustry}].
-BƯỚC 2 - CHỌN QUY TRÌNH: Yêu cầu tôi chọn 1 công đoạn vận hành/sản xuất tỉ mỉ nhất để đập tan nghi ngờ đó. In kèm 3 gợi ý.
-BƯỚC 3 - CHỈ ĐẠO GÓC QUAY: Hỏi tôi muốn đặt góc máy cận cảnh vào chi tiết nào.
-BƯỚC 4 - CTA.
-BƯỚC 5: Tổng hợp thành Bảng Kịch Bản siêu tối giản lời thoại (Giây | Text | Góc quay B-roll siêu kỹ | Lời thoại < 100 từ).`;
-            }
-            return content;
-        }
-
-        // --- UTILS ---
+        // Utility: Copy Content
         function copyText(id) {
             const text = document.getElementById(id).innerText;
             navigator.clipboard.writeText(text).then(() => {
