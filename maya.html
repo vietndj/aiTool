@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Content Strategist Copilot | AI System</title>
+    <title>Maya - Trợ lý kịch bản chuyển đổi</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -182,6 +182,7 @@
             background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
             color: white; padding: 6px 12px; border-radius: 6px; font-size: 0.8rem;
             cursor: pointer; transition: all 0.2s; display: none;
+            z-index: 10;
         }
         .copy-btn:hover { background: var(--success); border-color: var(--success); }
 
@@ -230,8 +231,8 @@
             <div class="header-left">
                 <div class="app-icon"><i class="fas fa-layer-group"></i></div>
                 <div class="header-title">
-                    <h1>Content Strategist Copilot</h1>
-                    <p>Hệ thống trích xuất kịch bản chuyển đổi</p>
+                    <h1>Maya - Trợ lý kịch bản chuyển đổi</h1>
+                    <p>Hệ thống trích xuất kịch bản chuẩn hóa</p>
                 </div>
             </div>
             <div class="live-status" id="live-indicator">
@@ -269,7 +270,6 @@
 
     <script>
         // --- DATA BẢN GỐC TỪ SOURCE CŨ ---
-        // 10 Random Personas bản gốc
         const personas = [
             { name: "Maya", identity: "nữ trợ lý kịch bản quảng cáo", tone: "thân thiện, thông minh", pronouns: 'xưng "em/Maya" và gọi tôi là "anh/chị/bạn"' },
             { name: "Leo", identity: "nam chiến lược gia nội dung phễu", tone: "sắc bén, dứt khoát", pronouns: 'xưng "tôi/Leo" và gọi tôi là "bạn/đối tác"' },
@@ -283,14 +283,12 @@
             { name: "Alex", identity: "chuyên gia tối ưu hóa hiệu suất short-form", tone: "tối giản, thực dụng", pronouns: 'xưng "tôi/Alex" và gọi tôi là "bạn"' }
         ];
 
-        // 3 Micro-copy phrasing variants bản gốc
         const guideVariants = [
             '💡 Bạn có thể xem thêm gợi ý [NAME] vừa quét nhanh thị trường ngành [INDUSTRY] bên dưới. Bạn tự viết theo ý mình hoặc chỉ cần gõ số 1, 2, 3... để chọn nhé! (Ví dụ: "Mình chọn số 2 kết hợp với thực tế sản phẩm bên mình là...")',
             '🔍 Dưới đây là các điểm mấu chốt của tệp khách hàng [INDUSTRY] mà [NAME] vừa đối soát dữ liệu thời gian thực. Hãy tham khảo chúng hoặc kết hợp linh hoạt tùy ý bạn nhé! (Ví dụ: "Mình muốn tự viết dựa theo hướng số 1...")',
             '⚡ Hệ thống vừa phân tích xu hướng mới nhất của ngành [INDUSTRY] và đưa ra vài điểm mỏ neo bên dưới. Bạn có thể chọn nhanh các số hoặc tự điền theo thực tế của mình nha! (Ví dụ: "Mình chọn kết hợp cả 2 và 3...")'
         ];
 
-        // Base Templates bản gốc (Giữ nguyên text gốc, chỉ nhúng thêm token [INDUSTRY] để context mượt hơn)
         const baseTemplates = {
             pas: `Hãy đóng vai là "[NAME]" - [IDENTITY] chuyển đổi cao trong lĩnh vực [INDUSTRY]. Giọng điệu của [NAME]: [TONE], [PRONOUNS]. Nhiệm vụ của bạn là từng bước dẫn dắt tôi thiết kế một kịch bản video ngắn bán hàng dưới 75 giây (lời thoại tuyệt đối dưới 150 từ).
 
@@ -532,11 +530,9 @@ Tạo bảng 4 cột: [Giây] | [Lời thoại tối giản < 120 từ] | [B-rol
             
             appendUserMessage(`Mình chọn ${name}`);
             
-            // Randomize Data y như code gốc của bạn
             selectedPersona = personas[Math.floor(Math.random() * personas.length)];
             const randomGuideTemplate = guideVariants[Math.floor(Math.random() * guideVariants.length)];
             
-            // Replaces tokens
             let normalizedGuide = randomGuideTemplate.replaceAll("[NAME]", selectedPersona.name);
             normalizedGuide = normalizedGuide.replaceAll("[INDUSTRY]", userIndustry);
 
@@ -546,7 +542,7 @@ Tạo bảng 4 cột: [Giây] | [Lời thoại tối giản < 120 từ] | [B-rol
             promptOutput = promptOutput.replaceAll("[TONE]", selectedPersona.tone);
             promptOutput = promptOutput.replaceAll("[PRONOUNS]", selectedPersona.pronouns);
             promptOutput = promptOutput.replaceAll("[GUIDE]", normalizedGuide);
-            promptOutput = promptOutput.replaceAll("[INDUSTRY]", userIndustry); // Điền thông tin Context AI
+            promptOutput = promptOutput.replaceAll("[INDUSTRY]", userIndustry); 
             
             statusText.innerText = `Agent [${selectedPersona.name}] đang viết lệnh...`;
             liveIndicator.style.background = 'rgba(245, 158, 11, 0.1)';
@@ -574,7 +570,7 @@ Tạo bảng 4 cột: [Giây] | [Lời thoại tối giản < 120 từ] | [B-rol
             }, 800 + Math.random() * 500);
         }
 
-        // Bước 4: Streaming (Typewriter Effect) xuất Mega Prompt Gốc
+        // Bước 4: Streaming (Typewriter Effect)
         function streamMegaPrompt(targetContent) {
             statusText.innerText = "Trợ lý trực tuyến";
             liveIndicator.style.background = 'rgba(16, 185, 129, 0.1)';
@@ -607,14 +603,14 @@ Tạo bảng 4 cột: [Giây] | [Lời thoại tối giản < 120 từ] | [B-rol
             const copyBtn = document.getElementById(`btn-${promptId}`);
             
             let i = 0;
-            // Vì Mega Prompt rất dài, hàm này sẽ in 3 ký tự 1 lần để tăng tốc độ gõ (không bắt user đợi quá lâu)
+            // TĂNG TỐC ĐỘ GÕ CHỮ (Nhả 6 ký tự mỗi 5ms - Nhanh gấp ~4 lần bản cũ)
             function typeWriter() {
                 if (i < targetContent.length) {
-                    const chunk = targetContent.substring(i, i + 3);
+                    const chunk = targetContent.substring(i, i + 6);
                     targetElement.textContent += chunk;
-                    i += 3;
+                    i += 6;
                     scrollToBottom();
-                    setTimeout(typeWriter, 10); // Tốc độ gõ 10ms
+                    setTimeout(typeWriter, 5); 
                 } else {
                     cursor.style.display = 'none';
                     copyBtn.style.display = 'block'; 
@@ -627,11 +623,13 @@ Tạo bảng 4 cột: [Giây] | [Lời thoại tối giản < 120 từ] | [B-rol
             typeWriter();
         }
 
-        // Utility: Copy Content
+        // --- HÀM COPY TEXT ĐƯỢC NÂNG CẤP (Bao gồm Fallback cho file local) ---
         function copyText(id) {
-            const text = document.getElementById(id).innerText;
-            navigator.clipboard.writeText(text).then(() => {
-                const btn = document.getElementById(`btn-${id}`);
+            const textToCopy = document.getElementById(id).innerText;
+            const btn = document.getElementById(`btn-${id}`);
+
+            // Cập nhật giao diện nút khi copy thành công
+            const handleSuccess = () => {
                 btn.innerHTML = '<i class="fas fa-check"></i> Đã Copy';
                 btn.style.background = 'var(--success)';
                 btn.style.borderColor = 'var(--success)';
@@ -640,7 +638,49 @@ Tạo bảng 4 cột: [Giây] | [Lời thoại tối giản < 120 từ] | [B-rol
                     btn.style.background = 'rgba(255,255,255,0.1)';
                     btn.style.borderColor = 'rgba(255,255,255,0.2)';
                 }, 2000);
-            });
+            };
+
+            // Dùng Clipboard API hiện đại nếu môi trường an toàn (HTTPS/localhost)
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(textToCopy).then(() => {
+                    handleSuccess();
+                }).catch(err => {
+                    // Nếu lỗi (vd: mở file://), chuyển sang dùng phương án dự phòng
+                    fallbackCopyText(textToCopy, handleSuccess);
+                });
+            } else {
+                // Phương án dự phòng cho các trường hợp chạy file cục bộ
+                fallbackCopyText(textToCopy, handleSuccess);
+            }
+        }
+
+        // Hàm copy dự phòng dùng Textarea ảo (Cực kỳ "trâu bò", hoạt động mọi lúc)
+        function fallbackCopyText(text, successCallback) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            
+            // Ẩn textarea khỏi màn hình để không giật khung hình
+            textArea.style.top = "0";
+            textArea.style.left = "0";
+            textArea.style.position = "fixed";
+            textArea.style.opacity = "0";
+
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    successCallback();
+                } else {
+                    alert('Trình duyệt không hỗ trợ copy tự động. Hãy bôi đen và copy thủ công nhé!');
+                }
+            } catch (err) {
+                alert('Trình duyệt không hỗ trợ copy tự động. Hãy bôi đen và copy thủ công nhé!');
+            }
+
+            document.body.removeChild(textArea);
         }
     </script>
 </body>
