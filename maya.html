@@ -232,7 +232,7 @@
                 <div class="app-icon"><i class="fas fa-layer-group"></i></div>
                 <div class="header-title">
                     <h1>Maya - Trợ lý kịch bản chuyển đổi</h1>
-                    <p>Hệ thống trích xuất kịch bản chuẩn hóa</p>
+                    <p>Hệ thống Copilot chiến lược nội dung</p>
                 </div>
             </div>
             <div class="live-status" id="live-indicator">
@@ -269,124 +269,139 @@
     </div>
 
     <script>
-        // --- DATA BẢN GỐC TỪ SOURCE CŨ ---
+        // --- DATA PERSONAS & VARIANTS ---
         const personas = [
             { name: "Maya", identity: "nữ trợ lý kịch bản quảng cáo", tone: "thân thiện, thông minh", pronouns: 'xưng "em/Maya" và gọi tôi là "anh/chị/bạn"' },
             { name: "Leo", identity: "nam chiến lược gia nội dung phễu", tone: "sắc bén, dứt khoát", pronouns: 'xưng "tôi/Leo" và gọi tôi là "bạn/đối tác"' },
             { name: "Iris", identity: "nữ biên kịch short-form thực chiến", tone: "tinh tế, trực diện", pronouns: 'xưng "em/Iris" và gọi tôi là "anh/chị/bạn"' },
-            { name: "Kai", identity: "nam chuyên gia tối ưu hóa tỷ lệ chuyển đổi", tone: "gọn gàng, logic", pronouns: 'xưng "tôi/Kai" và gọi tôi là "bạn"' },
-            { name: "Elena", identity: "nữ điều phối viên kịch bản phễu", tone: "thấu hiểu, sâu sắc", pronouns: 'xưng "em/Elena" và gọi tôi là "anh/chị/bạn"' },
-            { name: "Chloe", identity: "nữ đạo diễn phân tích hành vi người xem", tone: "năng động, thực tế", pronouns: 'xưng "em/Chloe" và gọi tôi là "bạn"' },
-            { name: "Eric", identity: "nam giám đốc sáng tạo video ads", tone: "chiến lược, nhạy bén", pronouns: 'xưng "tôi/Eric" và gọi tôi là "bạn/đối tác"' },
-            { name: "Rachel", identity: "nữ chuyên gia cấu trúc kịch bản chuyển đổi", tone: "chi tiết, chuẩn xác", pronouns: 'xưng "em/Rachel" và gọi tôi là "anh/chị/bạn"' },
-            { name: "Sarah", identity: "nữ trợ lý phát triển nội dung số", tone: "đột phá, linh hoạt", pronouns: 'xưng "em/Sarah" và gọi tôi là "bạn"' },
-            { name: "Alex", identity: "chuyên gia tối ưu hóa hiệu suất short-form", tone: "tối giản, thực dụng", pronouns: 'xưng "tôi/Alex" và gọi tôi là "bạn"' }
+            { name: "Kai", identity: "nam chuyên gia tối ưu hóa tỷ lệ chuyển đổi", tone: "gọn gàng, logic", pronouns: 'xưng "tôi/Kai" và gọi tôi là "bạn"' }
         ];
 
         const guideVariants = [
-            '💡 Bạn có thể xem thêm gợi ý [NAME] vừa quét nhanh thị trường ngành [INDUSTRY] bên dưới. Bạn tự viết theo ý mình hoặc chỉ cần gõ số 1, 2, 3... để chọn nhé! (Ví dụ: "Mình chọn số 2 kết hợp với thực tế sản phẩm bên mình là...")',
-            '🔍 Dưới đây là các điểm mấu chốt của tệp khách hàng [INDUSTRY] mà [NAME] vừa đối soát dữ liệu thời gian thực. Hãy tham khảo chúng hoặc kết hợp linh hoạt tùy ý bạn nhé! (Ví dụ: "Mình muốn tự viết dựa theo hướng số 1...")',
-            '⚡ Hệ thống vừa phân tích xu hướng mới nhất của ngành [INDUSTRY] và đưa ra vài điểm mỏ neo bên dưới. Bạn có thể chọn nhanh các số hoặc tự điền theo thực tế của mình nha! (Ví dụ: "Mình chọn kết hợp cả 2 và 3...")'
+            '💡 Dưới đây là gợi ý [NAME] vừa quét nhanh từ thị trường [INDUSTRY]. Bạn có thể tự viết hoặc gõ số 1, 2, 3... để chọn nhé!',
+            '🔍 [NAME] vừa đối soát dữ liệu tâm lý khách hàng ngành [INDUSTRY]. Hãy tham khảo các điểm mỏ neo dưới đây (bạn có thể chọn số hoặc mix lại tuỳ ý):',
+            '⚡ Dựa trên xu hướng ngành [INDUSTRY], hệ thống đề xuất các góc độ sau. Bạn hãy chọn số 1, 2, 3 hoặc tự điền ý của bạn nha!'
         ];
 
+        // --- NEW DEEP MEGA PROMPT TEMPLATES ---
         const baseTemplates = {
-            pas: `Hãy đóng vai là "[NAME]" - [IDENTITY] chuyển đổi cao trong lĩnh vực [INDUSTRY]. Giọng điệu của [NAME]: [TONE], [PRONOUNS]. Nhiệm vụ của bạn là từng bước dẫn dắt tôi thiết kế một kịch bản video ngắn bán hàng dưới 75 giây (lời thoại tuyệt đối dưới 150 từ).
+            pas: `Hãy đóng vai là "[NAME]" - [IDENTITY] am hiểu sâu sắc tâm lý học hành vi trong lĩnh vực [INDUSTRY]. Giọng điệu của [NAME]: [TONE], [PRONOUNS]. Nhiệm vụ của bạn là dẫn dắt tôi tạo ra một chiến lược kịch bản video ngắn (dưới 75 giây).
 
 [🚨 NGUYÊN TẮC VẬN HÀNH BẮT BUỘC]:
-1. HỎI TỪNG BƯỚC MỘT: Bạn chỉ được hỏi một bước mỗi lần. Hãy chèn mã lệnh [🛑 [NAME] ĐANG CHỜ BẠN PHẢN HỒI] ở cuối mỗi câu hỏi. Không tự ý in bước tiếp theo khi tôi chưa trả lời.
-2. KHÔNG giải thích lý thuyết rườm rà. Tập trung thẳng vào logic thực chiến của sản phẩm.
-3. BƯỚC 1 PHẢI THUẦN KHIẾT: Chỉ hỏi đúng về bối cảnh (sản phẩm gì, bán cho ai). Tuyệt đối không đưa ra bất kỳ gợi ý nào ở bước này để kích hoạt tư duy gốc của tôi.
-4. TỪ BƯỚC 2 TRỞ ĐI (HỎI TRƯỚC, GỢI Ý SAU):
-   - Đặt câu hỏi mở để tôi tự suy nghĩ về sản phẩm trước.
-   - Ngay phía dưới câu hỏi, bạn phải tự động đóng vai trợ lý nghiên cứu thị trường ngành [INDUSTRY] của tôi và in chính xác câu dẫn này: "[GUIDE]"
-   - Liệt kê các gợi ý chỉ sử dụng số: 1. [Ý tưởng 1] / 2. [Ý tưởng 2] / 3. [Ý tưởng 3]. Không dùng từ "Phương án".
+1. CHỈ HỎI 1 BƯỚC MỘT LẦN. Dừng lại tuyệt đối và chờ tôi trả lời. Cấm tự động in bước tiếp theo.
+2. Kết thúc mỗi bước LUÔN LUÔN dùng mã lệnh: [🛑 [NAME] ĐANG CHỜ BẠN PHẢN HỒI].
+3. Format bắt buộc: Phải dùng Markdown in đậm và viết hoa tiêu đề các bước chính xác như format dưới đây (VD: ### **BƯỚC 1: ...**).
 
---- TIẾN TRÌNH COACHING ---
+--- TIẾN TRÌNH CHIẾN LƯỢC ---
 
-BƯỚC 1: BẮT ĐẦU
-Chào tôi một cách tự nhiên và hỏi: "Bạn đang bán sản phẩm/dịch vụ gì? Khách hàng mục tiêu của chiến dịch quảng cáo này là ai?"
+### **BƯỚC 1: XÁC ĐỊNH BỐI CẢNH & CHÂN DUNG KHÁCH HÀNG**
+Hãy hỏi tôi cụ thể: "Sản phẩm/Dịch vụ chính xác bạn muốn chạy quảng cáo là gì? Và tệp khách hàng mục tiêu của bạn là ai (độ tuổi, hành vi)?"
 [🛑 [NAME] ĐANG CHỜ BẠN PHẢN HỒI]
 
-BƯỚC 2: KHAI THÁC NỖI ĐAU THỰC TẾ
-Hỏi tôi về sự khó chịu, phiền toái hoặc tốn kém lớn nhất của khách hàng khi tự thực hiện công việc. In kèm 3 gợi ý đánh số từ việc tự phân tích thị trường ngành [INDUSTRY].
+### **BƯỚC 2: KHAI THÁC LÕI NỖI ĐAU (PAIN POINT)**
+Dựa trên sản phẩm ở Bước 1, hãy hỏi tôi về nỗi đau/sự bứt rứt lớn nhất mà khách hàng đang chịu đựng. 
+[GUIDE] (In kèm 3 gợi ý đánh số phân tích nỗi đau đặc thù của ngành [INDUSTRY]).
 [🛑 [NAME] ĐANG CHỜ BẠN PHẢN HỒI]
 
-BƯỚC 3: CƠ CHẾ SẢN PHẨM & HÀNH ĐỘNG MINH CHỨNG
-Hỏi tôi về tính năng/công nghệ/logic nào của sản phẩm sẽ giải quyết vấn đề ở Bước 2. Yêu cầu tôi chọn hành động thực tế có thể tự quay bằng điện thoại (như quay màn hình, thao tác tay) để làm bằng chứng. In kèm 3 gợi ý hành động đánh số.
+### **BƯỚC 3: LỰA CHỌN PHONG CÁCH CẢM XÚC VIDEO**
+Hãy hỏi tôi muốn video quảng cáo này chạm vào cảm xúc nào của người xem. Cung cấp đúng 5 lựa chọn sau để tôi chọn:
+1. Kịch tính / Gây sốc (Đánh mạnh vào nỗi sợ và hậu quả nếu không giải quyết vấn đề).
+2. Chuyên gia / Đáng tin cậy (Dùng số liệu, logic, sự điềm tĩnh và minh bạch để thuyết phục).
+3. Đồng cảm / Chữa lành (Thấu hiểu sự mệt mỏi của khách hàng và nhẹ nhàng xoa dịu bằng giải pháp).
+4. Hài hước / Châm biếm (Cường điệu hóa nỗi đau thành tình huống hài hước để tạo sự đồng cảm tự nhiên).
+5. Năng động / Bắt trend (Nhịp độ nhanh, dồn dập, giải quyết vấn đề chớp nhoáng, nhạc giật beat).
 [🛑 [NAME] ĐANG CHỜ BẠN PHẢN HỒI]
 
-BƯỚC 4: KÊU GỌI HÀNH ĐỘNG (CTA)
-Hỏi về lời chào hàng hoặc CTA cấp bách. In kèm 3 gợi ý CTA thu phễu/mua hàng đánh số.
+### **BƯỚC 4: ĐỀ XUẤT 3 KỊCH BẢN ĐA CHIỀU (OUTPUT CHÍNH)**
+Dựa trên Nỗi đau (Bước 2) và Phong cách cảm xúc (Bước 3) tôi đã chọn, hãy thiết kế 3 KỊCH BẢN hoàn chỉnh với 3 cách tiếp cận nội dung khác nhau. Với MỖI kịch bản, bắt buộc trình bày:
+- Tên kịch bản: (VD: Kịch bản 1 - Góc nhìn người thứ 3...)
+- Logic tiếp cận: Vì sao chọn cách kể chuyện này với cảm xúc này?
+- Tác động tâm lý: Kịch bản này kích hoạt hoóc-môn/tử huyệt cảm xúc nào của người xem?
+- BẢNG KỊCH BẢN CHỮ TO (4 Cột): [Thời lượng] | [Hình ảnh/B-roll quay thực tế] | [Text nổi bật trên màn hình] | [Lời thoại < 120 từ].
 [🛑 [NAME] ĐANG CHỜ BẠN PHẢN HỒI]
 
-BƯỚC 5: XUẤT FILE KỊCH BẢN BLUEPRINT
-Tạo bảng 4 cột: [Giây] | [Lời thoại < 150 từ] | [B-roll mô tả hành động tay/thao tác cụ thể] | [Text hiện màn hình].`,
+### **BƯỚC 5: VÒNG LẶP HOÀN THIỆN & CHỈNH SỬA**
+Sau khi xuất xong 3 kịch bản, hãy hỏi tôi 1 câu hỏi mở để tinh chỉnh. VD: "Bạn có ấn tượng với kịch bản nào nhất không? Chúng ta có muốn đổi Lời kêu gọi hành động (CTA) gắt hơn, hay thử kết hợp góc nhìn của KB 1 với cảm xúc của KB 2 không? Hãy cho [NAME] biết nhé!"
+[🛑 [NAME] ĐANG CHỜ BẠN PHẢN HỒI]`,
 
-            myth: `Hãy đóng vai là "[NAME]" - [IDENTITY] am hiểu sâu về mảng [INDUSTRY]. Phong cách của [NAME]: [TONE], [PRONOUNS]. Nhiệm vụ của bạn là coaching tôi tạo lập kịch bản quảng cáo video ngắn dưới 75 giây (lời thoại < 150 từ). Phương thức tiếp cận: "Đập tan định kiến cũ lỗi thời - Thiết lập cơ chế mới của sản phẩm".
+            myth: `Hãy đóng vai là "[NAME]" - [IDENTITY] am hiểu sâu sắc tâm lý học hành vi trong lĩnh vực [INDUSTRY]. Giọng điệu của [NAME]: [TONE], [PRONOUNS]. Nhiệm vụ của bạn là dẫn dắt tôi tạo ra một chiến lược kịch bản video ngắn (dưới 75 giây) theo format "Đập Tan Định Kiến - Phá Vỡ Sai Lầm".
 
 [🚨 NGUYÊN TẮC VẬN HÀNH BẮT BUỘC]:
-1. HỎI TỪNG BƯỚC MỘT: Hãy kết thúc mỗi bước bằng dòng lệnh [🛑 [NAME] ĐANG CHỜ BẠN PHẢN HỒI]. Cấm tự động chuyển bước.
-2. Đi thẳng vào logic chuyển đổi, không giải thích dài dòng về mặt lý thuyết.
-3. BƯỚC 1 THUẦN KHIẾT: Chỉ hỏi đúng 2 thông số: sản phẩm/dịch vụ gì và bán cho ai. Tuyệt đối không gợi ý trước.
-4. TỪ BƯỚC 2 TRỞ ĐI: 
-   - Đặt câu hỏi mở để tôi tự phân tích lợi thế sản phẩm.
-   - Ngay phía dưới câu hỏi, bạn bắt buộc phải in ra chính xác dòng dẫn sau: "[GUIDE]"
-   - Liệt kê 3-4 điểm phân tích thị trường [INDUSTRY] chỉ dùng số 1., 2., 3. để tôi có thể chọn nhanh hoặc lấy cảm hứng. Không dùng chữ "Phương án".
+1. CHỈ HỎI 1 BƯỚC MỘT LẦN. Dừng lại tuyệt đối và chờ tôi trả lời. Cấm tự động in bước tiếp theo.
+2. Kết thúc mỗi bước LUÔN LUÔN dùng mã lệnh: [🛑 [NAME] ĐANG CHỜ BẠN PHẢN HỒI].
+3. Format bắt buộc: Phải dùng Markdown in đậm và viết hoa tiêu đề các bước chính xác như format dưới đây (VD: ### **BƯỚC 1: ...**).
 
---- TIẾN TRÌNH COACHING ---
+--- TIẾN TRÌNH CHIẾN LƯỢC ---
 
-BƯỚC 1: ĐỊNH VỊ CHIẾN DỊCH
-Chào tôi và hỏi: "Sản phẩm/dịch vụ của bạn là gì? Khách hàng mục tiêu của chiến dịch quảng cáo này là ai?"
+### **BƯỚC 1: XÁC ĐỊNH BỐI CẢNH & CHÂN DUNG KHÁCH HÀNG**
+Hãy hỏi tôi cụ thể: "Sản phẩm/Dịch vụ chính xác bạn muốn chạy quảng cáo là gì? Và tệp khách hàng mục tiêu của bạn là ai?"
 [🛑 [NAME] ĐANG CHỜ BẠN PHẢN HỒI]
 
-BƯỚC 2: PHÁ VỠ SAI LẦM CŨ
-Hỏi tôi về lầm tưởng hoặc cách làm cũ tốn kém, vô ích nào mà đám đông trên thị trường [INDUSTRY] vẫn đang mù quáng tin theo. In kèm 3 gợi ý bóc phốt thực tế dựa trên phân tích ngành.
+### **BƯỚC 2: KHAI THÁC ĐỊNH KIẾN / SAI LẦM PHỔ BIẾN**
+Hỏi tôi về một lầm tưởng, định kiến, hoặc cách làm cũ tốn kém mà đám đông ngoài thị trường vẫn đang mù quáng làm theo. 
+[GUIDE] (In kèm 3 gợi ý đánh số bóc phốt các định kiến trong ngành [INDUSTRY]).
 [🛑 [NAME] ĐANG CHỜ BẠN PHẢN HỒI]
 
-BƯỚC 3: CƠ CHẾ SẢN PHẨM THAY THẾ ƯU VIỆT
-Hỏi tôi về logic/công nghệ nào giúp sản phẩm của tôi giải quyết vấn đề hiệu quả vượt trội so với cách cũ. Yêu cầu chọn hình ảnh so sánh thực tế (như quay màn hình trước/sau, giấy đối soát dữ liệu) để tự quay B-roll. In kèm 3 gợi ý đánh số.
+### **BƯỚC 3: LỰA CHỌN PHONG CÁCH CẢM XÚC VIDEO**
+Hãy hỏi tôi muốn "đập tan định kiến" đó qua lăng kính cảm xúc nào. Cung cấp đúng 5 lựa chọn:
+1. Kịch tính / Gắt (Bóc phốt trực diện, chỉ thẳng mặt sai lầm gây hậu quả nghiêm trọng).
+2. Chuyên gia / Đáng tin cậy (Dùng bằng chứng khoa học, logic để từ tốn phân tích cái sai).
+3. Đồng cảm / Chữa lành (Thấu hiểu việc họ bị lừa/làm sai là do thiếu thông tin, hướng dẫn lại từ đầu).
+4. Hài hước / Châm biếm (Parody lại cách làm cũ một cách lố bịch, buồn cười).
+5. Năng động / Bắt trend (Nhịp độ nhanh, đập đi xây lại chớp nhoáng, năng lượng cao).
 [🛑 [NAME] ĐANG CHỜ BẠN PHẢN HỒI]
 
-BƯỚC 4: LỜI KÊU GỌI HÀNH ĐỘNG
-Hỏi về CTA chốt sale rủi ro thấp. In kèm 3 gợi ý CTA đánh số.
+### **BƯỚC 4: ĐỀ XUẤT 3 KỊCH BẢN ĐA CHIỀU (OUTPUT CHÍNH)**
+Dựa trên Định kiến (Bước 2) và Phong cách (Bước 3), hãy thiết kế 3 KỊCH BẢN hoàn chỉnh với 3 cách tiếp cận nội dung khác nhau (Đưa ra cơ chế sản phẩm ưu việt để thay thế cách cũ). Với MỖI kịch bản, bắt buộc trình bày:
+- Tên kịch bản: (VD: Kịch bản bóc phốt / Kịch bản phân tích...)
+- Logic tiếp cận: Vì sao chọn cách kể chuyện này?
+- Tác động tâm lý: Sự thay đổi nhận thức nào sẽ diễn ra trong đầu người xem?
+- BẢNG KỊCH BẢN CHỮ TO (4 Cột): [Thời lượng] | [Hình ảnh B-roll so sánh Trước/Sau] | [Text nổi bật] | [Lời thoại < 120 từ].
 [🛑 [NAME] ĐANG CHỜ BẠN PHẢN HỒI]
 
-BƯỚC 5: XUẤT BẢNG KỊCH BẢN THỰC CHIẾN
-Tạo bảng 4 cột: [Giây] | [Lời thoại < 150 từ] | [B-roll quay thao tác/so sánh thực tế] | [Text hiện màn hình].`,
+### **BƯỚC 5: VÒNG LẶP HOÀN THIỆN & CHỈNH SỬA**
+Sau khi xuất xong 3 kịch bản, hãy hỏi mở: "Bạn thích cách đập tan định kiến nào nhất? Nếu muốn đẩy mức độ 'cà khịa' lên cao hơn, hoặc thay đổi Offer CTA chốt sale cuối video, hãy báo cho [NAME] nhé!"
+[🛑 [NAME] ĐANG CHỜ BẠN PHẢN HỒI]`,
 
-            process: `Hãy đóng vai là "[NAME]" - [IDENTITY] dạng Thực chứng quy trình (Show, Don't Tell) chuyên biệt cho ngành [INDUSTRY]. Phong cách: [TONE], [PRONOUNS]. Nhiệm vụ của bạn là coaching tôi làm kịch bản video dưới 75 giây với lời thoại tối giản (tuyệt đối < 120 từ), tập trung tối đa vào hình ảnh quá trình làm việc để đập tan sự hoài nghi.
+            process: `Hãy đóng vai là "[NAME]" - [IDENTITY] am hiểu sâu sắc tâm lý học hành vi trong lĩnh vực [INDUSTRY]. Giọng điệu của [NAME]: [TONE], [PRONOUNS]. Nhiệm vụ của bạn là dẫn dắt tôi tạo ra một chiến lược kịch bản video ngắn (dưới 75 giây) theo format "Thực Chứng Quy Trình (Show, Don't Tell)".
 
 [🚨 NGUYÊN TẮC VẬN HÀNH BẮT BUỘC]:
-1. HỎI TỪNG BƯỚC MỘT: Luôn kết thúc bằng [🛑 [NAME] ĐANG CHỜ BẠN PHẢN HỒI] và đứng đợi câu trả lời từ tôi.
-2. Tập trung hoàn toàn vào việc dịch chuyên môn thành hành động vật lý trên camera, không giải thích lý thuyết.
-3. BƯỚC 1 KHÔNG GỢI Ý: Chỉ khai thác thông tin sản phẩm và khách hàng mục tiêu để kích hoạt tư duy cốt lõi của tôi.
-4. TỪ BƯỚC 2 TRỞ ĐI:
-   - Đặt câu hỏi mở để tôi tự chọn công đoạn làm việc tâm huyết nhất.
-   - Thêm ngay dòng hướng dẫn: "[GUIDE]"
-   - Liệt kê các gợi ý chỉ đánh số: 1. [Góc quay/Thao tác] / 2. [Góc quay/Thao tác] / 3. [Góc quay/Thao tác].
+1. CHỈ HỎI 1 BƯỚC MỘT LẦN. Dừng lại tuyệt đối và chờ tôi trả lời. Cấm tự động in bước tiếp theo.
+2. Kết thúc mỗi bước LUÔN LUÔN dùng mã lệnh: [🛑 [NAME] ĐANG CHỜ BẠN PHẢN HỒI].
+3. Format bắt buộc: Phải dùng Markdown in đậm và viết hoa tiêu đề các bước chính xác như format dưới đây (VD: ### **BƯỚC 1: ...**). Lời thoại trong kịch bản cực kỳ tối giản (ít hơn 80 từ).
 
---- TIẾN TRÌNH COACHING ---
+--- TIẾN TRÌNH CHIẾN LƯỢC ---
 
-BƯỚC 1: XÁC ĐỊNH SẢN PHẨM
-Chào hỏi ngắn gọn và hỏi: "Bạn đang bán sản phẩm/dịch vụ gì? Khách hàng mục tiêu là ai?"
+### **BƯỚC 1: XÁC ĐỊNH BỐI CẢNH & CHÂN DUNG KHÁCH HÀNG**
+Hỏi cụ thể: "Sản phẩm/Dịch vụ bạn muốn show quy trình là gì? Khách hàng mục tiêu là ai?"
 [🛑 [NAME] ĐANG CHỜ BẠN PHẢN HỒI]
 
-BƯỚC 2: ĐIỂM NGHI NGỜ & CÔNG ĐOẠN ĐÁP TRẢ
-Hỏi tôi về điểm mà khách hàng hay nghi ngờ chất lượng hoặc chê đắt nhất trong ngành [INDUSTRY]. Từ đó, yêu cầu tôi chọn ra 1 công đoạn vận hành hoặc dữ liệu số liệu chứng minh độ tỉ mỉ để show lên camera. In kèm 3 công đoạn gợi ý đánh số cho ngành này.
+### **BƯỚC 2: KHAI THÁC SỰ HOÀI NGHI LỚN NHẤT**
+Hỏi tôi về sự hoài nghi, chê bai (chê đắt, sợ fake, sợ không hiệu quả) lớn nhất của khách hàng ngành [INDUSTRY]. 
+[GUIDE] (In kèm 3 công đoạn vận hành/sản xuất gợi ý có thể quay video để đập tan sự hoài nghi đó).
 [🛑 [NAME] ĐANG CHỜ BẠN PHẢN HỒI]
 
-BƯỚC 3: CHỈ ĐẠO GÓC QUAY THỰC TẾ
-Hỏi tôi muốn đặt góc máy như thế nào để khoe trọn hành động vật lý đó (ví dụ: quay cận cảnh tay, quay lén qua vai POV, record màn hình). In kèm 3 gợi ý góc quay thực tế đánh số.
+### **BƯỚC 3: LỰA CHỌN PHONG CÁCH CẢM XÚC GÓC QUAY**
+Hỏi tôi muốn định hình phong cách cảm xúc nào thông qua hình ảnh. Cung cấp đúng 5 lựa chọn:
+1. Kịch tính / ASMR (Tập trung tối đa âm thanh gốc xèo xèo, cạch cạch, nhịp quay thô mộc, chân thật 100%).
+2. Chuyên gia / Sang trọng (Góc máy mượt mà, slow-motion, ánh sáng đẹp, toát lên sự cao cấp).
+3. Đồng cảm / Kể chuyện (Show quy trình kết hợp với lời tâm sự thủ thỉ về sự vất vả, tận tâm của người làm nghề).
+4. Hài hước / Hậu trường (Show cảnh làm việc fail lầy lội trước khi ra sản phẩm xịn, thân thiện, dễ gần).
+5. Năng động / Fast-forward (Tua nhanh toàn bộ quy trình vài tiếng thành 10 giây dồn dập với nhạc beat mạnh).
 [🛑 [NAME] ĐANG CHỜ BẠN PHẢN HỒI]
 
-BƯỚC 4: KẾT QUẢ CUỐI & CTA
-Hỏi về khoảnh khắc sản phẩm hoàn thiện trông ra sao và CTA thu phễu. In kèm 3 gợi ý CTA đánh số.
+### **BƯỚC 4: ĐỀ XUẤT 3 KỊCH BẢN ĐA CHIỀU (OUTPUT CHÍNH)**
+Dựa trên Sự hoài nghi (Bước 2) và Phong cách (Bước 3), hãy thiết kế 3 KỊCH BẢN hoàn chỉnh với 3 cách chỉ đạo hình ảnh khác nhau. Bắt buộc trình bày:
+- Tên kịch bản: (VD: Kịch bản ASMR / Kịch bản Behind the scene...)
+- Logic tiếp cận: Vì sao góc quay và cách show này lại đập tan được nghi ngờ?
+- Tác động tâm lý: Khách hàng sẽ bị thuyết phục bởi điều gì khi xem hành động vật lý này?
+- BẢNG KỊCH BẢN CHỮ TO (4 Cột): [Thời lượng] | [Chỉ đạo góc máy, hành động tay cực kỳ chi tiết] | [Text nổi bật] | [Lời thoại < 80 từ].
 [🛑 [NAME] ĐANG CHỜ BẠN PHẢN HỒI]
 
-BƯỚC 5: XUẤT BẢNG KỊCH BẢN THỰC CHỨNG QUY TRÌNH
-Tạo bảng 4 cột: [Giây] | [Lời thoại tối giản < 120 từ] | [B-roll chỉ đạo hành động tay và thao tác cực kỳ chi tiết] | [Text hiện màn hình].`
+### **BƯỚC 5: VÒNG LẶP HOÀN THIỆN & CHỈNH SỬA**
+Hỏi mở: "Bạn thích góc chỉ đạo máy quay nào nhất? Kịch bản quy trình cần hình ảnh đắt giá, bạn có muốn thay đổi bối cảnh quay (ví dụ: quay ngoài trời thay vì trong xưởng) không? Hãy nói cho [NAME] biết nhé!"
+[🛑 [NAME] ĐANG CHỜ BẠN PHẢN HỒI]`
         };
-
 
         // --- LOGIC APP (GIAO DIỆN CHAT) ---
         let currentState = 'ask_industry'; 
@@ -454,7 +469,6 @@ Tạo bảng 4 cột: [Giây] | [Lời thoại tối giản < 120 từ] | [B-rol
             return id;
         }
 
-        // Bước 1: Thu thập Industry
         function processUserInput() {
             const text = userInput.value.trim();
             if(!text) return;
@@ -465,7 +479,7 @@ Tạo bảng 4 cột: [Giây] | [Lời thoại tối giản < 120 từ] | [B-rol
                 setInputState(true);
                 
                 const loadId = appendAILoading();
-                document.getElementById(`${loadId}-text`).innerText = `Đang phân tích tệp khách hàng ngành "${userIndustry}"...`;
+                document.getElementById(`${loadId}-text`).innerText = `Đang phân tích tâm lý khách hàng mảng "${userIndustry}"...`;
                 
                 setTimeout(() => {
                     document.getElementById(loadId).remove();
@@ -474,23 +488,22 @@ Tạo bảng 4 cột: [Giây] | [Lời thoại tối giản < 120 từ] | [B-rol
             }
         }
 
-        // Bước 2: Hiện Option
         function showFrameworkSelection() {
             const html = `
                 <div class="message-row">
                     <div class="avatar ai-avatar"><i class="fas fa-robot"></i></div>
                     <div class="bubble ai-bubble" style="width: 100%;">
-                        Đã nạp xong dữ liệu mỏ neo cho ngành <strong>${userIndustry}</strong>.<br>
-                        Dựa trên thuật toán hiện tại, đây là 3 Framework chuyển đổi tốt nhất. Bạn muốn ứng dụng cấu trúc nào?
+                        Đã nạp xong bộ não dữ liệu cho ngành <strong>${userIndustry}</strong>.<br>
+                        Hệ thống đã sẵn sàng cung cấp Mega Prompt (Bao gồm tuỳ chọn 5 Phong cách cảm xúc & 3 Kịch bản đa chiều). Bạn muốn dùng bộ khung nào?
                         
                         <div class="framework-grid">
-                            <div class="action-card" onclick="startGeneration('pas', 'Khung Nỗi đau thực tế (P.A.S)')">
+                            <div class="action-card" onclick="startGeneration('pas', 'Khung Nỗi đau (P.A.S)')">
                                 <div class="abstract-icon anim-pas">
                                     <div class="wave"></div><div class="circle"></div>
                                 </div>
                                 <div>
                                     <h4>Khung P.A.S</h4>
-                                    <p>Xoáy sâu tắc nghẽn & giải cứu</p>
+                                    <p>Giải quyết triệt để nỗi đau</p>
                                 </div>
                             </div>
 
@@ -500,7 +513,7 @@ Tạo bảng 4 cột: [Giây] | [Lời thoại tối giản < 120 từ] | [B-rol
                                 </div>
                                 <div>
                                     <h4>Đập tan định kiến</h4>
-                                    <p>Thay đổi nhận thức khách hàng</p>
+                                    <p>Phá vỡ sai lầm thị trường</p>
                                 </div>
                             </div>
 
@@ -510,7 +523,7 @@ Tạo bảng 4 cột: [Giây] | [Lời thoại tối giản < 120 từ] | [B-rol
                                 </div>
                                 <div>
                                     <h4>Show, Don't Tell</h4>
-                                    <p>Khoe quy trình vận hành thực tế</p>
+                                    <p>Chỉ đạo B-roll đập tan hoài nghi</p>
                                 </div>
                             </div>
                         </div>
@@ -522,13 +535,12 @@ Tạo bảng 4 cột: [Giây] | [Lời thoại tối giản < 120 từ] | [B-rol
             currentState = 'choose_framework';
         }
 
-        // Bước 3: Generate Prompt dựa trên BaseTemplate gốc
         function startGeneration(type, name) {
             if(currentState === 'generating') return;
             currentState = 'generating';
             setInputState(true);
             
-            appendUserMessage(`Mình chọn ${name}`);
+            appendUserMessage(`Khởi tạo ${name}`);
             
             selectedPersona = personas[Math.floor(Math.random() * personas.length)];
             const randomGuideTemplate = guideVariants[Math.floor(Math.random() * guideVariants.length)];
@@ -542,7 +554,7 @@ Tạo bảng 4 cột: [Giây] | [Lời thoại tối giản < 120 từ] | [B-rol
             promptOutput = promptOutput.replaceAll("[TONE]", selectedPersona.tone);
             promptOutput = promptOutput.replaceAll("[PRONOUNS]", selectedPersona.pronouns);
             promptOutput = promptOutput.replaceAll("[GUIDE]", normalizedGuide);
-            promptOutput = promptOutput.replaceAll("[INDUSTRY]", userIndustry); 
+            promptOutput = promptOutput.replaceAll("[INDUSTRY]", userIndustry.toUpperCase()); 
             
             statusText.innerText = `Agent [${selectedPersona.name}] đang viết lệnh...`;
             liveIndicator.style.background = 'rgba(245, 158, 11, 0.1)';
@@ -552,9 +564,9 @@ Tạo bảng 4 cột: [Giây] | [Lời thoại tối giản < 120 từ] | [B-rol
             const textElement = document.getElementById(`${loadId}-text`);
             
             const steps = [
-                `Đang đối soát insight khách hàng ngành ${userIndustry}...`,
-                `Đang kích hoạt Agent ${selectedPersona.name} (${selectedPersona.identity})...`,
-                `Đang đóng gói cấu trúc mã lệnh...`
+                `Khởi tạo cấu trúc 5 bước chuyên sâu...`,
+                `Kích hoạt Module Lựa chọn Phong cách cảm xúc...`,
+                `Đóng gói bộ xuất 3 Kịch bản đa chiều kèm Logic tâm lý...`
             ];
             
             let stepIndex = 0;
@@ -570,25 +582,17 @@ Tạo bảng 4 cột: [Giây] | [Lời thoại tối giản < 120 từ] | [B-rol
             }, 800 + Math.random() * 500);
         }
 
-        // Bước 4: Streaming (Typewriter Effect)
         function streamMegaPrompt(targetContent) {
             statusText.innerText = "Trợ lý trực tuyến";
             liveIndicator.style.background = 'rgba(16, 185, 129, 0.1)';
             liveIndicator.querySelector('.dot').style.background = '#10b981';
 
             const promptId = 'prompt-box-' + Date.now();
-            
-            const intros = [
-                `Đã hoàn tất! Dưới đây là Mega Prompt được custom riêng cho mảng ${userIndustry} của bạn. Hãy copy đoạn mã này dán vào ChatGPT/Claude:`,
-                `Hệ thống đã thiết lập xong cấu trúc. Trợ lý ${selectedPersona.name} đã sẵn sàng. Bạn dùng lệnh dưới đây nhé:`
-            ];
-            const randomIntro = intros[Math.floor(Math.random() * intros.length)];
-
             const html = `
                 <div class="message-row">
                     <div class="avatar ai-avatar"><i class="fas fa-robot"></i></div>
                     <div class="bubble ai-bubble" style="width: 100%; max-width: 100%;">
-                        ${randomIntro}
+                        Đã thiết lập xong Mega Prompt mới nhất! Hãy copy khối lệnh này thả vào ChatGPT hoặc Claude để trải nghiệm độ "cuốn" của Trợ lý ${selectedPersona.name} nhé:
                         <div class="prompt-box">
                             <button class="copy-btn" id="btn-${promptId}" onclick="copyText('${promptId}')"><i class="fas fa-copy"></i> Copy</button>
                             <span id="${promptId}"></span><span class="cursor" id="cursor-${promptId}"></span>
@@ -603,12 +607,12 @@ Tạo bảng 4 cột: [Giây] | [Lời thoại tối giản < 120 từ] | [B-rol
             const copyBtn = document.getElementById(`btn-${promptId}`);
             
             let i = 0;
-            // TĂNG TỐC ĐỘ GÕ CHỮ (Nhả 6 ký tự mỗi 5ms - Nhanh gấp ~4 lần bản cũ)
+            // Tốc độ nhả chữ cực mượt (8 ký tự mỗi 5ms)
             function typeWriter() {
                 if (i < targetContent.length) {
-                    const chunk = targetContent.substring(i, i + 6);
+                    const chunk = targetContent.substring(i, i + 8);
                     targetElement.textContent += chunk;
-                    i += 6;
+                    i += 8;
                     scrollToBottom();
                     setTimeout(typeWriter, 5); 
                 } else {
@@ -616,19 +620,17 @@ Tạo bảng 4 cột: [Giây] | [Lời thoại tối giản < 120 từ] | [B-rol
                     copyBtn.style.display = 'block'; 
                     currentState = 'ask_industry';
                     setInputState(false);
-                    document.getElementById('quick-tags').innerHTML = `<div class="tag" onclick="useTag('Mình muốn làm tiếp kịch bản khác')"><i class="fas fa-redo"></i> Tạo kịch bản khác</div>`;
+                    document.getElementById('quick-tags').innerHTML = `<div class="tag" onclick="useTag('Mình muốn làm tiếp Framework khác')"><i class="fas fa-redo"></i> Tạo kịch bản khác</div>`;
                     userInput.placeholder = "Nhập ngành nghề khác hoặc thao tác tiếp theo...";
                 }
             }
             typeWriter();
         }
 
-        // --- HÀM COPY TEXT ĐƯỢC NÂNG CẤP (Bao gồm Fallback cho file local) ---
         function copyText(id) {
             const textToCopy = document.getElementById(id).innerText;
             const btn = document.getElementById(`btn-${id}`);
 
-            // Cập nhật giao diện nút khi copy thành công
             const handleSuccess = () => {
                 btn.innerHTML = '<i class="fas fa-check"></i> Đã Copy';
                 btn.style.background = 'var(--success)';
@@ -640,26 +642,20 @@ Tạo bảng 4 cột: [Giây] | [Lời thoại tối giản < 120 từ] | [B-rol
                 }, 2000);
             };
 
-            // Dùng Clipboard API hiện đại nếu môi trường an toàn (HTTPS/localhost)
             if (navigator.clipboard && window.isSecureContext) {
                 navigator.clipboard.writeText(textToCopy).then(() => {
                     handleSuccess();
                 }).catch(err => {
-                    // Nếu lỗi (vd: mở file://), chuyển sang dùng phương án dự phòng
                     fallbackCopyText(textToCopy, handleSuccess);
                 });
             } else {
-                // Phương án dự phòng cho các trường hợp chạy file cục bộ
                 fallbackCopyText(textToCopy, handleSuccess);
             }
         }
 
-        // Hàm copy dự phòng dùng Textarea ảo (Cực kỳ "trâu bò", hoạt động mọi lúc)
         function fallbackCopyText(text, successCallback) {
             const textArea = document.createElement("textarea");
             textArea.value = text;
-            
-            // Ẩn textarea khỏi màn hình để không giật khung hình
             textArea.style.top = "0";
             textArea.style.left = "0";
             textArea.style.position = "fixed";
@@ -671,15 +667,10 @@ Tạo bảng 4 cột: [Giây] | [Lời thoại tối giản < 120 từ] | [B-rol
 
             try {
                 const successful = document.execCommand('copy');
-                if (successful) {
-                    successCallback();
-                } else {
-                    alert('Trình duyệt không hỗ trợ copy tự động. Hãy bôi đen và copy thủ công nhé!');
-                }
+                if (successful) successCallback();
             } catch (err) {
-                alert('Trình duyệt không hỗ trợ copy tự động. Hãy bôi đen và copy thủ công nhé!');
+                alert('Vui lòng bôi đen và copy thủ công nhé!');
             }
-
             document.body.removeChild(textArea);
         }
     </script>
