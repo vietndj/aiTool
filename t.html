@@ -1,0 +1,497 @@
+ <!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZenPaste - Tự động hóa chuyển đổi văn bản sang TXT</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f5f7ff',
+                            100: '#ebf0ff',
+                            500: '#4f46e5',
+                            600: '#4338ca',
+                            900: '#1e1b4b',
+                        },
+                        darkBg: '#0b0f19',
+                        darkCard: '#151b2c',
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts (Inter & Fira Code) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0b0f19;
+            color: #f3f4f6;
+        }
+        .code-font {
+            font-family: 'Fira Code', monospace;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #151b2c;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #374151;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4b5563;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between transition-colors duration-300">
+
+    <!-- Header -->
+    <header class="border-b border-gray-800 bg-darkCard/80 backdrop-blur-md sticky top-0 z-50 px-6 py-4">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-purple-500 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                    <svg class="w-5 h-5 text-white animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight bg-gradient-to-r from-indigo-200 via-white to-indigo-200 bg-clip-text text-transparent">ZenPaste</h1>
+                    <p class="text-xs text-gray-400">Trình tự động hóa chuyển đổi Text sang .TXT siêu tốc</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-3 flex-wrap">
+                <!-- Auto download Toggle -->
+                <div class="flex items-center gap-3 bg-gray-800/50 px-4 py-2 rounded-xl border border-gray-700">
+                    <span class="text-sm font-medium text-gray-300">Tự động tải khi dán (Auto-download)</span>
+                    <button id="autoDownloadToggle" onclick="toggleAutoDownload()" class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none bg-indigo-600" role="switch" aria-checked="true">
+                        <span id="toggleHandle" class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out translate-x-5"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <main class="flex-grow max-w-7xl w-full mx-auto p-4 sm:p-6 flex flex-col gap-6">
+        
+        <!-- Controls & Customizations Panel -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <!-- Naming Settings -->
+            <div class="bg-darkCard border border-gray-800 p-4 rounded-2xl flex flex-col justify-between gap-3 shadow-xl">
+                <div>
+                    <h2 class="text-sm font-semibold text-gray-300 flex items-center gap-2 mb-2">
+                        <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                        Cấu trúc tên File mặc định
+                    </h2>
+                    <p class="text-xs text-gray-400 mb-3">Hệ thống sẽ ưu tiên lấy dòng đầu tiên của văn bản làm tên file. Nếu trống, sẽ dùng định dạng dưới:</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-xs text-gray-500 code-font">vanban-</span>
+                    <input type="text" id="fileNamePrefix" value="tailieu" class="bg-gray-900/80 border border-gray-700 rounded-lg px-3 py-1.5 text-sm w-full focus:outline-none focus:border-indigo-500 text-gray-200 code-font" placeholder="Ví dụ: kịch-bản">
+                    <span class="text-xs text-gray-500 code-font">.txt</span>
+                </div>
+            </div>
+
+            <!-- Fast Formatting Actions -->
+            <div class="bg-darkCard border border-gray-800 p-4 rounded-2xl shadow-xl flex flex-col justify-between gap-3">
+                <h2 class="text-sm font-semibold text-gray-300 flex items-center gap-2">
+                    <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+                    Công cụ xử lý nhanh văn bản
+                </h2>
+                <div class="grid grid-cols-2 gap-2">
+                    <button onclick="cleanEmptyLines()" class="px-3 py-2 bg-gray-800/40 hover:bg-gray-800 text-xs text-gray-300 rounded-xl border border-gray-700/60 transition-all flex items-center justify-center gap-2">
+                        Xóa dòng trống
+                    </button>
+                    <button onclick="normalizeSpaces()" class="px-3 py-2 bg-gray-800/40 hover:bg-gray-800 text-xs text-gray-300 rounded-xl border border-gray-700/60 transition-all flex items-center justify-center gap-2">
+                        Chuẩn hóa khoảng trắng
+                    </button>
+                    <button onclick="toLowerCase()" class="px-3 py-2 bg-gray-800/40 hover:bg-gray-800 text-xs text-gray-300 rounded-xl border border-gray-700/60 transition-all flex items-center justify-center gap-2">
+                        viết thường hết
+                    </button>
+                    <button onclick="toUpperCase()" class="px-3 py-2 bg-gray-800/40 hover:bg-gray-800 text-xs text-gray-300 rounded-xl border border-gray-700/60 transition-all flex items-center justify-center gap-2">
+                        VIẾT HOA HẾT
+                    </button>
+                </div>
+            </div>
+
+            <!-- Live Status & Stats -->
+            <div class="bg-darkCard border border-gray-800 p-4 rounded-2xl flex flex-col justify-between gap-3 shadow-xl">
+                <h2 class="text-sm font-semibold text-gray-300 flex items-center gap-2">
+                    <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                    Thống kê thời gian thực
+                </h2>
+                <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-2 gap-2 text-center">
+                    <div class="bg-gray-900/50 p-2 rounded-xl border border-gray-800/50">
+                        <span class="block text-xs text-gray-400">Ký tự</span>
+                        <span id="charCount" class="text-base font-bold text-indigo-400 code-font">0</span>
+                    </div>
+                    <div class="bg-gray-900/50 p-2 rounded-xl border border-gray-800/50">
+                        <span class="block text-xs text-gray-400">Số từ</span>
+                        <span id="wordCount" class="text-base font-bold text-indigo-400 code-font">0</span>
+                    </div>
+                    <div class="bg-gray-900/50 p-2 rounded-xl border border-gray-800/50">
+                        <span class="block text-xs text-gray-400">Số dòng</span>
+                        <span id="lineCount" class="text-base font-bold text-indigo-400 code-font">0</span>
+                    </div>
+                    <div class="bg-gray-900/50 p-2 rounded-xl border border-gray-800/50">
+                        <span class="block text-xs text-gray-400">Thời gian đọc</span>
+                        <span id="readTime" class="text-base font-bold text-indigo-400 code-font">~0p</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Editor Area -->
+        <div class="flex-grow flex flex-col bg-darkCard border border-gray-800 rounded-2xl overflow-hidden shadow-2xl relative">
+            <!-- Textarea Toolbar -->
+            <div class="flex justify-between items-center px-4 py-3 bg-gray-900/40 border-b border-gray-800/80">
+                <div class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-red-500"></span>
+                    <span class="w-2.5 h-2.5 rounded-full bg-yellow-500"></span>
+                    <span class="w-2.5 h-2.5 rounded-full bg-green-500"></span>
+                    <span class="text-xs text-gray-400 ml-2">Bộ soạn thảo chính</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <!-- Manual Clear -->
+                    <button onclick="clearAll()" class="p-2 text-gray-400 hover:text-red-400 hover:bg-gray-800/50 rounded-lg transition-all" title="Xóa toàn bộ">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                    </button>
+                    <!-- Copy to Clipboard -->
+                    <button onclick="copyToClipboard()" class="p-2 text-gray-400 hover:text-indigo-400 hover:bg-gray-800/50 rounded-lg transition-all" title="Sao chép lại">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Big Input Textarea -->
+            <div class="flex-grow relative flex">
+                <!-- Line Numbers (Visual feedback mimicking real editors) -->
+                <div id="lineNumbers" class="hidden sm:flex flex-col text-right pr-3 pl-4 py-4 text-gray-600 bg-gray-900/20 border-r border-gray-800/40 select-none text-xs code-font min-w-[3rem]">
+                    1
+                </div>
+                <textarea 
+                    id="editor" 
+                    placeholder="Dán hoặc nhập một khối văn bản dài vào đây...&#10;&#10;[Tính năng độc quyền]: Nếu 'Tự động tải khi dán' đang bật, bạn chỉ cần bấm Ctrl+V, file .txt sẽ lập tức tự động tải xuống thiết bị của bạn mà không cần bấm thêm bất cứ nút nào khác!" 
+                    class="w-full h-[300px] sm:h-[450px] bg-transparent resize-none p-4 focus:outline-none text-gray-200 placeholder-gray-500 leading-relaxed text-sm code-font focus:ring-0 focus:border-transparent"
+                    oninput="handleTextChange()"
+                    onpaste="handlePasteEvent(event)"
+                ></textarea>
+            </div>
+
+            <!-- Download Area -->
+            <div class="p-4 bg-gray-900/40 border-t border-gray-800/80 flex flex-col sm:flex-row justify-between items-center gap-3">
+                <div class="text-xs text-gray-400">
+                    Trạng thái: <span id="statusIndicator" class="text-emerald-400 font-semibold">Sẵn sàng nhận dữ liệu</span>
+                </div>
+                <button onclick="downloadAsTxt()" class="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-semibold rounded-xl shadow-lg shadow-indigo-600/20 hover:shadow-indigo-600/30 transition-all duration-200 flex items-center justify-center gap-2 transform hover:-translate-y-0.5 active:translate-y-0">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                    Tải File TXT Thủ công (Hoặc khi tắt Tự động)
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Toast Notifications System -->
+    <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-3 max-w-sm w-full"></div>
+
+    <!-- Footer -->
+    <footer class="border-t border-gray-900 bg-darkBg px-6 py-4 text-center">
+        <p class="text-xs text-gray-500">
+            ZenPaste &copy; 2026. Công cụ mã nguồn mở bảo mật hoàn toàn - Toàn bộ quá trình xử lý diễn ra trực tiếp ngay trên trình duyệt của bạn (Không lưu trữ hoặc truyền tải dữ liệu về máy chủ).
+        </p>
+    </footer>
+
+    <!-- JS Scripts for Business Logic -->
+    <script>
+        // State Management
+        let isAutoDownloadActive = true;
+        
+        // Element Selectors
+        const editor = document.getElementById('editor');
+        const autoDownloadToggle = document.getElementById('autoDownloadToggle');
+        const toggleHandle = document.getElementById('toggleHandle');
+        const lineNumbers = document.getElementById('lineNumbers');
+        const fileNamePrefix = document.getElementById('fileNamePrefix');
+        const toastContainer = document.getElementById('toastContainer');
+        const statusIndicator = document.getElementById('statusIndicator');
+
+        // Counters
+        const charCount = document.getElementById('charCount');
+        const wordCount = document.getElementById('wordCount');
+        const lineCount = document.getElementById('lineCount');
+        const readTime = document.getElementById('readTime');
+
+        // Toggle Auto Download
+        function toggleAutoDownload() {
+            isAutoDownloadActive = !isAutoDownloadActive;
+            if (isAutoDownloadActive) {
+                autoDownloadToggle.classList.replace('bg-gray-700', 'bg-indigo-600');
+                toggleHandle.classList.replace('translate-x-0', 'translate-x-5');
+                showToast("Bật Tự động tải", "File .txt sẽ được tải ngay khi bạn paste văn bản.", "success");
+            } else {
+                autoDownloadToggle.classList.replace('bg-indigo-600', 'bg-gray-700');
+                toggleHandle.classList.replace('translate-x-5', 'translate-x-0');
+                showToast("Tắt Tự động tải", "Bạn sẽ cần bấm nút 'Tải File TXT Thủ công' để tải.", "info");
+            }
+        }
+
+        // On paste event handler
+        function handlePasteEvent(e) {
+            // Give a short delay to let the pasted text render inside textarea
+            setTimeout(() => {
+                if (isAutoDownloadActive) {
+                    const content = editor.value;
+                    if (content.trim().length > 0) {
+                        executeAutoDownload(content);
+                    }
+                }
+            }, 50);
+        }
+
+        // Core business logic to run on input/paste
+        function handleTextChange() {
+            const text = editor.value;
+            
+            // Calculate stats
+            const chars = text.length;
+            const words = text.trim() === "" ? 0 : text.trim().split(/\s+/).length;
+            const lines = text === "" ? 0 : text.split('\n').length;
+            const timeToRead = Math.ceil(words / 200); // Standard 200 wpm reading pace
+
+            // Update stats UI
+            charCount.innerText = chars.toLocaleString();
+            wordCount.innerText = words.toLocaleString();
+            lineCount.innerText = lines.toLocaleString();
+            readTime.innerText = `~${timeToRead}p`;
+
+            // Update line numbers visual component
+            updateLineNumbers(lines);
+
+            // Update status
+            if (chars > 0) {
+                statusIndicator.innerText = `Đã nhập ${chars} ký tự`;
+                statusIndicator.className = "text-indigo-400 font-semibold";
+            } else {
+                statusIndicator.innerText = "Sẵn sàng nhận dữ liệu";
+                statusIndicator.className = "text-emerald-400 font-semibold";
+            }
+        }
+
+        // Update visual line numbers
+        function updateLineNumbers(count) {
+            let numHtml = '';
+            const finalCount = count < 1 ? 1 : count;
+            for (let i = 1; i <= finalCount; i++) {
+                numHtml += `<div>${i}</div>`;
+            }
+            lineNumbers.innerHTML = numHtml;
+        }
+
+        // Auto-generation of files
+        function executeAutoDownload(text) {
+            const filename = generateFileName(text);
+            downloadTxt(text, filename);
+            showToast("Tự động tải xuống thành công!", `Đã lưu tệp: ${filename}`, "success");
+        }
+
+        // Smart name detection
+        function generateFileName(text) {
+            const lines = text.trim().split('\n');
+            let baseName = '';
+
+            // Try using the first line if it's brief
+            if (lines.length > 0 && lines[0].trim().length > 0) {
+                let firstLine = lines[0].trim();
+                // Clean markdown symbols if any (like '# Title')
+                firstLine = firstLine.replace(/[#*`_\[\]()\-+]/g, '').trim();
+                
+                if (firstLine.length > 1 && firstLine.length < 50) {
+                    baseName = sanitizeFileName(firstLine);
+                }
+            }
+
+            // Fallback to custom prefix + date/time
+            if (!baseName) {
+                const prefix = fileNamePrefix.value.trim() || 'tailieu';
+                const now = new Date();
+                const timestamp = `${now.getFullYear()}${(now.getMonth()+1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}_${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}`;
+                baseName = `${prefix}-${timestamp}`;
+            }
+
+            return `${baseName}.txt`;
+        }
+
+        // Clean filename of unsafe OS characters
+        function sanitizeFileName(str) {
+            // Remove diacritics / Vietnamese accents
+            str = str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            str = str.replace(/[đĐ]/g, "d");
+            // Standard formatting
+            return str
+                .toLowerCase()
+                .replace(/[^a-z0-9\s-_]/g, '') // Remove symbols
+                .trim()
+                .replace(/\s+/g, '-'); // Replace space with dash
+        }
+
+        // Trigger safe file download
+        function downloadTxt(text, filename) {
+            const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Manual Trigger
+        function downloadAsTxt() {
+            const content = editor.value;
+            if (!content || content.trim().length === 0) {
+                showToast("Lỗi dữ liệu", "Vui lòng nhập hoặc dán nội dung trước khi tải.", "warning");
+                return;
+            }
+            const filename = generateFileName(content);
+            downloadTxt(content, filename);
+            showToast("Tải file hoàn tất", `Đã tải về tệp ${filename}`, "success");
+        }
+
+        // Clear All Workspace
+        function clearAll() {
+            if (editor.value.length > 0) {
+                editor.value = '';
+                handleTextChange();
+                showToast("Đã dọn dẹp", "Hộp soạn thảo đã được xóa sạch.", "info");
+            }
+        }
+
+        // Copy Text back using recommended fallback logic
+        function copyToClipboard() {
+            const content = editor.value;
+            if (!content) {
+                showToast("Trống", "Không có nội dung nào để sao chép.", "warning");
+                return;
+            }
+            
+            // Highlight text internally to copy safely
+            editor.select();
+            editor.setSelectionRange(0, 99999); // For mobile devices
+
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    showToast("Đã sao chép", "Đã sao chép nội dung trở lại bộ nhớ tạm.", "success");
+                } else {
+                    showToast("Thất bại", "Không thể sao chép tự động.", "error");
+                }
+            } catch (err) {
+                showToast("Lỗi sao chép", "Trình duyệt của bạn không hỗ trợ thao tác này.", "error");
+            }
+        }
+
+        // TEXT OPERATIONS UTILS
+        function cleanEmptyLines() {
+            const text = editor.value;
+            if (!text) return;
+            // Remove empty lines or lines with only spaces
+            const cleaned = text.split('\n').filter(line => line.trim() !== '').join('\n');
+            editor.value = cleaned;
+            handleTextChange();
+            showToast("Xử lý thành công", "Đã lược bỏ tất cả dòng trống thừa.", "success");
+        }
+
+        function normalizeSpaces() {
+            const text = editor.value;
+            if (!text) return;
+            // Trim consecutive spaces to single space, and strip tailing/leading spaces per line
+            const cleaned = text.split('\n').map(line => line.trim().replace(/[ \t]+/g, ' ')).join('\n');
+            editor.value = cleaned;
+            handleTextChange();
+            showToast("Xử lý thành công", "Đã tối ưu hóa khoảng trắng giữa các ký tự.", "success");
+        }
+
+        function toLowerCase() {
+            if (!editor.value) return;
+            editor.value = editor.value.toLowerCase();
+            handleTextChange();
+            showToast("Đã chuyển đổi", "Đã chuyển toàn bộ nội dung thành dạng chữ thường.", "info");
+        }
+
+        function toUpperCase() {
+            if (!editor.value) return;
+            editor.value = editor.value.toUpperCase();
+            handleTextChange();
+            showToast("Đã chuyển đổi", "Đã chuyển toàn bộ nội dung thành dạng chữ IN HOA.", "info");
+        }
+
+        // Modern Toast Notification Builder
+        function showToast(title, message, type = "success") {
+            const toast = document.createElement("div");
+            
+            let typeClasses = "bg-emerald-950/90 border-emerald-800 text-emerald-200";
+            let iconPath = "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z";
+            
+            if (type === "warning") {
+                typeClasses = "bg-amber-950/90 border-amber-800 text-amber-200";
+                iconPath = "M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z";
+            } else if (type === "info") {
+                typeClasses = "bg-indigo-950/90 border-indigo-800 text-indigo-200";
+                iconPath = "M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z";
+            } else if (type === "error") {
+                typeClasses = "bg-red-950/90 border-red-800 text-red-200";
+                iconPath = "M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z";
+            }
+
+            toast.className = `flex gap-3 p-4 rounded-xl border ${typeClasses} shadow-xl backdrop-blur-sm transition-all duration-300 transform translate-x-12 opacity-0`;
+            
+            toast.innerHTML = `
+                <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${iconPath}"></path>
+                </svg>
+                <div class="flex-grow">
+                    <h4 class="text-sm font-semibold">${title}</h4>
+                    <p class="text-xs opacity-80 mt-0.5">${message}</p>
+                </div>
+            `;
+            
+            toastContainer.appendChild(toast);
+            
+            // Trigger animation
+            setTimeout(() => {
+                toast.classList.remove('translate-x-12', 'opacity-0');
+            }, 10);
+
+            // Auto dismiss after 3.5 seconds
+            setTimeout(() => {
+                toast.classList.add('translate-x-12', 'opacity-0');
+                setTimeout(() => {
+                    toastContainer.removeChild(toast);
+                }, 300);
+            }, 3500);
+        }
+
+        // Initialize App on Page Load
+        window.onload = function() {
+            handleTextChange();
+            showToast("Hệ thống hoạt động", "ZenPaste đã sẵn sàng nhận văn bản của bạn.", "info");
+        };
+    </script>
+</body>
+</html>
