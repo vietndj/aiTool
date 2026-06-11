@@ -25,30 +25,22 @@
         }
     </script>
     <style>
-        /* CSS tối ưu hóa riêng cho việc in ấn (Print to PDF) */
+        /* CSS tối ưu hóa riêng cho việc in ấn (Print to PDF) - Đã vá lỗi trang trắng */
         @media print {
-            body {
+            html, body {
                 background-color: #fff !important;
                 color: #000 !important;
+                height: auto !important;
+                min-height: 0 !important;
+                overflow: visible !important;
+                padding: 0 !important;
+                margin: 0 !important;
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
             }
             .no-print {
                 display: none !important;
             }
-            .print-shadow-none {
-                box-shadow: none !important;
-            }
-            .print-p-0 {
-                padding: 0 !important;
-            }
-            .print-m-0 {
-                margin: 0 !important;
-            }
-            .page-break {
-                page-break-before: always;
-            }
-            /* Đảm bảo vừa vặn một trang A4 */
             #cv-container {
                 width: 100% !important;
                 max-width: 100% !important;
@@ -56,6 +48,26 @@
                 border: none !important;
                 margin: 0 !important;
                 padding: 0 !important;
+                overflow: visible !important;
+                height: auto !important;
+                float: none !important;
+            }
+            /* Ép cấu trúc Grid giữ nguyên 2 cột song song khi in, không bị xếp chồng dọc */
+            .grid-print-layout {
+                display: grid !important;
+                grid-template-columns: repeat(12, minmax(0, 1fr)) !important;
+            }
+            #sidebar {
+                grid-column: span 4 / span 4 !important;
+                background-color: #f8fafc !important;
+                border-right-width: 1px !important;
+                padding: 1.5rem !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            #main-content {
+                grid-column: span 8 / span 8 !important;
+                padding: 2rem !important;
             }
         }
         
@@ -98,8 +110,8 @@
                     <span>Đồng bộ GitHub</span>
                 </button>
 
-                <!-- Nút in / xuất PDF -->
-                <button onclick="window.print()" class="flex items-center gap-1.5 px-3.5 py-1.5 bg-slate-900 text-white hover:bg-slate-800 text-xs font-semibold rounded-lg transition-colors">
+                <!-- Nút in / xuất PDF (Đã tối ưu hóa hàm gọi) -->
+                <button onclick="safePrint()" class="flex items-center gap-1.5 px-3.5 py-1.5 bg-slate-900 text-white hover:bg-slate-800 text-xs font-semibold rounded-lg transition-colors">
                     <i class="fa-solid fa-print"></i>
                     <span>In / Lưu PDF</span>
                 </button>
@@ -192,10 +204,10 @@
         <div id="theme-banner" class="h-3 bg-gradient-to-r from-indigo-600 to-sky-500"></div>
 
         <!-- Layout Grid chính -->
-        <div class="grid grid-cols-1 md:grid-cols-12">
+        <div class="grid grid-cols-1 md:grid-cols-12 grid-print-layout">
             
             <!-- CỘT TRÁI (Sidebar - 4/12 width) -->
-            <div id="sidebar" class="md:col-span-4 bg-slate-50 border-r border-slate-100 p-6 flex flex-col gap-6 print:bg-slate-50/50">
+            <div id="sidebar" class="col-span-12 md:col-span-4 bg-slate-50 border-r border-slate-100 p-6 flex flex-col gap-6 print:bg-slate-50/50">
                 
                 <!-- Khu vực Upload & Preview Ảnh Chân Dung -->
                 <div class="flex flex-col items-center text-center">
@@ -302,7 +314,7 @@
             </div>
 
             <!-- CỘT PHẢI (Main Content - 8/12 width) -->
-            <div class="md:col-span-8 p-8 flex flex-col gap-6">
+            <div id="main-content" class="col-span-12 md:col-span-8 p-8 flex flex-col gap-6">
                 
                 <!-- Tiêu Đề CV -->
                 <div class="border-b border-slate-100 pb-5">
@@ -614,6 +626,20 @@
             }
         }
 
+        // 4. Hàm In/Xuất PDF thông minh (Đã sửa lỗi trang trắng)
+        function safePrint() {
+            // A. Tự động tắt chế độ chỉnh sửa để bản in sạch, không có viền nét đứt
+            toggleEditMode(false);
+            
+            // B. Focus trực tiếp vào tài liệu để đảm bảo print-engine của Chrome không in nhầm khung bao ngoài (Iframe) gây trắng trang
+            window.focus();
+            
+            // C. Trì hoãn 150ms để DOM cập nhật và nhận diện tiêu điểm in chính xác
+            setTimeout(() => {
+                window.print();
+            }, 150);
+        }
+
         // ==========================================
         // BỘ CÔNG CỤ ĐỒNG BỘ GITHUB
         // ==========================================
@@ -721,7 +747,7 @@
                 const url = `https://api.github.com/repos/${username}/${repo}/contents/${filepath}`;
                 const headers = {
                     "Authorization": `Bearer ${token}`,
-                    "Accept": "application/vnd.github+json",
+                    "Accept": "https://api.github.com/repos/${username}/${repo}/contents/${filepath}",
                     "Content-Type": "application/json"
                 };
 
