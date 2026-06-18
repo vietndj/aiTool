@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trợ lý Nova v1.0 | Hệ thống Kiến trúc Sales Page</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            darkBg: '#09090b',
+                            panelBg: '#18181b',
+                            border: '#27272a'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #09090b;
+            color: #f4f4f5;
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #09090b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #3f3f46;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #f59e0b;
+        }
+
+        /* Abstract Micro-Animations for Action Cards */
+        .anim-dr .pulse-ring { width: 16px; height: 16px; border: 2px solid #ef4444; border-radius: 50%; position: absolute; animation: dr-pulse 1.5s infinite cubic-bezier(0.215, 0.61, 0.355, 1); }
+        .anim-dr .core { width: 8px; height: 8px; background: #ef4444; border-radius: 50%; position: absolute; }
+        @keyframes dr-pulse { 0% { transform: scale(0.5); opacity: 1; } 100% { transform: scale(2.5); opacity: 0; } }
+
+        .anim-story .book-page { width: 14px; height: 18px; border: 2px solid #3b82f6; border-radius: 2px; position: absolute; animation: story-flip 2s infinite ease-in-out; transform-origin: left center; }
+        @keyframes story-flip { 0%, 100% { transform: perspective(100px) rotateY(0deg); background: transparent; } 50% { transform: perspective(100px) rotateY(-180deg); background: rgba(59,130,246,0.2); } }
+
+        .anim-edu .chart-bar { width: 4px; background: #10b981; position: absolute; bottom: 8px; border-radius: 2px; animation: edu-grow 1.5s infinite ease-in-out alternate; }
+        .anim-edu .chart-bar:nth-child(1) { left: 8px; height: 10px; animation-delay: 0s; }
+        .anim-edu .chart-bar:nth-child(2) { left: 16px; height: 16px; animation-delay: 0.2s; }
+        .anim-edu .chart-bar:nth-child(3) { left: 24px; height: 24px; animation-delay: 0.4s; }
+        @keyframes edu-grow { 0% { transform: scaleY(0.5); } 100% { transform: scaleY(1.2); } }
+
+        .glowing-amber {
+            box-shadow: 0 0 20px rgba(245, 158, 11, 0.12);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased">
+
+    <!-- Header -->
+    <header class="w-full bg-[#111113] border-b border-zinc-800 px-6 py-4 flex items-center justify-between sticky top-0 z-50">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 via-orange-500 to-rose-600 flex items-center justify-center shadow-lg shadow-amber-500/20">
+                <i class="fas fa-layer-group text-white text-lg"></i>
+            </div>
+            <div>
+                <h1 class="text-base font-extrabold tracking-tight text-white flex items-center gap-2">
+                    Trợ lý Nova <span class="text-xs bg-amber-500/20 text-amber-400 font-semibold px-2 py-0.5 rounded-full border border-amber-500/30">Version 1.0</span>
+                </h1>
+                <p class="text-xs text-zinc-400">Hệ thống kiến trúc và trích xuất Sales Page chuyển đổi cao</p>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-4">
+            <div class="flex items-center gap-2 px-3 py-1.5 bg-[#18181b] rounded-lg border border-zinc-700 text-xs">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span class="text-zinc-300 font-medium">Hệ thống: Trực tuyến</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Workspace -->
+    <div class="flex-1 w-full max-w-7xl mx-auto flex flex-col lg:flex-row overflow-hidden relative">
+        
+        <!-- BẢNG TRÁI: Tham số cài đặt (1/4) -->
+        <aside class="w-full lg:w-80 bg-[#111113] border-b lg:border-b-0 lg:border-r border-zinc-800 p-5 flex flex-col gap-6 shrink-0 z-10">
+            <div>
+                <h2 class="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-3 flex items-center gap-2">
+                    <i class="fas fa-sliders-h text-amber-400"></i> Tham số cấu trúc
+                </h2>
+                <div class="space-y-4">
+                    <!-- Định dạng sản phẩm -->
+                    <div>
+                        <label class="block text-xs font-semibold text-zinc-300 mb-1.5">Định dạng sản phẩm</label>
+                        <select id="setting-format" class="w-full bg-[#18181b] border border-zinc-700 rounded-lg py-2 px-3 text-sm text-zinc-200 outline-none focus:border-amber-500 transition-colors">
+                            <option value="khoa-hoc">Khóa học Online / Đào tạo</option>
+                            <option value="tai-lieu">Tài liệu số (Ebook / Template)</option>
+                            <option value="dich-vu">Dịch vụ / Coaching 1-1</option>
+                            <option value="san-pham">Sản phẩm vật lý / Thực phẩm</option>
+                        </select>
+                    </div>
+
+                    <!-- Giọng điệu Copywriting -->
+                    <div>
+                        <label class="block text-xs font-semibold text-zinc-300 mb-1.5">Giọng điệu tiếp thị (Tone of voice)</label>
+                        <select id="setting-tone" class="w-full bg-[#18181b] border border-zinc-700 rounded-lg py-2 px-3 text-sm text-zinc-200 outline-none focus:border-amber-500 transition-colors">
+                            <option value="Sắc bén, đanh thép, tập trung vào tính logic và dữ liệu thực tế">Sắc bén, đanh thép, tập trung logic</option>
+                            <option value="Đồng cảm, thấu hiểu, kể chuyện dẫn dắt từ nỗi đau">Đồng cảm, thấu hiểu, chân thành</option>
+                            <option value="Kịch tính, khơi gợi sự tò mò và cảm giác sợ bị bỏ lỡ (FOMO)">Kịch tính, khơi gợi hành động mạnh mẽ</option>
+                        </select>
+                    </div>
+
+                    <!-- Mức độ nhận thức (Awareness) -->
+                    <div>
+                        <label class="block text-xs font-semibold text-zinc-300 mb-1.5">Mức độ nhận thức của khách hàng</label>
+                        <select id="setting-awareness" class="w-full bg-[#18181b] border border-zinc-700 rounded-lg py-2 px-3 text-sm text-zinc-200 outline-none focus:border-amber-500 transition-colors">
+                            <option value="Problem Aware (Biết mình có nỗi đau nhưng chưa biết cách giải quyết)">Mới biết vấn đề (Problem Aware)</option>
+                            <option value="Solution Aware (Đã biết có giải pháp ngoài kia nhưng chưa chọn ai)">Đã biết giải pháp (Solution Aware)</option>
+                            <option value="Product Aware (Đã biết đến bạn, cần cú hích cuối cùng để mua)">Đã biết sản phẩm (Product Aware)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chọn chuyên gia Copywriter -->
+            <div class="border-t border-zinc-800 pt-5">
+                <h2 class="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-3 flex items-center gap-2">
+                    <i class="fas fa-user-pen text-rose-400"></i> Chọn góc nhìn Copywriter
+                </h2>
+                <div class="space-y-2" id="agents-list">
+                    <!-- Agent Nova -->
+                    <div class="agent-card p-3 rounded-lg border border-zinc-700 bg-[#18181b] hover:border-zinc-600 transition-all cursor-pointer flex items-center gap-3 active-agent" data-agent="nova">
+                        <div class="w-8 h-8 rounded-full bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 text-xs font-bold">NV</div>
+                        <div class="flex-1">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-bold text-white">Chuyên gia Nova</span>
+                                <span class="text-[10px] text-amber-400 font-medium">Hành vi tiêu dùng</span>
+                            </div>
+                            <p class="text-[10px] text-zinc-400">Chuyên gia tâm lý học chuyển đổi số</p>
+                        </div>
+                    </div>
+                    <!-- Agent Orion -->
+                    <div class="agent-card p-3 rounded-lg border border-zinc-800 bg-transparent hover:border-zinc-700 transition-all cursor-pointer flex items-center gap-3" data-agent="orion">
+                        <div class="w-8 h-8 rounded-full bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-400 text-xs font-bold">OR</div>
+                        <div class="flex-1">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-bold text-white">Chuyên gia Orion</span>
+                                <span class="text-[10px] text-blue-400 font-medium">Bậc thầy UI/UX</span>
+                            </div>
+                            <p class="text-[10px] text-zinc-400">Thiết kế điểm chạm thị giác trơn tru</p>
+                        </div>
+                    </div>
+                    <!-- Agent Lyra -->
+                    <div class="agent-card p-3 rounded-lg border border-zinc-800 bg-transparent hover:border-zinc-700 transition-all cursor-pointer flex items-center gap-3" data-agent="lyra">
+                        <div class="w-8 h-8 rounded-full bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-400 text-xs font-bold">LR</div>
+                        <div class="flex-1">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-bold text-white">Chuyên gia Lyra</span>
+                                <span class="text-[10px] text-rose-400 font-medium">Nghệ thuật kể chuyện</span>
+                            </div>
+                            <p class="text-[10px] text-zinc-400">Dẫn dắt câu chuyện thương hiệu cảm xúc</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- BẢNG GIỮA: Tương tác & Trích xuất Prompt -->
+        <main class="flex-1 flex flex-col bg-[#09090b] border-r border-zinc-800 overflow-hidden">
+            <!-- Khu vực Chat -->
+            <div id="chat-history" class="flex-1 overflow-y-auto p-6 space-y-6">
+                
+                <!-- Welcome Message -->
+                <div class="flex gap-4 items-start max-w-[85%]">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-amber-500 to-rose-600 flex items-center justify-center text-white shrink-0 shadow-md">
+                        <i class="fas fa-robot text-sm"></i>
+                    </div>
+                    <div class="bg-[#18181b] border border-zinc-800 text-zinc-100 rounded-2xl rounded-tl-none p-4 text-sm leading-relaxed shadow-sm">
+                        Chào bạn, tôi là Nova - hệ thống chuyên biệt thiết kế Sales Page chuyển đổi cao.<br><br>
+                        Để bắt đầu kiến tạo bộ Mega Prompt gồm 2 giai đoạn tiêu chuẩn, bạn hãy cho tôi biết: <strong>Tên sản phẩm hoặc lĩnh vực bạn đang muốn bán là gì?</strong>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Khung nhập liệu -->
+            <div class="p-4 bg-[#111113] border-t border-zinc-800">
+                <div id="quick-tags" class="flex gap-2 mb-3 overflow-x-auto pb-2">
+                    <button onclick="useTag('Khóa học Tiếng Anh giao tiếp cho người đi làm')" class="tag shrink-0 px-3 py-1.5 bg-[#18181b] hover:bg-[#27272a] border border-zinc-800 hover:border-zinc-700 rounded-lg text-xs font-medium text-zinc-300 transition-all">🎓 Khóa học ngoại ngữ</button>
+                    <button onclick="useTag('Phần mềm quản lý tài chính cá nhân tự động')" class="tag shrink-0 px-3 py-1.5 bg-[#18181b] hover:bg-[#27272a] border border-zinc-800 hover:border-zinc-700 rounded-lg text-xs font-medium text-zinc-300 transition-all">💻 Phần mềm/Công cụ</button>
+                    <button onclick="useTag('Ebook hướng dẫn Content Marketing đa kênh')" class="tag shrink-0 px-3 py-1.5 bg-[#18181b] hover:bg-[#27272a] border border-zinc-800 hover:border-zinc-700 rounded-lg text-xs font-medium text-zinc-300 transition-all">📖 Ebook / Tài liệu số</button>
+                    <button onclick="useTag('Dịch vụ Coaching giảm cân chuẩn y khoa')" class="tag shrink-0 px-3 py-1.5 bg-[#18181b] hover:bg-[#27272a] border border-zinc-800 hover:border-zinc-700 rounded-lg text-xs font-medium text-zinc-300 transition-all">🏋️ Coaching chuyên sâu</button>
+                </div>
+                <div class="flex items-center gap-3 bg-[#18181b] border border-zinc-700 rounded-xl px-4 py-2 focus-within:border-amber-500 focus-within:ring-2 focus-within:ring-amber-500/10 transition-all">
+                    <input type="text" id="user-input" onkeypress="handleEnter(event)" placeholder="Nhập tên sản phẩm hoặc ngách của bạn..." class="flex-1 bg-transparent text-zinc-100 text-sm outline-none border-none placeholder-zinc-500">
+                    <button id="send-btn" onclick="processUserInput()" class="w-9 h-9 rounded-lg bg-amber-500 hover:bg-amber-600 text-white flex items-center justify-center transition-all shadow-md shadow-amber-500/10">
+                        <i class="fas fa-arrow-up text-xs"></i>
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <!-- BẢNG PHẢI: Wireframe Sandbox Preview (1/3) -->
+        <section id="preview-sidebar" class="w-full lg:w-[400px] bg-[#09090b] lg:bg-[#111113] border-t lg:border-t-0 lg:border-l border-zinc-800 p-5 flex flex-col overflow-hidden z-10">
+            <div class="flex items-center justify-between mb-4 border-b border-zinc-800 pb-3">
+                <h3 class="text-xs font-bold text-zinc-200 uppercase tracking-widest flex items-center gap-2">
+                    <i class="fas fa-layer-group text-amber-400"></i> Bản đồ cấu trúc Sales Page
+                </h3>
+                <span id="preview-framework-badge" class="text-[10px] bg-amber-500/15 border border-amber-500/30 text-amber-400 font-semibold px-2 py-0.5 rounded-full uppercase">CHỜ KHỞI TẠO</span>
+            </div>
+
+            <!-- Empty state -->
+            <div id="preview-empty-state" class="flex-1 flex flex-col items-center justify-center text-center p-6 text-zinc-500">
+                <div class="w-16 h-16 rounded-full bg-zinc-800/40 border border-zinc-700/50 flex items-center justify-center mb-4">
+                    <i class="fas fa-border-all text-xl"></i>
+                </div>
+                <h4 class="text-xs font-bold text-zinc-300 mb-1">Mô phỏng bản thảo UI/UX</h4>
+                <p class="text-[11px] leading-relaxed max-w-[220px]">Bản đồ cấu trúc 11 phân khu của Sales Page sẽ xuất hiện tại đây sau khi bạn chọn phương thức triển khai.</p>
+            </div>
+
+            <!-- Active wireframe state -->
+            <div id="preview-active-state" class="flex-1 flex flex-col overflow-y-auto hidden pr-2">
+                <div class="mb-4 p-3 bg-[#18181b]/80 border border-zinc-800 rounded-xl text-center">
+                    <div class="text-[10px] text-zinc-400 uppercase tracking-wider mb-1">Dự án kinh doanh</div>
+                    <div id="preview-industry-title" class="text-sm font-bold text-amber-400">...</div>
+                </div>
+
+                <!-- Wireframe Blocks -->
+                <div id="wireframe-container" class="space-y-3 relative before:absolute before:inset-0 before:ml-4 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-zinc-800 before:to-transparent">
+                    <!-- Sẽ được điền bằng Javascript -->
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast-notify" class="fixed bottom-6 right-6 z-50 bg-zinc-950 border border-zinc-800 px-4 py-3 rounded-xl shadow-2xl shadow-black flex items-center gap-3 transition-all transform translate-y-20 opacity-0 pointer-events-none">
+        <div class="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-500">
+            <i class="fas fa-check-circle text-sm"></i>
+        </div>
+        <div>
+            <h5 class="text-xs font-bold text-white">Hoàn tất!</h5>
+            <p id="toast-message" class="text-[10px] text-zinc-400">Đã sao chép nội dung thành công.</p>
+        </div>
+    </div>
+
+    <script>
+        // --- QUẢN LÝ TRẠNG THÁI ---
+        let currentState = 'ask_industry'; 
+        let userIndustry = '';
+        let activeAgent = 'nova';
+
+        const agentsMap = {
+            nova: { name: "Nova", identity: "Tâm lý học hành vi tiêu dùng", color: "#f59e0b" },
+            orion: { name: "Orion", identity: "Kiến trúc sư UI/UX", color: "#3b82f6" },
+            lyra: { name: "Lyra", identity: "Nghệ thuật Storytelling", color: "#f43f5e" }
+        };
+
+        // --- SỰ KIỆN GIAO DIỆN ---
+        document.querySelectorAll('.agent-card').forEach(card => {
+            card.addEventListener('click', function() {
+                document.querySelectorAll('.agent-card').forEach(c => {
+                    c.classList.remove('bg-[#18181b]', 'border-zinc-700', 'active-agent');
+                    c.classList.add('bg-transparent', 'border-zinc-800');
+                });
+                this.classList.remove('bg-transparent', 'border-zinc-800');
+                this.classList.add('bg-[#18181b]', 'border-zinc-700', 'active-agent');
+                activeAgent = this.getAttribute('data-agent');
+                
+                showToast("Đổi chuyên gia phụ trách", `Chuyên gia ${agentsMap[activeAgent].name} đã tiếp nhận cấu hình.`);
+            });
+        });
+
+        const chatHistory = document.getElementById('chat-history');
+        const userInput = document.getElementById('user-input');
+        const sendBtn = document.getElementById('send-btn');
+
+        function scrollToBottom() {
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+        }
+
+        function handleEnter(e) {
+            if(e.key === 'Enter') processUserInput();
+        }
+
+        function useTag(text) {
+            if(currentState === 'ask_industry') {
+                userInput.value = text;
+                processUserInput();
+            }
+        }
+
+        function showToast(title, message) {
+            const toast = document.getElementById('toast-notify');
+            const toastMsg = document.getElementById('toast-message');
+            toast.querySelector('h5').innerText = title;
+            toastMsg.innerText = message;
+            
+            toast.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
+            }, 3000);
+        }
+
+        function setInputState(disabled) {
+            userInput.disabled = disabled;
+            sendBtn.disabled = disabled;
+            const tags = document.getElementById('quick-tags');
+            if(disabled) {
+                tags.style.opacity = '0.4';
+                tags.style.pointerEvents = 'none';
+            } else {
+                tags.style.opacity = '1';
+                tags.style.pointerEvents = 'auto';
+            }
+        }
+
+        function appendUserMessage(text) {
+            const html = `
+                <div class="flex gap-4 items-start max-w-[85%] self-end flex-row-reverse ml-auto">
+                    <div class="w-8 h-8 rounded-lg bg-zinc-800 flex items-center justify-center text-zinc-300 shrink-0 shadow-md border border-zinc-700">
+                        <i class="fas fa-user text-sm"></i>
+                    </div>
+                    <div class="bg-zinc-800/40 border border-zinc-700/50 text-zinc-200 rounded-2xl rounded-tr-none p-4 text-sm leading-relaxed shadow-sm">
+                        ${text}
+                    </div>
+                </div>
+            `;
+            chatHistory.insertAdjacentHTML('beforeend', html);
+            userInput.value = '';
+            scrollToBottom();
+        }
+
+        function appendAILoading() {
+            const id = 'loading-' + Date.now();
+            const agent = agentsMap[activeAgent];
+            const html = `
+                <div class="flex gap-4 items-start max-w-[85%]" id="${id}">
+                    <div class="w-8 h-8 rounded-lg bg-zinc-900 border border-zinc-800 flex items-center justify-center text-amber-500 shrink-0 shadow-md">
+                        <i class="fas fa-robot text-sm"></i>
+                    </div>
+                    <div class="bg-[#18181b] border border-zinc-800 text-zinc-100 rounded-2xl rounded-tl-none p-4 text-sm w-full shadow-sm">
+                        <div class="text-[11px] text-zinc-400 italic mb-2 flex items-center gap-2" id="${id}-text">
+                            <i class="fas fa-circle-notch animate-spin text-amber-500"></i> Đang tải dữ liệu bộ nhớ...
+                        </div>
+                    </div>
+                </div>
+            `;
+            chatHistory.insertAdjacentHTML('beforeend', html);
+            scrollToBottom();
+            return id;
+        }
+
+        // --- BƯỚC 1: XỬ LÝ NHẬP LIỆU SẢN PHẨM ---
+        function processUserInput() {
+            const text = userInput.value.trim();
+            if(!text) return;
+
+            if (currentState === 'ask_industry') {
+                userIndustry = text;
+                appendUserMessage(text);
+                setInputState(true);
+                
+                const loadId = appendAILoading();
+                const textElement = document.getElementById(`${loadId}-text`);
+                textElement.innerHTML = `<i class="fas fa-database animate-pulse text-amber-500"></i> Đang đối chiếu cấu trúc Sales Page cho định dạng: "${userIndustry}"...`;
+                
+                setTimeout(() => {
+                    document.getElementById(loadId).remove();
+                    showFrameworkSelection();
+                }, 1200);
+            }
+        }
+
+        // --- BƯỚC 2: HIỂN THỊ CÁC PHONG CÁCH TÍCH HỢP ---
+        function showFrameworkSelection() {
+            const html = `
+                <div class="flex gap-4 items-start max-w-[95%]">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-amber-500 to-rose-600 flex items-center justify-center text-white shrink-0 shadow-md">
+                        <i class="fas fa-robot text-sm"></i>
+                    </div>
+                    <div class="bg-[#18181b] border border-zinc-800 text-zinc-100 rounded-2xl rounded-tl-none p-5 text-sm leading-relaxed w-full shadow-md">
+                        <div class="mb-4">
+                            Sản phẩm <strong>"${userIndustry}"</strong> rất tiềm năng. <br>
+                            Bây giờ, bạn muốn tôi đóng gói bộ Mega Prompt này theo định hướng tư duy nào dưới đây?
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2">
+                            <!-- Direct Response -->
+                            <div class="bg-[#09090b] border border-zinc-800 hover:border-amber-500/50 p-4 rounded-xl cursor-pointer hover:-translate-y-1 transition-all flex flex-col items-center text-center gap-3 group" onclick="startGeneration('direct-response', 'Tư duy Direct Response (Tập trung chuyển đổi)')">
+                                <div class="w-11 h-11 rounded-xl bg-zinc-900/80 flex items-center justify-center relative anim-dr border border-zinc-800">
+                                    <div class="pulse-ring"></div><div class="core"></div>
+                                </div>
+                                <div>
+                                    <h4 class="text-xs font-bold text-white group-hover:text-amber-400 transition-colors">Direct Response</h4>
+                                    <p class="text-[10px] text-zinc-400 mt-1 leading-normal">Đi thẳng vào nỗi đau, giải pháp nhanh, Call to action mạnh bạo.</p>
+                                </div>
+                            </div>
+
+                            <!-- StoryBrand -->
+                            <div class="bg-[#09090b] border border-zinc-800 hover:border-blue-500/50 p-4 rounded-xl cursor-pointer hover:-translate-y-1 transition-all flex flex-col items-center text-center gap-3 group" onclick="startGeneration('storybrand', 'Tư duy StoryBrand (Kể chuyện thương hiệu)')">
+                                <div class="w-11 h-11 rounded-xl bg-zinc-900/80 flex items-center justify-center relative anim-story border border-zinc-800">
+                                    <div class="book-page"></div>
+                                </div>
+                                <div>
+                                    <h4 class="text-xs font-bold text-white group-hover:text-blue-400 transition-colors">StoryBrand Model</h4>
+                                    <p class="text-[10px] text-zinc-400 mt-1 leading-normal">Khách hàng là Anh hùng, Sản phẩm là Người dẫn đường đắc lực.</p>
+                                </div>
+                            </div>
+
+                            <!-- Educational / Webinar -->
+                            <div class="bg-[#09090b] border border-zinc-800 hover:border-emerald-500/50 p-4 rounded-xl cursor-pointer hover:-translate-y-1 transition-all flex flex-col items-center text-center gap-3 group" onclick="startGeneration('education', 'Tư duy Giáo dục / Bẻ gãy niềm tin')">
+                                <div class="w-11 h-11 rounded-xl bg-zinc-900/80 flex items-center justify-center relative anim-edu border border-zinc-800">
+                                    <div class="chart-bar"></div><div class="chart-bar"></div><div class="chart-bar"></div>
+                                </div>
+                                <div>
+                                    <h4 class="text-xs font-bold text-white group-hover:text-emerald-400 transition-colors">Giáo dục thị trường</h4>
+                                    <p class="text-[10px] text-zinc-400 mt-1 leading-normal">Cung cấp Insight sâu, đập tan định kiến trước khi chốt Sale.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            chatHistory.insertAdjacentHTML('beforeend', html);
+            scrollToBottom();
+            currentState = 'choose_framework';
+        }
+
+        // --- BƯỚC 3: MÔ PHỎNG TIẾN TRÌNH BIÊN DỊCH PROMPT ---
+        function startGeneration(type, name) {
+            if(currentState === 'generating') return;
+            currentState = 'generating';
+            setInputState(true);
+            
+            appendUserMessage(`Mình chọn ${name}`);
+            
+            const loadId = appendAILoading();
+            const textElement = document.getElementById(`${loadId}-text`);
+            
+            const formatVal = document.getElementById('setting-format').selectedOptions[0].text;
+            const toneVal = document.getElementById('setting-tone').selectedOptions[0].text;
+
+            const steps = [
+                `Đang cập nhật cấu hình: ${formatVal}...`,
+                `Thiết lập định chuẩn văn phong: ${toneVal}...`,
+                `Đồng bộ hóa 11 module của bản đồ Sales Page...`,
+                `Hoàn tất cấu trúc lệnh Mega Prompt.`
+            ];
+            
+            let stepIndex = 0;
+            const thinkInterval = setInterval(() => {
+                if(stepIndex < steps.length) {
+                    textElement.innerHTML = `<i class="fas fa-layer-group animate-pulse text-amber-500"></i> ${steps[stepIndex]}`;
+                    stepIndex++;
+                } else {
+                    clearInterval(thinkInterval);
+                    document.getElementById(loadId).remove();
+                    streamMegaPromptAndSandbox(type);
+                }
+            }, 800);
+        }
+
+        // --- BƯỚC 4: RENDER MEGA PROMPT CHUẨN XÁC YÊU CẦU ---
+        function streamMegaPromptAndSandbox(type) {
+            const promptId = 'prompt-box-' + Date.now();
+            
+            const html = `
+                <div class="flex gap-4 items-start max-w-[95%]">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-amber-500 to-rose-600 flex items-center justify-center text-white shrink-0 shadow-md">
+                        <i class="fas fa-magic text-sm"></i>
+                    </div>
+                    <div class="bg-[#18181b] border border-zinc-800 text-zinc-100 rounded-2xl rounded-tl-none p-5 text-sm leading-relaxed w-full shadow-md">
+                        <p class="mb-3 text-zinc-300 text-xs">Bộ lệnh Mega Prompt cấu trúc 2 Giai đoạn nghiêm ngặt đã hoàn thiện! Hãy sao chép toàn bộ đoạn lệnh dưới đây và đưa vào hệ thống AI của bạn (ChatGPT/Claude/Gemini):</p>
+                        
+                        <div class="bg-[#09090b] border border-zinc-800 rounded-xl p-4 font-mono text-[11px] leading-relaxed relative overflow-hidden glowing-amber group">
+                            <button id="btn-${promptId}" onclick="copyTextToClipboard('${promptId}')" class="absolute top-3 right-3 bg-zinc-800/80 hover:bg-amber-500 border border-zinc-700 hover:border-amber-400 text-[10px] text-zinc-300 hover:text-white px-2.5 py-1.5 rounded-lg transition-all flex items-center gap-1.5 z-10 shadow-lg">
+                                <i class="fas fa-copy"></i> Sao chép lệnh
+                            </button>
+                            <div class="text-zinc-300 max-h-80 overflow-y-auto pr-2 select-text whitespace-pre-wrap" id="${promptId}">
+                                <!-- Hiển thị Typewriter -->
+                            </div>
+                        </div>
+                        
+                        <p class="mt-4 text-[11px] text-zinc-400 flex items-center gap-1.5">
+                            <i class="fas fa-eye text-amber-500"></i> Hệ thống đã tự động dựng trước <b>Bản đồ cấu trúc UI/UX</b> ở cột bên phải để bạn hình dung rõ trang web sau khi hoàn thiện sẽ như thế nào.
+                        </p>
+                    </div>
+                </div>
+            `;
+            chatHistory.insertAdjacentHTML('beforeend', html);
+            
+            // Output nguyên vẹn cấu trúc nội dung được yêu cầu
+            const targetText = generateStrictPromptText();
+            const targetElement = document.getElementById(promptId);
+            
+            let i = 0;
+            function typeWriter() {
+                if (i < targetText.length) {
+                    // Type nhanh hơn để tiết kiệm thời gian
+                    targetElement.textContent += targetText.substring(i, i + 6);
+                    i += 6; 
+                    scrollToBottom();
+                    setTimeout(typeWriter, 1);
+                } else {
+                    targetElement.textContent = targetText; 
+                    scrollToBottom();
+                    deployWireframeSandbox();
+                    
+                    currentState = 'ask_industry';
+                    setInputState(false);
+                    document.getElementById('quick-tags').innerHTML = `
+                        <button onclick="resetApp()" class="px-3 py-1.5 bg-[#18181b] hover:bg-amber-500/10 border border-zinc-800 hover:border-amber-500/20 text-zinc-300 hover:text-amber-400 rounded-lg text-xs font-bold transition-all flex items-center gap-2">
+                            <i class="fas fa-redo"></i> Xây dựng kịch bản dự án mới
+                        </button>
+                    `;
+                }
+            }
+            typeWriter();
+        }
+
+        // Tạo nội dung Prompt đúng chính xác 100% yêu cầu của User
+        function generateStrictPromptText() {
+            const formatVal = document.getElementById('setting-format').selectedOptions[0].text;
+            const toneVal = document.getElementById('setting-tone').selectedOptions[0].text;
+            const awarenessVal = document.getElementById('setting-awareness').selectedOptions[0].text;
+
+            let prompt = `[SYSTEM INSTRUCTION: KÍCH HOẠT QUY TRÌNH MEGA-PROMPT TƯƠNG TÁC]
+Bắt đầu từ bây giờ, bạn sẽ hoạt động như một cỗ máy tạo Sales Page tương tác theo quy trình 2 GIAI ĐOẠN nghiêm ngặt. 
+
+TUYỆT ĐỐI KHÔNG VIẾT SALES PAGE NGAY LẬP TỨC. Bạn phải thực hiện Giai đoạn 1 trước, chờ tôi trả lời, rồi mới được chuyển sang Giai đoạn 2.
+
+=== GIAI ĐOẠN 1: THIẾT LẬP VAI TRÒ & PHỎNG VẤN THU THẬP DỮ LIỆU ===
+
+1. THIẾT LẬP VAI TRÒ (PERSONA):
+Bạn là một Chuyên gia Copywriter thuộc top 1% trong lĩnh vực Direct Response Marketing và là một Kiến trúc sư UI/UX thực chiến. Bạn am hiểu sâu sắc tâm lý học hành vi. 
+- MỤC TIÊU SẢN PHẨM: ${userIndustry} (${formatVal})
+- ĐỐI TƯỢNG NHẬN THỨC: ${awarenessVal}
+- VĂN PHONG BẮT BUỘC: ${toneVal}. Phân tích chuyên môn sâu. TUYỆT ĐỐI BÁC BỎ ngôn từ marketing sáo rỗng, phô trương (như "Master Class", "siêu đỉnh", "bí mật"). Ưu tiên thuật ngữ chuẩn xác, văn phong đanh thép, thực tế, khớp hoàn toàn với giọng văn của khách hàng mục tiêu tại Việt Nam.
+
+2. QUY TRÌNH PHỎNG VẤN:
+Khi nhận được prompt này, lời nói đầu tiên của bạn phải là lời chào mừng với tư cách Chuyên gia Copywriter. Sau đó, hãy đưa ra danh sách 8 câu hỏi dưới đây để yêu cầu tôi cung cấp nguyên liệu. Bạn sẽ chờ tôi trả lời hết các thông tin này mới được tiến hành Giai đoạn 2.
+Danh sách 8 trường dữ liệu cần hỏi:
+1. Product Name & Format: (Tên sản phẩm? Ebook/Khóa học All-in-One?)
+2. Target Audience (ICP): (Thị trường mục tiêu là ai? Đặc điểm nhận diện?)
+3. Main Problem & Emotional Pain: (Vấn đề nhức nhối nhất? Cảm xúc tiêu cực của họ?)
+4. Common Objections/Failed Attempts: (Họ từng thử cách gì nhưng thất bại? Tại sao sai bản chất?)
+5. Desired Result (Transformation): (Sự thay đổi lớn nhất sau khi dùng sản phẩm?)
+6. Timeframe: (Mất bao lâu để đạt kết quả?)
+7. Authority/Instructor Info: (Họ tên? Chức danh? Số năm kinh nghiệm? Thành tựu nổi bật?)
+8. Pricing: (Giá ưu đãi VNĐ? Giá gốc VNĐ?)
+
+*(Chỉ khi tôi đã cung cấp đủ thông tin, bạn mới kích hoạt Giai đoạn 2).*
+
+=== GIAI ĐOẠN 2: THỰC THI VIẾT SALES PAGE ===
+
+Khi đã có đủ thông tin, bạn hãy sử dụng [STRICT SALES PAGE TEMPLATE] ở bên dưới. Đối với MỖI SECTION, bạn BẮT BUỘC phải xuất kết quả bằng TIẾNG VIỆT tuần tự theo đúng 4 bước sau:
+
+- BƯỚC 1: [Mục tiêu chuyển đổi] - Mục tiêu tâm lý của section này là gì?
+- BƯỚC 2: [Internal Monologue] - Tự độc thoại phân tích logic ngầm (Ví dụ: Pain point sâu thẳm nhất là gì? Micro-problem nào cần giải quyết?). Tự phân tích xong mới được viết.
+- BƯỚC 3: [Copywriting Thực chiến] - BƯỚC QUAN TRỌNG NHẤT. GIỮ NGUYÊN số lượng gạch đầu dòng và cấu trúc của Section tương ứng trong template. Dịch mượt mà và điền kín các biến số tiếng Anh \`[...]\` bằng nội dung tiếng Việt sắc bén dựa trên dữ liệu thu thập ở Giai đoạn 1. Xóa bỏ hoàn toàn dấu ngoặc vuông sau khi điền. Nội dung viết ra phải mang tính bán hàng nhưng không sáo rỗng.
+- BƯỚC 4: [Gợi ý UI/UX Visual] - Đề xuất bố cục và hình ảnh minh họa phù hợp cho từng section.
+
+[STRICT SALES PAGE TEMPLATE CẦN ÁP DỤNG CHO BƯỚC 3]
+
+[SECTION 1: HERO SECTION]
+[ATTENTION-GRABBING HEADLINE ABOUT TRANSFORMATION]
+[SPECIFIC PROMISE WITH TIMEFRAME]: How To [SOLVE MAIN PROBLEM] And [ACHIEVE DESIRED RESULT] In Just [TIME PERIOD]
+(even if [COMMON OBJECTION OR PREVIOUS FAILURE])
+[CALL TO ACTION BUTTON] - Chỉ [PRICE] VNĐ
+[SCARCITY ELEMENT] (Giá gốc [HIGHER PRICE] VNĐ)
+
+[SECTION 2: ESTABLISHING PAIN]
+The [SYSTEM/METHOD] That is Transforming [NEGATIVE STATE] Into [POSITIVE STATE] In Just [TIME PERIOD]
+"[EMOTIONAL QUOTE THAT CAPTURES PAIN POINT]"
+[RELATABLE STORY OPENING THAT ESTABLISHES PAIN]
+[DESCRIBE THE CONTRAST BETWEEN NEGATIVE PAST AND DESIRED STATE]
+[EMOTIONAL REACTION TO THE PROBLEM]
+Now my daily struggle with [PROBLEM] includes:
+- [SPECIFIC PAIN POINT 1]
+- [SPECIFIC PAIN POINT 2]
+- [SPECIFIC PAIN POINT 3]
+- [SPECIFIC PAIN POINT 4]
+- [SPECIFIC PAIN POINT 5]
+
+[SECTION 3: CYCLE OF FAILING]
+[DESCRIBE CYCLE OF TRYING AND FAILING]
+I tried everything [AUTHORITY FIGURES/EXPERTS] suggested:
+- [ATTEMPTED SOLUTION 1] ([WHY IT FAILED])
+- [ATTEMPTED SOLUTION 2] ([WHY IT FAILED])
+- [ATTEMPTED SOLUTION 3] ([WHY IT FAILED])
+- [ATTEMPTED SOLUTION 4] ([WHY IT FAILED])
+- [ATTEMPTED SOLUTION 5] ([WHY IT FAILED])
+[EMOTIONAL LOW POINT]
+
+[SECTION 4: THE DISCOVERY & INSIGHTS]
+Then I Discovered Something That Changed Everything...
+[DISCOVERY STORY - HOW YOU FOUND THE SOLUTION]
+[REAL RESULTS ACHIEVED AFTER DISCOVERING THE SOLUTION]
+What I learned shocked me:
+According to [RELEVANT RESEARCH/EXPERT SOURCE], [SURPRISING STATISTIC OR FACT ABOUT PROBLEM]:
+- [KEY INSIGHT 1]
+- [KEY INSIGHT 2]
+- [KEY INSIGHT 3]
+- [KEY INSIGHT 4]
+But most alarming of all:
+Most [TARGET AUDIENCE] are unknowingly [COMMON MISTAKE THAT WORSENS PROBLEM]
+I know because I was making all these same mistakes...
+Through extensive research and consultation with:
+- [EXPERT/AUTHORITY TYPE 1]
+- [EXPERT/AUTHORITY TYPE 2]
+- [EXPERT/AUTHORITY TYPE 3]
+I discovered WHY traditional approaches fail - and more importantly, what actually works.
+
+[SECTION 5: THE SOLUTION & BENEFITS]
+I call it the "[PRODUCT NAME]"
+By [KEY MECHANISM OF SOLUTION], I was able to:
+- [BENEFIT 1]
+- [BENEFIT 2]
+- [BENEFIT 3]
+- [BENEFIT 4]
+- [BENEFIT 5]
+[CALL TO ACTION BUTTON] - Chỉ [PRICE] VNĐ
+[SCARCITY ELEMENT] (Giá gốc [HIGHER PRICE] VNĐ)
+
+[SECTION 6: ESSENTIAL SKILLS]
+THE [QUALITIES/SKILLS] THAT SEPARATE [SUCCESS STATE] FROM [FAILURE STATE]
+The 4 Essential [SKILLS/ATTRIBUTES] [TARGET AUDIENCE] Need(s) (That [PROBLEM SOURCE] Dont/Doesnt Provide)
+- [SKILL/ATTRIBUTE 1]: [DESCRIPTION] - [WHY IT IS IMPORTANT] (and [NEGATIVE CONSEQUENCE OF NOT HAVING IT])
+- [SKILL/ATTRIBUTE 2]: [DESCRIPTION] - [WHY IT IS IMPORTANT] (and [NEGATIVE CONSEQUENCE OF NOT HAVING IT])
+- [SKILL/ATTRIBUTE 3]: [DESCRIPTION] - [WHY IT IS IMPORTANT] (and [NEGATIVE CONSEQUENCE OF NOT HAVING IT])
+- [SKILL/ATTRIBUTE 4]: [DESCRIPTION] - [WHY IT IS IMPORTANT] (and [NEGATIVE CONSEQUENCE OF NOT HAVING IT])
+[CALL TO ACTION BUTTON] - Chỉ [PRICE] VNĐ
+[SCARCITY ELEMENT] (Giá gốc [HIGHER PRICE] VNĐ)
+
+[SECTION 7: INSTANT ACCESS & BONUSES]
+INSTANT ACCESS - START [DESIRED TRANSFORMATION] TODAY
+Here is Everything You Get With The [PRODUCT NAME] Today!
+What is included:
+The Complete [PRODUCT NAME]: [NUMBER] proven [MODULES/COMPONENTS] that [SOLVE PROBLEM] and [DELIVER RESULT]
+🎁 Plus These 5 [VALUE-ADDING] Bonuses 🎁
+- "[BONUS 1 TITLE]" - [BENEFIT-FOCUSED DESCRIPTION] (Giải quyết micro-problem)
+- "[BONUS 2 TITLE]" - [BENEFIT-FOCUSED DESCRIPTION] (Giải quyết micro-problem)
+- "[BONUS 3 TITLE]" - [BENEFIT-FOCUSED DESCRIPTION] (Giải quyết micro-problem)
+- "[BONUS 4 TITLE]" - [BENEFIT-FOCUSED DESCRIPTION] (Giải quyết micro-problem)
+- "[BONUS 5 TITLE]" - [BENEFIT-FOCUSED DESCRIPTION] (Giải quyết micro-problem)
+Normally: [REGULAR PRICE] VNĐ
+Today: [DISCOUNTED PRICE] VNĐ
+[CALL TO ACTION BUTTON]
+[SCARCITY ELEMENT] Chỉ còn [PRICE] VNĐ
+
+[SECTION 8: BEFORE AND AFTER]
+The Transformation You Can Expect
+Do not let [PROBLEM] continue dominating your [AREA OF LIFE]. Your [DESIRED OUTCOME] can be [POSITIVE ADJECTIVE] than ever - you just need the right system to make it happen.
+Before The [PRODUCT NAME]:
+- [NEGATIVE STATE 1]
+- [NEGATIVE STATE 2]
+- [NEGATIVE STATE 3]
+- [NEGATIVE STATE 4]
+- [NEGATIVE STATE 5]
+- [NEGATIVE STATE 6]
+After The [PRODUCT NAME]:
+- [POSITIVE STATE 1]
+- [POSITIVE STATE 2]
+- [POSITIVE STATE 3]
+- [POSITIVE STATE 4]
+- [POSITIVE STATE 5]
+- [POSITIVE STATE 6]
+[CALL TO ACTION BUTTON]
+[SCARCITY ELEMENT] Chỉ còn [PRICE] VNĐ
+
+[SECTION 9: COMPONENTS / MODULES]
+YOUR [TRANSFORMATION] PATH BEGINS HERE
+The 5 [COMPONENTS] That Transform Your [PROBLEM AREA]:
+Each [COMPONENT] precisely designed to [MECHANISM OF TRANSFORMATION] through proven [APPROACH].
+[COMPONENT 1]: [TITLE] ([TIMEFRAME])
+[EMOTIONAL OUTCOME DESCRIPTION] - this [METHOD TYPE] helps you [BENEFIT] while [ADDITIONAL BENEFIT].
+- [SPECIFIC TECHNIQUE 1] that [SPECIFIC BENEFIT]
+- [SPECIFIC TECHNIQUE 2] that [SPECIFIC BENEFIT]
+- [SPECIFIC TECHNIQUE 3] that [SPECIFIC BENEFIT]
+
+[COMPONENT 2]: [TITLE] ([TIMEFRAME])
+[EMOTIONAL OUTCOME DESCRIPTION] - our [METHOD TYPE] helps you [BENEFIT] while [ADDITIONAL BENEFIT].
+- [SPECIFIC TECHNIQUE 1] that [SPECIFIC BENEFIT]
+- [SPECIFIC TECHNIQUE 2] that [SPECIFIC BENEFIT]
+- [SPECIFIC TECHNIQUE 3] that [SPECIFIC BENEFIT]
+
+[COMPONENT 3]: [TITLE] ([TIMEFRAME])
+[EMOTIONAL OUTCOME DESCRIPTION] - our [METHOD TYPE] helps you [BENEFIT] while [ADDITIONAL BENEFIT].
+- [SPECIFIC TECHNIQUE 1] that [SPECIFIC BENEFIT]
+- [SPECIFIC TECHNIQUE 2] that [SPECIFIC BENEFIT]
+- [SPECIFIC TECHNIQUE 3] that [SPECIFIC BENEFIT]
+
+[COMPONENT 4]: [TITLE] ([TIMEFRAME])
+[EMOTIONAL OUTCOME DESCRIPTION] - our [METHOD TYPE] helps you [BENEFIT] while [ADDITIONAL BENEFIT].
+- [SPECIFIC TECHNIQUE 1] that [SPECIFIC BENEFIT]
+- [SPECIFIC TECHNIQUE 2] that [SPECIFIC BENEFIT]
+- [SPECIFIC TECHNIQUE 3] that [SPECIFIC BENEFIT]
+
+[COMPONENT 5]: [TITLE] ([TIMEFRAME])
+[EMOTIONAL OUTCOME DESCRIPTION] - our [METHOD TYPE] helps you [BENEFIT] while [ADDITIONAL BENEFIT].
+- [SPECIFIC TECHNIQUE 1] that [SPECIFIC BENEFIT]
+- [SPECIFIC TECHNIQUE 2] that [SPECIFIC BENEFIT]
+- [SPECIFIC TECHNIQUE 3] that [SPECIFIC BENEFIT]
+
+[SECTION 10: INSTRUCTOR INFO]
+=== THÊM SECTION GIỚI THIỆU GIẢNG VIÊN ===
+[INSTRUCTOR SECTION HEADLINE]
+Thông tin giảng viên/chuyên gia đào tạo:
+- Họ tên:
+- Chức danh/chuyên môn:
+- Số năm kinh nghiệm:
+- Thành tựu nổi bật:
+- Dự án/khách hàng/kết quả tiêu biểu:
+- Triết lý đào tạo hoặc điểm khác biệt:
+- Vì sao học viên nên tin tưởng học theo:
+
+[SECTION 11: FINAL CTA & FORM]
+[COMPELLING CALL TO ACTION HEADLINE]
+Get The [PRODUCT NAME] Now
+While other [TARGET AUDIENCE] struggle with [ONGOING PROBLEM], you will be [ENJOYING BENEFITS] using our proven system.
+[CALL TO ACTION BUTTON]
+[SCARCITY ELEMENT] Chỉ còn [PRICE] VNĐ
+
+=== THÊM CTA CUỐI CÙNG KÈM FORM ĐĂNG KÝ ===
+[FINAL CTA HEADLINE]
+[FINAL CTA SUBHEAD THAT REINFORCES BENEFIT + URGENCY]
+Form đăng ký nhận tư vấn / đăng ký khóa học:
+- Họ và tên
+- Số điện thoại
+[NỘI DUNG NÚT CTA THEO PHONG CÁCH THÚC ĐẨY HÀNH ĐỘNG TỰ NHIÊN BẰNG TIẾNG VIỆT]
+[SCARCITY ELEMENT] Chỉ còn [PRICE] VNĐ
+
+COPYRIGHT 2026 | YOUR BRAND | PRIVACY POLICY | TERMS & CONDITIONS
+
+Nếu bạn đã hiểu toàn bộ hệ thống, KHÔNG viết bất cứ chữ nào của bài Sales Page. Hãy chào tôi và bắt đầu hỏi tôi 8 câu hỏi ở Giai đoạn 1.`;
+            return prompt;
+        }
+
+        // --- BƯỚC 5: ĐỒNG BỘ WIREFRAME LÊN BẢNG SANDBOX PHẢI ---
+        function deployWireframeSandbox() {
+            const previewEmpty = document.getElementById('preview-empty-state');
+            const previewActive = document.getElementById('preview-active-state');
+            const previewIndustry = document.getElementById('preview-industry-title');
+            const previewBadge = document.getElementById('preview-framework-badge');
+            const container = document.getElementById('wireframe-container');
+            
+            previewEmpty.classList.add('hidden');
+            previewActive.classList.remove('hidden');
+            
+            previewIndustry.innerText = userIndustry;
+            previewBadge.innerText = "ĐÃ ĐỒNG BỘ";
+
+            // Dữ liệu mô phỏng cấu trúc 11 section của Sales Page
+            const wireframes = [
+                { id: "Sec 1", name: "Hero Section", icon: "fa-rocket", desc: "Headline thu hút + Lời hứa thời gian + Nút CTA chính" },
+                { id: "Sec 2", name: "Establishing Pain", icon: "fa-heart-crack", desc: "Xoáy sâu vào nỗi đau hiện tại của khách hàng" },
+                { id: "Sec 3", name: "Cycle of Failing", icon: "fa-rotate-right", desc: "Chỉ ra những phương pháp họ từng thử và thất bại" },
+                { id: "Sec 4", name: "Discovery & Insights", icon: "fa-lightbulb", desc: "Cú ngoặt khám phá giải pháp mới dựa trên dữ liệu" },
+                { id: "Sec 5", name: "Solution & Benefits", icon: "fa-box-open", desc: "Giới thiệu Sản phẩm/Dịch vụ và 5 lợi ích cốt lõi" },
+                { id: "Sec 6", name: "Essential Skills", icon: "fa-gears", desc: "Các kỹ năng/tố chất khác biệt cần có để thành công" },
+                { id: "Sec 7", name: "Access & Bonuses", icon: "fa-gift", desc: "Trình bày ưu đãi, quà tặng kèm theo và giá trị quy đổi" },
+                { id: "Sec 8", name: "Before & After", icon: "fa-arrows-left-right", desc: "Bảng so sánh trực quan cuộc sống Trước - Sau" },
+                { id: "Sec 9", name: "Components Detail", icon: "fa-list-check", desc: "Diễn giải chi tiết 5 Module/Thành phần của giải pháp" },
+                { id: "Sec 10", name: "Instructor Info", icon: "fa-user-tie", desc: "Bảo chứng niềm tin: Hồ sơ chuyên gia/người tạo ra" },
+                { id: "Sec 11", name: "Final CTA & Form", icon: "fa-envelope-open-text", desc: "Lời kêu gọi khẩn cấp + Form thu thập data" }
+            ];
+
+            container.innerHTML = '';
+            wireframes.forEach((item, index) => {
+                const html = `
+                    <div class="relative flex items-center mb-3">
+                        <div class="hidden md:block w-4 h-4 absolute left-1/2 -ml-2 rounded-full border-4 border-[#09090b] bg-amber-500 z-10"></div>
+                        <div class="ml-6 md:ml-0 md:w-1/2 p-3 bg-[#18181b] border border-zinc-800 rounded-lg shadow-sm hover:border-zinc-600 transition-colors ${index % 2 === 0 ? 'md:mr-auto md:pr-8' : 'md:ml-auto md:pl-8'}">
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="bg-zinc-800 text-zinc-400 text-[9px] px-1.5 py-0.5 rounded font-bold">${item.id}</span>
+                                <h4 class="text-xs font-bold text-zinc-200"><i class="fas ${item.icon} text-amber-500 mr-1"></i> ${item.name}</h4>
+                            </div>
+                            <p class="text-[10px] text-zinc-500 leading-snug">${item.desc}</p>
+                        </div>
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', html);
+            });
+        }
+
+        // --- COPY CLIPBOARD CƠ BẢN ---
+        function copyTextToClipboard(id) {
+            const textToCopy = document.getElementById(id).innerText;
+            const dummy = document.createElement("textarea");
+            document.body.appendChild(dummy);
+            dummy.value = textToCopy;
+            dummy.select();
+            document.execCommand("copy");
+            document.body.removeChild(dummy);
+
+            const copyBtn = document.getElementById(`btn-${id}`);
+            const originalHtml = copyBtn.innerHTML;
+            copyBtn.innerHTML = '<i class="fas fa-check"></i> Đã sao chép!';
+            copyBtn.classList.remove('bg-zinc-800/80', 'border-zinc-700');
+            copyBtn.classList.add('bg-emerald-600', 'border-emerald-500', 'text-white');
+
+            showToast("Đã copy thành công", "Vui lòng dán Mega Prompt này vào công cụ AI của bạn.");
+
+            setTimeout(() => {
+                copyBtn.innerHTML = originalHtml;
+                copyBtn.classList.add('bg-zinc-800/80', 'border-zinc-700');
+                copyBtn.classList.remove('bg-emerald-600', 'border-emerald-500', 'text-white');
+            }, 2500);
+        }
+
+        // --- ĐẶT LẠI ỨNG DỤNG ---
+        function resetApp() {
+            document.getElementById('quick-tags').innerHTML = `
+                <button onclick="useTag('Khóa học Tiếng Anh giao tiếp cho người đi làm')" class="tag shrink-0 px-3 py-1.5 bg-[#18181b] hover:bg-[#27272a] border border-zinc-800 hover:border-zinc-700 rounded-lg text-xs font-medium text-zinc-300 transition-all">🎓 Khóa học ngoại ngữ</button>
+                <button onclick="useTag('Phần mềm quản lý tài chính cá nhân tự động')" class="tag shrink-0 px-3 py-1.5 bg-[#18181b] hover:bg-[#27272a] border border-zinc-800 hover:border-zinc-700 rounded-lg text-xs font-medium text-zinc-300 transition-all">💻 Phần mềm/Công cụ</button>
+                <button onclick="useTag('Ebook hướng dẫn Content Marketing đa kênh')" class="tag shrink-0 px-3 py-1.5 bg-[#18181b] hover:bg-[#27272a] border border-zinc-800 hover:border-zinc-700 rounded-lg text-xs font-medium text-zinc-300 transition-all">📖 Ebook / Tài liệu số</button>
+                <button onclick="useTag('Dịch vụ Coaching giảm cân chuẩn y khoa')" class="tag shrink-0 px-3 py-1.5 bg-[#18181b] hover:bg-[#27272a] border border-zinc-800 hover:border-zinc-700 rounded-lg text-xs font-medium text-zinc-300 transition-all">🏋️ Coaching chuyên sâu</button>
+            `;
+            userInput.placeholder = "Nhập tên sản phẩm hoặc ngách của bạn...";
+            userInput.value = '';
+            
+            chatHistory.innerHTML = `
+                <div class="flex gap-4 items-start max-w-[85%]">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-amber-500 to-rose-600 flex items-center justify-center text-white shrink-0 shadow-md">
+                        <i class="fas fa-robot text-sm"></i>
+                    </div>
+                    <div class="bg-[#18181b] border border-zinc-800 text-zinc-100 rounded-2xl rounded-tl-none p-4 text-sm leading-relaxed shadow-sm">
+                        Chào bạn, tôi là Nova - hệ thống chuyên biệt thiết kế Sales Page chuyển đổi cao.<br><br>
+                        Để bắt đầu kiến tạo bộ Mega Prompt gồm 2 giai đoạn tiêu chuẩn, bạn hãy cho tôi biết: <strong>Tên sản phẩm hoặc lĩnh vực bạn đang muốn bán là gì?</strong>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('preview-empty-state').classList.remove('hidden');
+            document.getElementById('preview-active-state').classList.add('hidden');
+            document.getElementById('preview-framework-badge').innerText = "CHỜ KHỞI TẠO";
+
+            userIndustry = '';
+            currentState = 'ask_industry';
+            setInputState(false);
+            
+            showToast("Đã làm mới", "Hệ thống sẵn sàng cho dự án tiếp theo.");
+        }
+    </script>
+</body>
+</html>
