@@ -667,77 +667,214 @@ async function genPrompt(){
 //  PROMPT BUILDER
 // ══════════════════════════════════════════════════════════
 function buildP(tone,fmt,aw){
-return `[SYSTEM: KÍCH HOẠT QUY TRÌNH VIẾT SALES PAGE TỰ ĐỘNG]
-Tôi đã thu thập đầy đủ dữ liệu. Bỏ qua bước phỏng vấn — trực tiếp thực thi viết Sales Page.
+const d=data;
+return `Leo ebook
+[SYSTEM INSTRUCTION: KÍCH HOẠT QUY TRÌNH MEGA-PROMPT TƯƠNG TÁC]
+Bắt đầu từ bây giờ, bạn sẽ hoạt động như một cỗ máy tạo Sales Page tương tác theo quy trình 2 GIAI ĐOẠN nghiêm ngặt.
 
-1. VAI TRÒ: Copywriter Direct Response top 1% + Kiến trúc sư UI/UX thực chiến.
-VĂN PHONG: ${tone}. TUYỆT ĐỐI BÁC BỎ ngôn từ sáo rỗng. Đanh thép, thực tế, khớp với người Việt Nam.
+TUYỆT ĐỐI KHÔNG VIẾT SALES PAGE NGAY LẬP TỨC. Bạn phải thực hiện Giai đoạn 1 trước, chờ tôi trả lời, rồi mới được chuyển sang Giai đoạn 2.
 
-2. DỮ LIỆU ĐẦU VÀO:
-- Sản phẩm: ${data.q1} (${fmt})
-- Nhận thức KH: ${aw}
-- Khách hàng mục tiêu: ${data.q2}
-- Nỗi đau / Cảm xúc: ${data.q3}
-- Giải pháp đã thử & thất bại: ${data.q4}
-- Kết quả / Transformation: ${data.q5}
-- Thời gian đạt kết quả: ${data.q6}
-- Authority người tạo: ${data.q7}
-- Chiến lược giá: ${data.q8}
+=== GIAI ĐOẠN 1: THIẾT LẬP VAI TRÒ & PHỎNG VẤN THU THẬP DỮ LIỆU ===
 
-=== THỰC THI — 11 SECTIONS ===
-Với MỖI SECTION, xuất TIẾNG VIỆT tuần tự 4 bước:
-BƯỚC 1 [Mục tiêu tâm lý] | BƯỚC 2 [Internal Monologue — phân tích trước khi viết] | BƯỚC 3 [Copywriting thực chiến — điền kín biến số, xóa ngoặc, giữ cấu trúc] | BƯỚC 4 [Gợi ý UI/UX Visual]
+1. THIẾT LẬP VAI TRÒ (PERSONA):
+Bạn là một Chuyên gia Copywriter thuộc top 1% trong lĩnh vực Direct Response Marketing và là một Kiến trúc sư UI/UX thực chiến. Bạn am hiểu sâu sắc tâm lý học hành vi.
+- VĂN PHONG BẮT BUỘC: Phân tích chuyên môn sâu. TUYỆT ĐỐI BÁC BỎ ngôn từ marketing sáo rỗng, phô trương (như "Master Class", "siêu đỉnh", "bí mật"). Ưu tiên thuật ngữ chuẩn xác, văn phong đanh thép, thực tế, khớp hoàn toàn với giọng văn của khách hàng mục tiêu tại Việt Nam.
 
-[S1 HERO]
-[HEADLINE TRANSFORMATION]
-How To [GIẢI QUYẾT] And [KẾT QUẢ] In Just [THỜI GIAN] (even if [RÀO CẢN])
-CTA — Chỉ [GIÁ ƯU ĐÃI] VNĐ | Giá gốc [GIÁ GỐC] VNĐ
+2. DỮ LIỆU ĐÃ THU THẬP (bỏ qua bước phỏng vấn, dùng trực tiếp):
+1. Product Name & Format: ${d.q1} (${fmt})
+2. Target Audience (ICP): ${d.q2}
+3. Main Problem & Emotional Pain: ${d.q3}
+4. Common Objections/Failed Attempts: ${d.q4}
+5. Desired Result (Transformation): ${d.q5}
+6. Timeframe: ${d.q6}
+7. Authority/Instructor Info: ${d.q7}
+8. Pricing: ${d.q8}
 
-[S2 ESTABLISHING PAIN]
-"[EMOTIONAL QUOTE]" | [STORY MỞ ĐẦU ĐỒNG CẢNH]
-Hàng ngày họ phải đối mặt: [NỖI ĐAU CỤ THỂ × 5]
+Mức độ nhận thức khách hàng: ${aw}
+Văn phong: ${tone}
 
-[S3 CYCLE OF FAILING]
-Tôi đã thử mọi cách:
-[CÁCH ĐÃ THỬ + LÝ DO THẤT BẠI × 5]
-[ĐIỂM THẤP CẢM XÚC — TURNING POINT]
+*(Dữ liệu đã đầy đủ, bỏ qua Giai đoạn 1. Chuyển thẳng sang Giai đoạn 2.)*
 
-[S4 DISCOVERY & INSIGHTS]
-Rồi tôi khám phá ra điều thay đổi tất cả...
-[STORY KHÁM PHÁ] | [KEY INSIGHT × 4]
-Hầu hết [NHÓM KH] đang vô tình [SAI LẦM PHỔ BIẾN]...
+=== GIAI ĐOẠN 2: THỰC THI VIẾT SALES PAGE ===
 
-[S5 SOLUTION & BENEFITS]
-Giới thiệu: "${data.q1}"
-[LỢI ÍCH CỤ THỂ × 5]
-CTA — Chỉ [GIÁ] VNĐ
+Khi đã có đủ thông tin, bạn hãy sử dụng [STRICT SALES PAGE TEMPLATE] ở bên dưới. Đối với MỖI SECTION, bạn BẮT BUỘC phải xuất kết quả bằng TIẾNG VIỆT tuần tự theo đúng 4 bước sau:
 
-[S6 ESSENTIAL SKILLS]
-4 kỹ năng cốt lõi [NHÓM KH] cần có:
-[KỸ NĂNG + MÔ TẢ + HẬU QUẢ NẾU THIẾU × 4]
+- BƯỚC 1: [Mục tiêu chuyển đổi] - Mục tiêu tâm lý của section này là gì?
+- BƯỚC 2: [Internal Monologue] - Tự độc thoại phân tích logic ngầm (Ví dụ: Pain point sâu thẳm nhất là gì? Micro-problem nào cần giải quyết?). Tự phân tích xong mới được viết.
+- BƯỚC 3: [Copywriting Thực chiến] - BƯỚC QUAN TRỌNG NHẤT. GIỮ NGUYÊN số lượng gạch đầu dòng và cấu trúc của Section tương ứng trong template. Dịch mượt mà và điền kín các biến số tiếng Anh [...] bằng nội dung tiếng Việt sắc bén dựa trên dữ liệu thu thập ở Giai đoạn 1. Xóa bỏ hoàn toàn dấu ngoặc vuông sau khi điền. Nội dung viết ra phải mang tính bán hàng nhưng không sáo rỗng.
+- BƯỚC 4: [Gợi ý UI/UX Visual] - Đề xuất bố cục và hình ảnh minh họa phù hợp cho từng section.
 
-[S7 ACCESS & BONUSES]
-5 Bonus đi kèm: ["BONUS TITLE" — LỢI ÍCH × 5]
-Giá gốc: [GIÁ GỐC] | Hôm nay: [GIÁ ƯU ĐÃI]
+[STRICT SALES PAGE TEMPLATE CẦN ÁP DỤNG CHO BƯỚC 3]
 
-[S8 BEFORE & AFTER]
-Trước: [TRẠNG THÁI TIÊU CỰC × 6]
-Sau: [TRẠNG THÁI TÍCH CỰC × 6]
+[SECTION 1: HERO SECTION]
+[ATTENTION-GRABBING HEADLINE ABOUT TRANSFORMATION]
+[SPECIFIC PROMISE WITH TIMEFRAME]: How To [SOLVE MAIN PROBLEM] And [ACHIEVE DESIRED RESULT] In Just [TIME PERIOD]
+(even if [COMMON OBJECTION OR PREVIOUS FAILURE])
+[CALL TO ACTION BUTTON] - Chỉ [PRICE] VNĐ
+[SCARCITY ELEMENT] (Giá gốc [HIGHER PRICE] VNĐ)
 
-[S9 COMPONENTS]
-5 thành phần của "${data.q1}":
-[THÀNH PHẦN + TIMEFRAME + 3 KỸ THUẬT × 5]
+[SECTION 2: ESTABLISHING PAIN]
+The [SYSTEM/METHOD] That is Transforming [NEGATIVE STATE] Into [POSITIVE STATE] In Just [TIME PERIOD]
+"[EMOTIONAL QUOTE THAT CAPTURES PAIN POINT]"
+[RELATABLE STORY OPENING THAT ESTABLISHES PAIN]
+[DESCRIBE THE CONTRAST BETWEEN NEGATIVE PAST AND DESIRED STATE]
+[EMOTIONAL REACTION TO THE PROBLEM]
+Now my daily struggle with [PROBLEM] includes:
+- [SPECIFIC PAIN POINT 1]
+- [SPECIFIC PAIN POINT 2]
+- [SPECIFIC PAIN POINT 3]
+- [SPECIFIC PAIN POINT 4]
+- [SPECIFIC PAIN POINT 5]
 
-[S10 INSTRUCTOR]
-${data.q7}: Chức danh · Năm kinh nghiệm · Thành tựu · Kết quả tiêu biểu · Lý do tin tưởng
+[SECTION 3: CYCLE OF FAILING]
+[DESCRIBE CYCLE OF TRYING AND FAILING]
+I tried everything [AUTHORITY FIGURES/EXPERTS] suggested:
+- [ATTEMPTED SOLUTION 1] ([WHY IT FAILED])
+- [ATTEMPTED SOLUTION 2] ([WHY IT FAILED])
+- [ATTEMPTED SOLUTION 3] ([WHY IT FAILED])
+- [ATTEMPTED SOLUTION 4] ([WHY IT FAILED])
+- [ATTEMPTED SOLUTION 5] ([WHY IT FAILED])
+[EMOTIONAL LOW POINT]
 
-[S11 FINAL CTA & FORM]
-[HEADLINE CTA COMPELLING]
-Form: Họ và tên + Số điện thoại
-[NÚT CTA THÚC ĐẨY HÀNH ĐỘNG — TIẾNG VIỆT TỰ NHIÊN]
-Chỉ còn [GIÁ ƯU ĐÃI] VNĐ
+[SECTION 4: THE DISCOVERY & INSIGHTS]
+Then I Discovered Something That Changed Everything...
+[DISCOVERY STORY - HOW YOU FOUND THE SOLUTION]
+[REAL RESULTS ACHIEVED AFTER DISCOVERING THE SOLUTION]
+What I learned shocked me:
+According to [RELEVANT RESEARCH/EXPERT SOURCE], [SURPRISING STATISTIC OR FACT ABOUT PROBLEM]:
+- [KEY INSIGHT 1]
+- [KEY INSIGHT 2]
+- [KEY INSIGHT 3]
+- [KEY INSIGHT 4]
+But most alarming of all:
+Most [TARGET AUDIENCE] are unknowingly [COMMON MISTAKE THAT WORSENS PROBLEM]
+I know because I was making all these same mistakes...
+Through extensive research and consultation with:
+- [EXPERT/AUTHORITY TYPE 1]
+- [EXPERT/AUTHORITY TYPE 2]
+- [EXPERT/AUTHORITY TYPE 3]
+I discovered WHY traditional approaches fail - and more importantly, what actually works.
 
-© 2026 | YOUR BRAND | PRIVACY POLICY`;
+[SECTION 5: THE SOLUTION & BENEFITS]
+I call it the "${d.q1}"
+By [KEY MECHANISM OF SOLUTION], I was able to:
+- [BENEFIT 1]
+- [BENEFIT 2]
+- [BENEFIT 3]
+- [BENEFIT 4]
+- [BENEFIT 5]
+[CALL TO ACTION BUTTON] - Chỉ [PRICE] VNĐ
+[SCARCITY ELEMENT] (Giá gốc [HIGHER PRICE] VNĐ)
+
+[SECTION 6: ESSENTIAL SKILLS]
+THE [QUALITIES/SKILLS] THAT SEPARATE [SUCCESS STATE] FROM [FAILURE STATE]
+The 4 Essential [SKILLS/ATTRIBUTES] [TARGET AUDIENCE] Need(s) (That [PROBLEM SOURCE] Dont/Doesnt Provide)
+- [SKILL/ATTRIBUTE 1]: [DESCRIPTION] - [WHY IT IS IMPORTANT] (and [NEGATIVE CONSEQUENCE OF NOT HAVING IT])
+- [SKILL/ATTRIBUTE 2]: [DESCRIPTION] - [WHY IT IS IMPORTANT] (and [NEGATIVE CONSEQUENCE OF NOT HAVING IT])
+- [SKILL/ATTRIBUTE 3]: [DESCRIPTION] - [WHY IT IS IMPORTANT] (and [NEGATIVE CONSEQUENCE OF NOT HAVING IT])
+- [SKILL/ATTRIBUTE 4]: [DESCRIPTION] - [WHY IT IS IMPORTANT] (and [NEGATIVE CONSEQUENCE OF NOT HAVING IT])
+[CALL TO ACTION BUTTON] - Chỉ [PRICE] VNĐ
+[SCARCITY ELEMENT] (Giá gốc [HIGHER PRICE] VNĐ)
+
+[SECTION 7: INSTANT ACCESS & BONUSES]
+INSTANT ACCESS - START [DESIRED TRANSFORMATION] TODAY
+Here is Everything You Get With The ${d.q1} Today!
+What is included:
+The Complete ${d.q1}: [NUMBER] proven [MODULES/COMPONENTS] that [SOLVE PROBLEM] and [DELIVER RESULT]
+🎁 Plus These 5 [VALUE-ADDING] Bonuses 🎁
+- "[BONUS 1 TITLE]" - [BENEFIT-FOCUSED DESCRIPTION] (Giải quyết micro-problem)
+- "[BONUS 2 TITLE]" - [BENEFIT-FOCUSED DESCRIPTION] (Giải quyết micro-problem)
+- "[BONUS 3 TITLE]" - [BENEFIT-FOCUSED DESCRIPTION] (Giải quyết micro-problem)
+- "[BONUS 4 TITLE]" - [BENEFIT-FOCUSED DESCRIPTION] (Giải quyết micro-problem)
+- "[BONUS 5 TITLE]" - [BENEFIT-FOCUSED DESCRIPTION] (Giải quyết micro-problem)
+Normally: [REGULAR PRICE] VNĐ
+Today: [DISCOUNTED PRICE] VNĐ
+[CALL TO ACTION BUTTON]
+[SCARCITY ELEMENT] Chỉ còn [PRICE] VNĐ
+
+[SECTION 8: BEFORE AND AFTER]
+The Transformation You Can Expect
+Do not let [PROBLEM] continue dominating your [AREA OF LIFE]. Your [DESIRED OUTCOME] can be [POSITIVE ADJECTIVE] than ever - you just need the right system to make it happen.
+Before The ${d.q1}:
+- [NEGATIVE STATE 1]
+- [NEGATIVE STATE 2]
+- [NEGATIVE STATE 3]
+- [NEGATIVE STATE 4]
+- [NEGATIVE STATE 5]
+- [NEGATIVE STATE 6]
+After The ${d.q1}:
+- [POSITIVE STATE 1]
+- [POSITIVE STATE 2]
+- [POSITIVE STATE 3]
+- [POSITIVE STATE 4]
+- [POSITIVE STATE 5]
+- [POSITIVE STATE 6]
+[CALL TO ACTION BUTTON]
+[SCARCITY ELEMENT] Chỉ còn [PRICE] VNĐ
+
+[SECTION 9: COMPONENTS / MODULES]
+YOUR [TRANSFORMATION] PATH BEGINS HERE
+The 5 [COMPONENTS] That Transform Your [PROBLEM AREA]:
+Each [COMPONENT] precisely designed to [MECHANISM OF TRANSFORMATION] through proven [APPROACH].
+[COMPONENT 1]: [TITLE] ([TIMEFRAME])
+[EMOTIONAL OUTCOME DESCRIPTION] - this [METHOD TYPE] helps you [BENEFIT] while [ADDITIONAL BENEFIT].
+- [SPECIFIC TECHNIQUE 1] that [SPECIFIC BENEFIT]
+- [SPECIFIC TECHNIQUE 2] that [SPECIFIC BENEFIT]
+- [SPECIFIC TECHNIQUE 3] that [SPECIFIC BENEFIT]
+
+[COMPONENT 2]: [TITLE] ([TIMEFRAME])
+[EMOTIONAL OUTCOME DESCRIPTION] - our [METHOD TYPE] helps you [BENEFIT] while [ADDITIONAL BENEFIT].
+- [SPECIFIC TECHNIQUE 1] that [SPECIFIC BENEFIT]
+- [SPECIFIC TECHNIQUE 2] that [SPECIFIC BENEFIT]
+- [SPECIFIC TECHNIQUE 3] that [SPECIFIC BENEFIT]
+
+[COMPONENT 3]: [TITLE] ([TIMEFRAME])
+[EMOTIONAL OUTCOME DESCRIPTION] - our [METHOD TYPE] helps you [BENEFIT] while [ADDITIONAL BENEFIT].
+- [SPECIFIC TECHNIQUE 1] that [SPECIFIC BENEFIT]
+- [SPECIFIC TECHNIQUE 2] that [SPECIFIC BENEFIT]
+- [SPECIFIC TECHNIQUE 3] that [SPECIFIC BENEFIT]
+
+[COMPONENT 4]: [TITLE] ([TIMEFRAME])
+[EMOTIONAL OUTCOME DESCRIPTION] - our [METHOD TYPE] helps you [BENEFIT] while [ADDITIONAL BENEFIT].
+- [SPECIFIC TECHNIQUE 1] that [SPECIFIC BENEFIT]
+- [SPECIFIC TECHNIQUE 2] that [SPECIFIC BENEFIT]
+- [SPECIFIC TECHNIQUE 3] that [SPECIFIC BENEFIT]
+
+[COMPONENT 5]: [TITLE] ([TIMEFRAME])
+[EMOTIONAL OUTCOME DESCRIPTION] - our [METHOD TYPE] helps you [BENEFIT] while [ADDITIONAL BENEFIT].
+- [SPECIFIC TECHNIQUE 1] that [SPECIFIC BENEFIT]
+- [SPECIFIC TECHNIQUE 2] that [SPECIFIC BENEFIT]
+- [SPECIFIC TECHNIQUE 3] that [SPECIFIC BENEFIT]
+
+[SECTION 10: INSTRUCTOR INFO]
+=== THÊM SECTION GIỚI THIỆU GIẢNG VIÊN ===
+[INSTRUCTOR SECTION HEADLINE]
+Thông tin giảng viên/chuyên gia đào tạo:
+- Họ tên: [điền từ: ${d.q7}]
+- Chức danh/chuyên môn:
+- Số năm kinh nghiệm:
+- Thành tựu nổi bật:
+- Dự án/khách hàng/kết quả tiêu biểu:
+- Triết lý đào tạo hoặc điểm khác biệt:
+- Vì sao học viên nên tin tưởng học theo:
+
+[SECTION 11: FINAL CTA & FORM]
+[COMPELLING CALL TO ACTION HEADLINE]
+Get The ${d.q1} Now
+While other [TARGET AUDIENCE] struggle with [ONGOING PROBLEM], you will be [ENJOYING BENEFITS] using our proven system.
+[CALL TO ACTION BUTTON]
+[SCARCITY ELEMENT] Chỉ còn [PRICE] VNĐ
+
+=== THÊM CTA CUỐI CÙNG KÈM FORM ĐĂNG KÝ ===
+[FINAL CTA HEADLINE]
+[FINAL CTA SUBHEAD THAT REINFORCES BENEFIT + URGENCY]
+Form đăng ký nhận tư vấn / đăng ký khóa học:
+- Họ và tên
+- Số điện thoại
+[NỘI DUNG NÚT CTA THEO PHONG CÁCH THÚC ĐẨY HÀNH ĐỘNG TỰ NHIÊN BẰNG TIẾNG VIỆT]
+[SCARCITY ELEMENT] Chỉ còn [PRICE] VNĐ
+
+COPYRIGHT 2026 | YOUR BRAND | PRIVACY POLICY | TERMS & CONDITIONS`;
 }
 
 // ══════════════════════════════════════════════════════════
