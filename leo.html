@@ -84,10 +84,14 @@
     .h{color:var(--a);font-weight:600}
     .hg{color:#4ade80;font-weight:600}
 
-    /* Chunk typewriter cursor */
+    /* Chunk typewriter cursor (amber) */
     .cur{display:inline-block;width:2px;height:13px;background:var(--a);
       margin-left:2px;vertical-align:middle;animation:cb .75s step-end infinite}
     @keyframes cb{0%,100%{opacity:1}50%{opacity:0}}
+    /* Live AI stream cursor (green) — distinct from typewriter */
+    .stream-cur{display:inline-block;width:2px;height:14px;background:var(--g);
+      vertical-align:middle;margin-left:1px;border-radius:1px;
+      animation:cb .55s step-end infinite}
 
     /* ACK chip */
     .chip{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;
@@ -307,7 +311,7 @@
     // Format hints: show pricing format options
     h:['297.000đ / gốc 997.000đ','497.000đ — chỉ còn 20 suất ra mắt','1.200.000đ / gốc 2.500.000đ']
   }
-];��u đó sau <span class="h">bao lâu?</span> Càng cụ thể càng tốt.',
+];��u đó sau <span class="h">bao lâu?</span> Càng cụ thể càng tốt.',
     h:['Chỉ trong 30 ngày đầu tiên','Sau 8 tuần áp dụng đúng phương pháp','Ngay trong tuần đầu sau khi setup xong']
   },
   {
@@ -403,16 +407,21 @@ const AI={
   // Stream AI reaction into a text el — returns Promise
   async stream(stepIdx, answer, el){
     const qtext=Q[stepIdx].q.replace(/<[^>]+>/g,'');
-    const prompt=`Bạn là Leo, chuyên gia phân tích Sales Page. Phản hồi TỐI ĐA 2 câu, đanh thép, cụ thể. Tiếng Việt. Không emoji. Không "cảm ơn".
+    // Prompt nới hơn: 2-3 câu phân tích thật — không công thức
+    const prompt=`Bạn là Leo — chuyên gia copywriting Direct Response và phân tích Sales Page. Tiếng Việt. Không emoji. Không "cảm ơn". Không mở đầu bằng "Tôi đã ghi nhận" hay "Thú vị".
 
-Câu hỏi: "${qtext}"
-Câu trả lời: "${answer}"
+Câu hỏi vừa hỏi: "${qtext}"
+Câu trả lời của người dùng: "${answer}"
 
-Hãy: (1) xác nhận insight quan trọng nhất từ câu trả lời — trích dẫn 1-2 từ khoá của họ; (2) nói ngắn gọn nó sẽ được dùng vào section nào (Hero, Pain, Failing, Solution, CTA...). Phong cách chuyên gia, không phải chatbot.`;
+Viết phản hồi 2-3 câu theo phong cách chuyên gia thực chiến:
+- Trích dẫn trực tiếp 1-2 từ/cụm từ cốt lõi từ câu trả lời (dùng dấu "")
+- Phân tích ngắn tại sao data này quan trọng cho bản copy
+- Nêu cụ thể nó sẽ xuất hiện ở section nào và tác động tâm lý gì
+Văn phong: đanh thép, tự tin, như expert đang đọc brief — không như chatbot xác nhận form.`;
 
     try{
       if(this.mode==='nano') return await this._nano(prompt,el);
-      if(this.mode==='gemini') return await this._gemini(prompt,el,80);
+      if(this.mode==='gemini') return await this._gemini(prompt,el,180);
     }catch(e){}
     // Fallback
     await chunk(el,FR[stepIdx]?.(answer)||'',3,16);
@@ -445,13 +454,17 @@ Hãy: (1) xác nhận insight quan trọng nhất từ câu trả lời — trí
     }catch(e){return null}
   },
 
-  async _gemini(prompt,el,max=80){
+  async _gemini(prompt,el,max=180){
     const r=await fetch(this.GURL+this.key,{
       method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({contents:[{parts:[{text:prompt}]}],
         generationConfig:{maxOutputTokens:max,temperature:.85}})
     });
     if(!r.ok) throw new Error(r.status);
+    // Green blinking cursor shows AI is live-streaming
+    const cur=document.createElement('span');
+    cur.className='stream-cur';
+    el.appendChild(cur);
     const reader=r.body.getReader();
     const dec=new TextDecoder();
     let buf='';
@@ -466,22 +479,27 @@ Hãy: (1) xác nhận insight quan trọng nhất từ câu trả lời — trí
         try{
           const j=JSON.parse(ln.slice(6));
           const t=j.candidates?.[0]?.content?.parts?.[0]?.text||'';
-          if(t){el.appendChild(document.createTextNode(t));scrollB()}
+          if(t){el.insertBefore(document.createTextNode(t),cur);scrollB()}
         }catch(e){}
       }
     }
+    cur.remove();
   },
 
   async _nano(prompt,el){
     const s=await window.ai.languageModel.create({
       systemPrompt:'Bạn là Leo, chuyên gia Sales Page. Phản hồi ngắn, đanh thép, Tiếng Việt.'
     });
+    const cur=document.createElement('span');
+    cur.className='stream-cur';
+    el.appendChild(cur);
     const st=s.promptStreaming(prompt);
     let prev=0;
-    for await(const chunk of st){
-      const d=chunk.slice(prev); prev=chunk.length;
-      if(d){el.appendChild(document.createTextNode(d));scrollB()}
+    for await(const ch of st){
+      const d=ch.slice(prev); prev=ch.length;
+      if(d){el.insertBefore(document.createTextNode(d),cur);scrollB()}
     }
+    cur.remove();
   }
 };
 
@@ -588,21 +606,31 @@ async function send(){
   rm(tid);active(false);
 
   if(step<8){
-    // Reaction row
     const row=mkRow('leo');
     const txt=row.querySelector('.txt');
-    const chip=document.createElement('span');
-    chip.className='chip';
-    chip.innerHTML=`<i class="fas fa-check"></i> ${ACK[s%ACK.length]}`;
-    txt.appendChild(chip);
-    txt.appendChild(document.createElement('br'));
     cw.appendChild(row);active(true);
 
-    try{
-      await AI.stream(s,val,txt);
-    }catch(e){
+    if(AI.mode!=='fallback'){
+      // AI mode: no chip prefix — Gemini opens the reaction naturally
+      try{
+        await AI.stream(s,val,txt);
+      }catch(e){
+        // Stream failed: fallback to ACK + static
+        const chip=document.createElement('span');
+        chip.className='chip';
+        chip.innerHTML=`<i class="fas fa-check"></i> ${ACK[s%ACK.length]}`;
+        txt.appendChild(chip);
+        const sp=document.createElement('span');
+        sp.innerHTML=' '+(FR[s]?.('')||'');txt.appendChild(sp);
+      }
+    }else{
+      // Offline fallback: ACK chip + static text
+      const chip=document.createElement('span');
+      chip.className='chip';
+      chip.innerHTML=`<i class="fas fa-check"></i> ${ACK[s%ACK.length]}`;
+      txt.appendChild(chip);
       const sp=document.createElement('span');
-      sp.innerHTML=FR[s]?.(val)||'';txt.appendChild(sp);
+      sp.innerHTML=' '+(FR[s]?.('')||'');txt.appendChild(sp);
     }
     active(false);
     await sleep(350);
