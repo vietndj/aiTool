@@ -1,670 +1,1003 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trợ lý Leo 1.0 | Phễu Sales Page Sản Phẩm Số</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            bg: '#0a0a0a',
-                            panel: '#121212',
-                            border: '#262626',
-                            accent: '#f59e0b', // Amber 500
-                            accentHover: '#d97706'
-                        }
-                    },
-                    fontFamily: { sans: ['Inter', 'sans-serif'] }
-                }
-            }
-        }
-    </script>
-    
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #0a0a0a;
-            color: #e5e5e5;
-        }
-        
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #0a0a0a; }
-        ::-webkit-scrollbar-thumb { background: #404040; border-radius: 9999px; }
-        ::-webkit-scrollbar-thumb:hover { background: #f59e0b; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Leo 2.0 — Kiến trúc sư Sales Page</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        /* Animation cho Chat */
-        .fade-in-up { animation: fadeInUp 0.4s ease-out forwards; }
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+    :root {
+      --bg:          #0d0d0d;
+      --surface:     #181818;
+      --surface-2:   #222222;
+      --border:      #2c2c2c;
+      --text:        #e8e8e8;
+      --text-muted:  #777;
+      --text-dim:    #999;
+      --accent:      #f59e0b;
+      --accent-dim:  rgba(245,158,11,0.12);
+      --accent-glow: rgba(245,158,11,0.25);
+      --user-bg:     #1c2235;
+      --user-border: #283047;
+    }
 
-        .typing-dot { animation: typing 1.4s infinite ease-in-out both; }
-        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
-        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
-        @keyframes typing {
-            0%, 80%, 100% { transform: scale(0); opacity: 0.5; }
-            40% { transform: scale(1); opacity: 1; }
-        }
+    html, body { height: 100%; }
 
-        .glowing-amber { box-shadow: 0 0 20px rgba(245, 158, 11, 0.15); }
-    </style>
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* ─── HEADER ─── */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 13px 20px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+      z-index: 50;
+    }
+    .hdr-left { display: flex; align-items: center; gap: 12px; }
+
+    /* Avatar with pulse ring */
+    .av-wrap { position: relative; width: 38px; height: 38px; }
+    .av {
+      width: 38px; height: 38px;
+      border-radius: 11px;
+      background: linear-gradient(135deg, #f59e0b, #ea580c);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; font-weight: 800; color: #0d0d0d;
+      position: relative; z-index: 2;
+      box-shadow: 0 0 14px rgba(245,158,11,0.2);
+    }
+    .av-ring {
+      position: absolute; inset: -4px;
+      border-radius: 14px;
+      border: 2px solid var(--accent);
+      opacity: 0;
+      transition: opacity .3s;
+    }
+    .av-ring.on {
+      opacity: 1;
+      animation: ring-pulse 1.6s ease-in-out infinite;
+    }
+    @keyframes ring-pulse {
+      0%,100% { box-shadow: 0 0 0 0 var(--accent-glow); }
+      50%      { box-shadow: 0 0 0 7px transparent; }
+    }
+
+    .hdr-title {
+      font-size: 14px; font-weight: 700; color: var(--text);
+      display: flex; align-items: center; gap: 7px;
+    }
+    .badge {
+      font-size: 9px; font-weight: 700;
+      padding: 2px 7px; border-radius: 999px;
+      background: var(--accent-dim); color: var(--accent);
+      border: 1px solid rgba(245,158,11,0.25);
+      letter-spacing: .5px; text-transform: uppercase;
+    }
+    .hdr-sub {
+      font-size: 11px; color: var(--text-dim);
+      display: flex; align-items: center; gap: 5px; margin-top: 2px;
+    }
+    .dot-live {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: #22c55e;
+      animation: blink 2.2s ease-in-out infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+    .hdr-right { display: flex; gap: 8px; }
+    .icon-btn {
+      width: 34px; height: 34px;
+      border-radius: 9px;
+      border: 1px solid var(--border);
+      background: transparent; color: var(--text-muted);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 13px;
+      transition: all .2s;
+    }
+    .icon-btn:hover { background: var(--surface-2); color: var(--text); }
+
+    /* ─── PROGRESS BAR ─── */
+    .prog-track { height: 2px; background: var(--border); flex-shrink: 0; }
+    .prog-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), #ea580c);
+      width: 0%; transition: width .6s cubic-bezier(.4,0,.2,1);
+    }
+
+    /* ─── CHAT AREA ─── */
+    #chat-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: 28px 16px 0;
+      scroll-behavior: smooth;
+    }
+    #chat-area::-webkit-scrollbar { width: 4px; }
+    #chat-area::-webkit-scrollbar-thumb { background: #333; border-radius: 999px; }
+
+    .chat-wrap {
+      max-width: 660px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      padding-bottom: 20px;
+    }
+
+    /* Message rows */
+    .msg {
+      display: flex;
+      gap: 10px;
+      animation: rise .28s ease-out;
+    }
+    @keyframes rise {
+      from { opacity:0; transform: translateY(8px); }
+      to   { opacity:1; transform: translateY(0); }
+    }
+
+    .msg.user { flex-direction: row-reverse; }
+
+    .msg-av {
+      width: 30px; height: 30px; border-radius: 9px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; flex-shrink: 0; margin-top: 2px;
+    }
+    .msg-av.leo-av {
+      background: linear-gradient(135deg, #f59e0b, #ea580c);
+      font-weight: 800; color: #0d0d0d;
+    }
+    .msg-av.user-av {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+    }
+
+    /* Bubbles */
+    .bubble {
+      max-width: 80%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px 16px 16px 16px;
+      padding: 12px 15px;
+      font-size: 13.5px;
+      line-height: 1.72;
+      color: var(--text);
+      position: relative;
+    }
+    .msg.user .bubble {
+      background: var(--user-bg);
+      border-color: var(--user-border);
+      border-radius: 16px 4px 16px 16px;
+      color: #c9d8f8;
+    }
+    .bubble-meta {
+      font-size: 10px; color: var(--text-muted);
+      margin-top: 7px;
+      display: flex; align-items: center; gap: 4px;
+    }
+
+    /* Inline reaction chip */
+    .chip {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 11px; font-weight: 600;
+      color: #4ade80;
+      background: rgba(74,222,128,.08);
+      border: 1px solid rgba(74,222,128,.18);
+      border-radius: 6px;
+      padding: 2px 8px;
+      margin-bottom: 8px;
+    }
+
+    /* Typing cursor inside bubble */
+    .cursor {
+      display: inline-block;
+      width: 2px; height: 13px;
+      background: var(--accent);
+      margin-left: 2px;
+      vertical-align: middle;
+      animation: cur-blink .75s step-end infinite;
+    }
+    @keyframes cur-blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+    /* Label above question */
+    .q-label {
+      display: block;
+      font-size: 10px; font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase; letter-spacing: .6px;
+      margin-bottom: 5px;
+    }
+
+    /* Highlights inside Leo text */
+    .hl        { color: var(--accent); font-weight: 600; }
+    .hl-green  { color: #4ade80; font-weight: 600; }
+
+    /* Thinking row */
+    .thinking-bubble {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px 16px 16px 16px;
+      padding: 11px 14px;
+      display: flex; align-items: center; gap: 9px;
+      font-size: 12px; color: var(--text-muted); font-style: italic;
+    }
+    .dots { display: flex; gap: 4px; }
+    .d {
+      width: 5px; height: 5px; border-radius: 50%;
+      background: var(--accent);
+      animation: dot-bounce 1.4s ease-in-out infinite;
+    }
+    .d:nth-child(2) { animation-delay: .16s; }
+    .d:nth-child(3) { animation-delay: .32s; }
+    @keyframes dot-bounce {
+      0%,80%,100% { transform: scale(.65); opacity: .4; }
+      40%          { transform: scale(1);   opacity: 1;  }
+    }
+
+    /* Prompt output */
+    .prompt-box {
+      background: #0a0a0a;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 14px 14px 14px;
+      font-family: 'Courier New', monospace;
+      font-size: 11px; line-height: 1.65;
+      color: #8a9ab8;
+      max-height: 280px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+      margin-top: 12px;
+      position: relative;
+    }
+    .prompt-box::-webkit-scrollbar { width: 4px; }
+    .prompt-box::-webkit-scrollbar-thumb { background: #333; }
+
+    .copy-btn {
+      position: sticky; top: 0; left: 100%;
+      display: block; width: fit-content; margin-left: auto; margin-bottom: 8px;
+      padding: 5px 12px;
+      border-radius: 7px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      font-size: 11px; font-weight: 600;
+      cursor: pointer;
+      transition: all .2s;
+      font-family: 'Inter', sans-serif;
+    }
+    .copy-btn:hover { background: var(--accent); color: #0d0d0d; border-color: var(--accent); }
+
+    /* ─── INPUT AREA ─── */
+    #input-area {
+      flex-shrink: 0;
+      padding: 10px 16px 18px;
+      background: linear-gradient(to top, var(--bg) 75%, transparent);
+    }
+    #quick-tags {
+      display: flex; gap: 7px;
+      overflow-x: auto; padding-bottom: 2px;
+      margin-bottom: 9px;
+    }
+    #quick-tags::-webkit-scrollbar { display: none; }
+    .qtag {
+      flex-shrink: 0;
+      padding: 5px 11px;
+      border-radius: 8px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      font-size: 11.5px;
+      cursor: pointer;
+      transition: all .18s;
+      white-space: nowrap;
+      font-family: 'Inter', sans-serif;
+    }
+    .qtag:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+
+    .input-row {
+      display: flex; align-items: center; gap: 9px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 9px 9px 9px 15px;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .input-row:focus-within {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-dim);
+    }
+    #user-input {
+      flex: 1; background: transparent; border: none; outline: none;
+      color: var(--text); font-size: 13.5px;
+      font-family: 'Inter', sans-serif;
+    }
+    #user-input::placeholder { color: var(--text-muted); }
+    #user-input:disabled { opacity: .6; }
+
+    #send-btn {
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      background: var(--accent); border: none;
+      color: #0d0d0d; font-size: 13px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: all .2s; flex-shrink: 0;
+    }
+    #send-btn:hover:not(:disabled) { background: #d97706; transform: scale(1.06); }
+    #send-btn:disabled { opacity: .35; cursor: default; transform: none; }
+
+    /* ─── SETTINGS OVERLAY ─── */
+    #settings-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,.65);
+      z-index: 200;
+      display: flex; align-items: flex-end; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity .25s;
+    }
+    #settings-overlay.open { opacity: 1; pointer-events: all; }
+
+    .settings-sheet {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px 20px 0 0;
+      padding: 22px 20px 32px;
+      width: 100%; max-width: 600px;
+      transform: translateY(100%);
+      transition: transform .3s cubic-bezier(.4,0,.2,1);
+    }
+    #settings-overlay.open .settings-sheet { transform: translateY(0); }
+
+    .sheet-handle {
+      width: 36px; height: 3px;
+      border-radius: 999px; background: var(--border);
+      margin: 0 auto 18px;
+    }
+    .sheet-title {
+      font-size: 14px; font-weight: 700; color: var(--text);
+      margin-bottom: 14px;
+    }
+    .setting-block { margin-bottom: 13px; }
+    .setting-label {
+      font-size: 10px; font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase; letter-spacing: .5px;
+      margin-bottom: 5px;
+    }
+    .setting-select {
+      width: 100%;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 9px 12px;
+      color: var(--text); font-size: 13px;
+      font-family: 'Inter', sans-serif;
+      outline: none; appearance: none; -webkit-appearance: none;
+    }
+    .setting-select:focus { border-color: var(--accent); }
+
+    .apply-btn {
+      width: 100%; padding: 12px;
+      border-radius: 12px;
+      background: var(--accent); border: none;
+      color: #0d0d0d; font-size: 14px; font-weight: 700;
+      cursor: pointer; margin-top: 4px;
+      font-family: 'Inter', sans-serif;
+      transition: background .2s;
+    }
+    .apply-btn:hover { background: #d97706; }
+
+    /* ─── TOAST ─── */
+    #toast {
+      position: fixed; bottom: 90px; left: 50%;
+      transform: translateX(-50%) translateY(16px);
+      background: #22c55e; color: #fff;
+      padding: 9px 18px; border-radius: 12px;
+      font-size: 13px; font-weight: 600;
+      opacity: 0; pointer-events: none;
+      transition: all .28s; z-index: 999;
+      white-space: nowrap;
+    }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    @media (min-width: 768px) {
+      #chat-area { padding: 36px 32px 0; }
+      #input-area { padding: 10px 32px 22px; }
+    }
+  </style>
 </head>
-<body class="min-h-screen flex flex-col antialiased">
+<body>
 
-    <header class="w-full bg-[#121212] border-b border-zinc-800 px-6 py-4 flex items-center justify-between sticky top-0 z-50 shadow-sm">
-        <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-orange-600 flex items-center justify-center shadow-lg shadow-amber-500/20">
-                <i class="fas fa-bolt text-white text-lg"></i>
-            </div>
-            <div>
-                <h1 class="text-base font-extrabold tracking-tight text-white flex items-center gap-2">
-                    Trợ lý Leo <span class="text-[10px] bg-amber-500/20 text-amber-400 font-bold px-2 py-0.5 rounded-full border border-amber-500/30 uppercase tracking-wider">Version 1.0</span>
-                </h1>
-                <p class="text-xs text-zinc-400">Kiến trúc sư Sales Page chuyển đổi cao cho Sản phẩm số</p>
-            </div>
-        </div>
+<!-- ── HEADER ── -->
+<header>
+  <div class="hdr-left">
+    <div class="av-wrap">
+      <div class="av">L</div>
+      <div class="av-ring" id="av-ring"></div>
+    </div>
+    <div>
+      <div class="hdr-title">
+        Leo <span class="badge">2.0</span>
+      </div>
+      <div class="hdr-sub">
+        <span class="dot-live"></span>
+        Kiến trúc sư Sales Page · Phân tích thời gian thực
+      </div>
+    </div>
+  </div>
+  <div class="hdr-right">
+    <button class="icon-btn" onclick="openSettings()" title="Cài đặt chiến dịch">
+      <i class="fas fa-sliders-h"></i>
+    </button>
+  </div>
+</header>
 
-        <div class="flex items-center gap-4">
-            <div class="flex items-center gap-2 px-3 py-1.5 bg-[#1a1a1a] rounded-lg border border-zinc-800 text-xs">
-                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span class="text-zinc-300 font-medium">Trạng thái: Thu thập dữ liệu thời gian thực</span>
-            </div>
-        </div>
-    </header>
+<!-- ── PROGRESS BAR ── -->
+<div class="prog-track">
+  <div class="prog-fill" id="prog"></div>
+</div>
 
-    <div class="flex-1 w-full max-w-7xl mx-auto flex flex-col lg:flex-row overflow-hidden relative">
-        
-        <!-- BẢNG TRÁI: Cấu hình phong cách (1/4) -->
-        <aside class="w-full lg:w-[300px] bg-[#121212] border-b lg:border-b-0 lg:border-r border-zinc-800 p-5 flex flex-col gap-6 shrink-0 z-10">
-            <div>
-                <h2 class="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-4 flex items-center gap-2">
-                    <i class="fas fa-sliders text-amber-500"></i> Thuộc tính chiến dịch
-                </h2>
-                
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-xs font-semibold text-zinc-300 mb-1.5">Phân loại sản phẩm số</label>
-                        <select id="setting-format" class="w-full bg-[#1a1a1a] border border-zinc-700 rounded-lg py-2 px-3 text-sm text-zinc-200 outline-none focus:border-amber-500 transition-colors">
-                            <option value="Ebook / Tài liệu PDF">Ebook / Tài liệu PDF</option>
-                            <option value="Khóa học Video quay sẵn">Khóa học Video quay sẵn</option>
-                            <option value="Template / Công cụ đóng gói">Template / Công cụ đóng gói (Notion, Excel)</option>
-                            <option value="Dịch vụ Coaching / Tư vấn">Dịch vụ Coaching / Tư vấn 1-1</option>
-                        </select>
-                    </div>
+<!-- ── CHAT AREA ── -->
+<div id="chat-area">
+  <div class="chat-wrap" id="chat-wrap"></div>
+</div>
 
-                    <div>
-                        <label class="block text-xs font-semibold text-zinc-300 mb-1.5">Mức độ nhận thức (Awareness)</label>
-                        <select id="setting-awareness" class="w-full bg-[#1a1a1a] border border-zinc-700 rounded-lg py-2 px-3 text-sm text-zinc-200 outline-none focus:border-amber-500 transition-colors">
-                            <option value="Khách hàng mới nhận ra vấn đề (Problem Aware)">Mới nhận ra vấn đề (Problem Aware)</option>
-                            <option value="Khách hàng đã biết các giải pháp (Solution Aware)">Đã đi tìm giải pháp (Solution Aware)</option>
-                            <option value="Khách hàng đã biết bạn (Product Aware)">Đã biết đến bạn (Product Aware)</option>
-                        </select>
-                    </div>
+<!-- ── INPUT AREA ── -->
+<div id="input-area">
+  <div id="quick-tags"></div>
+  <div class="input-row">
+    <input id="user-input" type="text" autocomplete="off"
+      placeholder="Nhập câu trả lời của bạn..."
+      onkeydown="if(event.key==='Enter'&&!event.shiftKey)handleSend()">
+    <button id="send-btn" onclick="handleSend()">
+      <i class="fas fa-arrow-up"></i>
+    </button>
+  </div>
+</div>
 
-                    <div>
-                        <label class="block text-xs font-semibold text-zinc-300 mb-1.5">Giọng điệu (Tone of Voice)</label>
-                        <select id="setting-tone" class="w-full bg-[#1a1a1a] border border-zinc-700 rounded-lg py-2 px-3 text-sm text-zinc-200 outline-none focus:border-amber-500 transition-colors">
-                            <option value="Sắc bén, đanh thép, đi thẳng vào logic thực tế">Đanh thép, logic thực tế</option>
-                            <option value="Đồng cảm sâu sắc, chân thành kể chuyện">Đồng cảm, kể chuyện</option>
-                            <option value="Kịch tính, tạo cảm giác F.O.M.O khẩn cấp">Kịch tính, khẩn cấp</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
+<!-- ── SETTINGS OVERLAY ── -->
+<div id="settings-overlay" onclick="if(event.target===this)closeSettings()">
+  <div class="settings-sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">⚙ Cài đặt chiến dịch</div>
 
-            <!-- Tiến trình thu thập dữ liệu -->
-            <div class="border-t border-zinc-800 pt-5 mt-auto">
-                <h2 class="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-3 flex items-center gap-2">
-                    <i class="fas fa-bars-progress text-emerald-500"></i> Tiến trình phân tích
-                </h2>
-                <div class="w-full bg-zinc-800 rounded-full h-2 mb-2 overflow-hidden border border-zinc-700">
-                    <div id="progress-bar" class="bg-gradient-to-r from-amber-500 to-orange-500 h-2 rounded-full transition-all duration-500 w-0"></div>
-                </div>
-                <p class="text-[11px] text-zinc-400 font-medium" id="progress-text">Hoàn thành: 0/8 dữ liệu</p>
-            </div>
-        </aside>
-
-        <!-- KHU VỰC GIỮA: Giao tiếp & Thu thập -->
-        <main class="flex-1 flex flex-col bg-[#0a0a0a] border-r border-zinc-800 overflow-hidden relative">
-            <div id="chat-history" class="flex-1 overflow-y-auto p-6 space-y-6 scroll-smooth pb-32">
-                <!-- Chat tự động sinh bằng JS -->
-            </div>
-
-            <!-- Khung nhập liệu tĩnh ở đáy -->
-            <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a] to-transparent pt-10">
-                <div id="quick-tags" class="flex gap-2 mb-3 overflow-x-auto pb-1 hide-scrollbar">
-                    <!-- Gợi ý động sinh bằng JS -->
-                </div>
-                <div class="flex items-center gap-3 bg-[#1a1a1a] border border-zinc-700/80 rounded-xl px-4 py-2 focus-within:border-amber-500 focus-within:ring-1 focus-within:ring-amber-500/50 transition-all shadow-lg">
-                    <input type="text" id="user-input" onkeypress="handleEnter(event)" placeholder="Nhập câu trả lời của bạn..." class="flex-1 bg-transparent text-zinc-100 text-sm outline-none border-none placeholder-zinc-500">
-                    <button id="send-btn" onclick="processInput()" class="w-9 h-9 rounded-lg bg-amber-500 hover:bg-amber-600 text-zinc-900 flex items-center justify-center transition-all shadow-md">
-                        <i class="fas fa-arrow-up text-xs font-bold"></i>
-                    </button>
-                </div>
-            </div>
-        </main>
-
-        <!-- BẢNG PHẢI: Bản đồ Cấu trúc (1/4) -->
-        <section class="w-full lg:w-[320px] bg-[#121212] border-t lg:border-t-0 lg:border-l border-zinc-800 p-5 flex flex-col overflow-hidden z-10 hidden lg:flex">
-            <div class="flex items-center justify-between mb-4 border-b border-zinc-800 pb-3">
-                <h3 class="text-xs font-bold text-zinc-200 uppercase tracking-widest flex items-center gap-2">
-                    <i class="fas fa-sitemap text-amber-500"></i> Bản đồ 11 Phân Khu
-                </h3>
-            </div>
-            <div class="flex-1 overflow-y-auto pr-2 space-y-2.5 opacity-60" id="structure-map">
-                <!-- Sinh bằng JS -->
-            </div>
-        </section>
+    <div class="setting-block">
+      <div class="setting-label">Định dạng sản phẩm số</div>
+      <select class="setting-select" id="setting-format">
+        <option value="Ebook / Tài liệu PDF">Ebook / Tài liệu PDF</option>
+        <option value="Khóa học Video quay sẵn">Khóa học Video quay sẵn</option>
+        <option value="Template / Công cụ đóng gói">Template / Công cụ (Notion, Excel)</option>
+        <option value="Dịch vụ Coaching / Tư vấn 1-1">Dịch vụ Coaching / Tư vấn 1-1</option>
+      </select>
+    </div>
+    <div class="setting-block">
+      <div class="setting-label">Mức độ nhận thức (Awareness)</div>
+      <select class="setting-select" id="setting-awareness">
+        <option value="Khách hàng mới nhận ra vấn đề (Problem Aware)">Mới nhận ra vấn đề (Problem Aware)</option>
+        <option value="Khách hàng đã biết các giải pháp (Solution Aware)">Đã đi tìm giải pháp (Solution Aware)</option>
+        <option value="Khách hàng đã biết bạn (Product Aware)">Đã biết đến bạn (Product Aware)</option>
+      </select>
+    </div>
+    <div class="setting-block">
+      <div class="setting-label">Giọng điệu (Tone of Voice)</div>
+      <select class="setting-select" id="setting-tone">
+        <option value="Sắc bén, đanh thép, đi thẳng vào logic thực tế">Đanh thép, logic thực tế</option>
+        <option value="Đồng cảm sâu sắc, chân thành kể chuyện">Đồng cảm, kể chuyện</option>
+        <option value="Kịch tính, tạo cảm giác F.O.M.O khẩn cấp">Kịch tính, khẩn cấp</option>
+      </select>
     </div>
 
-    <!-- Toast Copy -->
-    <div id="toast" class="fixed top-6 right-6 z-50 bg-emerald-600 text-white px-4 py-3 rounded-lg shadow-xl transform translate-y-[-100%] opacity-0 transition-all duration-300 flex items-center gap-3">
-        <i class="fas fa-check-circle"></i>
-        <span class="text-sm font-medium">Đã sao chép cấu trúc Mega Prompt!</span>
+    <button class="apply-btn" onclick="closeSettings()">Áp dụng cài đặt</button>
+  </div>
+</div>
+
+<!-- ── TOAST ── -->
+<div id="toast"><i class="fas fa-check-circle"></i> Đã sao chép Mega Prompt!</div>
+
+<script>
+// ══════════════════════════════════════════════════════════
+//  DATA
+// ══════════════════════════════════════════════════════════
+const QUESTIONS = [
+  {
+    q: 'Hãy cho tôi biết <span class="hl">tên sản phẩm số</span> của bạn là gì?',
+    hints: ['Khóa học Tiếng Anh giao tiếp', 'Ebook Xây kênh TikTok', 'Dịch vụ Setup hệ thống tự động', 'Template Notion quản lý dự án']
+  },
+  {
+    q: '<span class="hl">Khách hàng mục tiêu (ICP)</span> của bạn là ai — đặc điểm, độ tuổi, nghề nghiệp?',
+    hints: ['Mẹ bỉm sữa muốn kinh doanh online', 'Sinh viên mới ra trường muốn freelance', 'Chủ doanh nghiệp SME 30-45 tuổi']
+  },
+  {
+    q: '<span class="hl">Nỗi đau nhức nhối nhất</span> và cảm xúc tiêu cực họ gặp hàng ngày là gì?',
+    hints: ['Làm nhiều nhưng thu nhập không tăng', 'Học nhiều khóa nhưng không áp dụng được', 'Chạy quảng cáo đốt tiền nhưng không ra đơn']
+  },
+  {
+    q: 'Họ đã <span class="hl">thử những cách gì</span> trong quá khứ nhưng thất bại? Vì sao thất bại?',
+    hints: ['Tự học YouTube nhưng kiến thức chắp vá', 'Thuê Agency nhưng nội dung không hiệu quả', 'Thử nhiều phương pháp nhưng thiếu hệ thống bài bản']
+  },
+  {
+    q: '<span class="hl">Kết quả lớn nhất</span> (Transformation thực tế) họ đạt được sau khi dùng sản phẩm của bạn?',
+    hints: ['Tự tin giao tiếp tiếng Anh với người nước ngoài', 'Xây phễu tự động đạt 50 đơn/ngày', 'Tăng gấp 3 thu nhập chỉ sau 2 tháng']
+  },
+  {
+    q: 'Mất bao lâu để đạt được kết quả đó? <span class="hl">(Timeframe cụ thể)</span>',
+    hints: ['Chỉ trong 30 ngày đầu tiên', 'Sau 8 tuần áp dụng đúng phương pháp', 'Ngay sau 24h setup xong hệ thống']
+  },
+  {
+    q: '<span class="hl">Ai là người tạo ra sản phẩm</span> — tên, chức danh, thành tựu bảo chứng uy tín?',
+    hints: ['Trần A — Founder với 5 năm kinh nghiệm thực chiến', 'Nguyễn B — Top 10 Marketer Việt Nam 2023', 'Dược sĩ C — 10 năm lâm sàng, đào tạo 5.000+ học viên']
+  },
+  {
+    q: '<span class="hl">Chiến lược giá</span> của bạn thế nào? Bao gồm giá gốc và giá ưu đãi hiện tại (VNĐ).',
+    hints: ['Giá gốc 2.000.000đ — Ưu đãi còn 499.000đ', 'Chỉ 199.000đ (Giá trị thực 1.000.000đ)', 'Miễn phí tài liệu — Upsell sau 30 ngày']
+  }
+];
+
+// Contextual reactions per step — reference user's actual keywords
+const REACTIONS = [
+  ans => `Tôi đã ghi nhận <span class="hl">"${ans.trim()}"</span>. Tên này sẽ xuất hiện ở Hero Section và toàn bộ các nút CTA.`,
+  ans => `Tệp <span class="hl">${kw(ans)}</span> có tỷ lệ chốt cao khi đánh đúng cảm xúc. Tôi đang lập bản đồ tâm lý cho nhóm này.`,
+  ans => `Nỗi đau <span class="hl">"${kw(ans)}"</span> — sắc bén. Tôi sẽ dùng chính ngôn ngữ này làm điểm neo cảm xúc ở Section 2.`,
+  ans => `Điểm mù thị trường: <span class="hl">${kw(ans)}</span>. Cái này sẽ phá vỡ định kiến mạnh mẽ ở Section 3 — Cycle of Failing.`,
+  ans => `Transformation <span class="hl">"${kw(ans)}"</span> rất cụ thể — tôi sẽ biến nó thành Headline hứa hẹn ở Hero Section.`,
+  ans => `Timeframe <span class="hl">${kw(ans)}</span> cụ thể và đáng tin. Sẽ kích hoạt Desire mạnh — tôi sẽ lặp lại ít nhất 3 lần trong toàn bộ copy.`,
+  ans => `Authority của <span class="hl">${kw(ans)}</span> đủ mạnh để phá rào cản hoài nghi. Section 10 sẽ được xây dựng kỹ.`,
+  ans => `Chiến lược <span class="hl">${kw(ans)}</span> tạo hiệu ứng neo giá tốt. FOMO sẽ được kích hoạt ở Section 5, 7 và 11.`,
+];
+
+// Thinking messages per step — contextual to each data point
+const THINKING = [
+  'Đang phân tích tên sản phẩm...',
+  'Đang lập bản đồ tâm lý khách hàng mục tiêu...',
+  'Đang khai thác cấu trúc nỗi đau...',
+  'Đang phân tích vòng lặp thất bại...',
+  'Đang xây dựng mô hình chuyển đổi...',
+  'Đang calibrate timeframe chuyển đổi...',
+  'Đang đánh giá mức độ uy tín...',
+  'Đang thiết kế ma trận giá...',
+  'Đang biên dịch Mega Prompt cuối cùng...',
+];
+
+// ══════════════════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════════════════
+let step = 0;
+let data = {};
+let busy = false;
+
+// DOM
+const chatWrap  = document.getElementById('chat-wrap');
+const inputEl   = document.getElementById('user-input');
+const sendBtn   = document.getElementById('send-btn');
+const tagsEl    = document.getElementById('quick-tags');
+const progEl    = document.getElementById('prog');
+const avRing    = document.getElementById('av-ring');
+
+// ══════════════════════════════════════════════════════════
+//  BOOT
+// ══════════════════════════════════════════════════════════
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    leoSay(
+      `Chào bạn! Tôi là <span class="hl">Leo 2.0</span> — trợ lý xây dựng phễu Sales Page cho sản phẩm số.<br><br>` +
+      `Thay vì bắt bạn tự viết prompt dài, tôi sẽ <span class="hl">thu thập và phân tích dữ liệu</span> từng bước, ` +
+      `rồi tạo một Mega Prompt hoàn chỉnh để bạn dán thẳng vào ChatGPT hoặc Claude.<br><br>` +
+      `<span class="hl-green">Chỉ 8 câu hỏi.</span> Bắt đầu nào —`,
+      () => setTimeout(() => askQuestion(0), 350)
+    );
+  }, 280);
+});
+
+// ══════════════════════════════════════════════════════════
+//  TYPEWRITER ENGINE  (HTML-aware)
+// ══════════════════════════════════════════════════════════
+function typewriter(el, html, speed, onDone) {
+  el.innerHTML = '';
+  // Tokenise: complete HTML tags & entities are atomic; everything else is a single char
+  const tokens = [];
+  const re = /(<[^>]+>|&[^;]+;|[\s\S])/g;
+  let m;
+  while ((m = re.exec(html)) !== null) tokens.push(m[0]);
+
+  let i = 0;
+  const CURSOR = '<span class="cursor"></span>';
+
+  function tick() {
+    if (i < tokens.length) {
+      el.innerHTML = tokens.slice(0, i + 1).join('') + CURSOR;
+      i++;
+      const t = tokens[i - 1];
+      const delay = (t === '.' || t === '!' || t === '?') ? 90
+                  : (t === ',') ? 50
+                  : (t === ' ' || t.startsWith('<')) ? 10
+                  : speed;
+      setTimeout(tick, delay);
+      scrollBottom();
+    } else {
+      el.innerHTML = html;
+      if (onDone) onDone();
+      scrollBottom();
+    }
+  }
+  tick();
+}
+
+// ══════════════════════════════════════════════════════════
+//  MESSAGE RENDERERS
+// ══════════════════════════════════════════════════════════
+function leoSay(html, onDone) {
+  busy = true;
+  setActive(true);
+  setInput(false);
+
+  const row = mkEl('div', 'msg');
+  row.innerHTML = `<div class="msg-av leo-av">L</div><div class="bubble"><div class="txt"></div><div class="bubble-meta"><i class="fas fa-check-double" style="color:#f59e0b"></i> ${now()}</div></div>`;
+  chatWrap.appendChild(row);
+  scrollBottom();
+
+  typewriter(row.querySelector('.txt'), html, 20, () => {
+    busy = false;
+    setActive(false);
+    if (onDone) onDone();
+  });
+}
+
+function userSay(text) {
+  const row = mkEl('div', 'msg user');
+  row.innerHTML = `
+    <div class="msg-av user-av"><i class="fas fa-user" style="font-size:11px"></i></div>
+    <div class="bubble"><div class="txt">${esc(text)}</div><div class="bubble-meta">${now()}</div></div>
+  `;
+  chatWrap.appendChild(row);
+  scrollBottom();
+}
+
+function showThinking(msg) {
+  const id = 'th-' + Date.now();
+  const row = mkEl('div', 'msg');
+  row.id = id;
+  row.innerHTML = `
+    <div class="msg-av leo-av">L</div>
+    <div class="thinking-bubble">
+      <div class="dots"><div class="d"></div><div class="d"></div><div class="d"></div></div>
+      <span>${msg}</span>
     </div>
+  `;
+  chatWrap.appendChild(row);
+  scrollBottom();
+  return id;
+}
 
-    <script>
-        // --- CƠ SỞ DỮ LIỆU CÂU HỎI & LOGIC ---
-        const questions = [
-            {
-                q: "1. Tên sản phẩm số của bạn là gì? (Ví dụ: Ebook Content Marketing, Khóa học Kế toán...)",
-                hints: ["Khóa học Tiếng Anh giao tiếp", "Ebook Xây kênh Tiktok", "Dịch vụ Setup Hệ thống tự động"]
-            },
-            {
-                q: "2. Thị trường mục tiêu (ICP) của bạn là ai? (Đặc điểm nhận diện, độ tuổi, nghề nghiệp...)",
-                hints: ["Mẹ bỉm sữa muốn kinh doanh", "Sinh viên mới ra trường", "Chủ doanh nghiệp SME"]
-            },
-            {
-                q: "3. Vấn đề nhức nhối nhất và cảm xúc tiêu cực họ đang gặp phải là gì?",
-                hints: ["Làm quần quật không có lãi, stress", "Học nhiều khóa học nhưng vẫn không nói được tiếng Anh", "Chạy quảng cáo đốt tiền nhưng không ra đơn"]
-            },
-            {
-                q: "4. Họ từng thử những cách gì trong quá khứ nhưng thất bại? Tại sao lại thất bại?",
-                hints: ["Từng thuê Agency nhưng nội dung sáo rỗng", "Tự học trên mạng nhưng kiến thức chắp vá", "Đã thử nhịn ăn giảm cân nhưng bị tăng lại"]
-            },
-            {
-                q: "5. Sự thay đổi lớn nhất (Kết quả thực tế) họ nhận được sau khi dùng sản phẩm của bạn?",
-                hints: ["Tự tin giao tiếp tiếng Anh với Tây", "Xây dựng được phễu tự động mang về 50 đơn/ngày", "Giảm 5kg an toàn không mệt mỏi"]
-            },
-            {
-                q: "6. Mất bao lâu để họ đạt được kết quả đó? (Timeframe)",
-                hints: ["Chỉ trong 30 ngày", "Sau 8 tuần áp dụng", "Ngay sau khi setup xong hệ thống (24h)"]
-            },
-            {
-                q: "7. Ai là người tạo ra sản phẩm này? (Họ tên, chức danh, thành tựu bảo chứng uy tín)",
-                hints: ["Trần A - Founder với 5 năm kinh nghiệm", "Nguyễn B - Chuyên gia đạt giải Nhất Marketing", "Dược sĩ C - 10 năm lâm sàng"]
-            },
-            {
-                q: "8. Chiến lược giá của bạn thế nào? (Bao gồm Giá gốc và Giá ưu đãi VNĐ)",
-                hints: ["Giá gốc 2.000.000đ - Ưu đãi còn 499.000đ", "Chỉ 199k (Giá trị thực 1 triệu)", "Miễn phí nhận tài liệu - Upsell sau"]
-            }
-        ];
+// ══════════════════════════════════════════════════════════
+//  CONVERSATION FLOW
+// ══════════════════════════════════════════════════════════
+function askQuestion(n) {
+  const q = QUESTIONS[n];
+  leoSay(
+    `<span class="q-label">Câu ${n + 1} / 8</span>` + q.q,
+    () => {
+      setTags(q.hints);
+      setInput(true);
+      inputEl.focus();
+    }
+  );
+}
 
-        // Phản hồi giả lập AI để tạo cảm giác thông minh
-        const aiReactions = [
-            "Định dạng này cực kỳ dễ scale rập khuôn.",
-            "Tệp khách hàng này rất dễ bị chốt sale nếu đánh trúng nỗi đau.",
-            "Nỗi đau rất sắc bén. Ta sẽ xoáy sâu vào cảm xúc này ở Section 2.",
-            "Điểm mù thị trường! Ta sẽ dùng cái này để đập tan định kiến ở Section 3.",
-            "Kết quả rất rõ ràng. Tôi sẽ biến nó thành Headline hứa hẹn ở Section 1.",
-            "Timeframe cụ thể sẽ giúp kích hoạt khao khát (Desire) mạnh mẽ.",
-            "Uy tín (Authority) tốt. Sự tin tưởng là chốt chặn cuối cùng.",
-            "Mức giá chênh lệch tốt, dễ tạo hiệu ứng chim mồi và khan hiếm."
-        ];
+function handleSend() {
+  const val = inputEl.value.trim();
+  if (!val || busy || step >= 8) return;
 
-        const collectedData = {};
-        let currentStep = 0;
+  data[`q${step + 1}`] = val;
+  userSay(val);
+  inputEl.value = '';
+  clearTags();
+  setInput(false);
 
-        // Elements
-        const chatBox = document.getElementById('chat-history');
-        const userInput = document.getElementById('user-input');
-        const quickTags = document.getElementById('quick-tags');
-        const progressBar = document.getElementById('progress-bar');
-        const progressText = document.getElementById('progress-text');
+  const s = step;
+  step++;
+  setProgress(step, 8);
 
-        // Khởi tạo
-        window.onload = () => {
-            renderMap();
-            setTimeout(() => {
-                appendLeoMessage(`Chào bạn, tôi là Leo 1.0 - trợ lý xây dựng phễu Sales Page. Thay vì bắt bạn tự copy lệnh dài và ngồi chat với AI, tôi sẽ phân tích dữ liệu trước để tạo ra một cấu trúc hoàn chỉnh nhất.<br><br>Hãy bắt đầu nhé: <br><strong class="text-amber-400">${questions[0].q}</strong>`);
-                updateTags(questions[0].hints);
-            }, 500);
-        };
+  // Delay ∝ answer length → feels like "reading" the answer
+  const delay = 650 + Math.min(val.length * 16, 1800) + Math.random() * 350;
+  const thId = showThinking(THINKING[s]);
+  setActive(true);
 
-        // UI Helpers
-        function handleEnter(e) { if(e.key === 'Enter') processInput(); }
-        
-        function useTag(text) {
-            userInput.value = text;
-            processInput();
+  setTimeout(() => {
+    rmEl(thId);
+    setActive(false);
+
+    if (step < 8) {
+      const reaction = REACTIONS[s](val);
+      const nextQ = `<span class="q-label">Câu ${step + 1} / 8</span>` + QUESTIONS[step].q;
+      leoSay(
+        `<span class="chip"><i class="fas fa-check"></i> Đã ghi nhận</span><br>${reaction}<br><br>${nextQ}`,
+        () => {
+          setTags(QUESTIONS[step].hints);
+          setInput(true);
+          inputEl.focus();
         }
+      );
+    } else {
+      generatePrompt();
+    }
+  }, delay);
+}
 
-        function scrollToBottom() {
-            chatBox.scrollTop = chatBox.scrollHeight;
-        }
+// ══════════════════════════════════════════════════════════
+//  MEGA PROMPT GENERATION
+// ══════════════════════════════════════════════════════════
+function generatePrompt() {
+  const thId = showThinking(THINKING[8]);
+  setActive(true);
 
-        // Cập nhật Tags động
-        function updateTags(hints) {
-            quickTags.innerHTML = '';
-            hints.forEach(hint => {
-                const btn = document.createElement('button');
-                btn.className = 'shrink-0 px-3 py-1.5 bg-[#1a1a1a] hover:bg-[#262626] border border-zinc-800 rounded-lg text-xs text-zinc-300 transition-all';
-                btn.innerText = hint;
-                btn.onclick = () => useTag(hint);
-                quickTags.appendChild(btn);
-            });
-        }
+  setTimeout(() => {
+    rmEl(thId);
+    setActive(false);
 
-        // Render Tin nhắn User
-        function appendUserMessage(text) {
-            const html = `
-                <div class="flex gap-4 items-start max-w-[85%] self-end flex-row-reverse ml-auto fade-in-up">
-                    <div class="w-8 h-8 rounded-lg bg-zinc-800 flex items-center justify-center text-zinc-300 shrink-0 border border-zinc-700">
-                        <i class="fas fa-user text-sm"></i>
-                    </div>
-                    <div class="bg-zinc-800/40 border border-zinc-700 text-zinc-200 rounded-2xl rounded-tr-none p-4 text-sm leading-relaxed">
-                        ${text}
-                    </div>
-                </div>
-            `;
-            chatBox.insertAdjacentHTML('beforeend', html);
-            scrollToBottom();
-        }
+    const tone      = document.getElementById('setting-tone').value;
+    const format    = document.getElementById('setting-format').value;
+    const awareness = document.getElementById('setting-awareness').value;
+    const prompt    = buildPrompt(tone, format, awareness);
 
-        // Render Tin nhắn Leo
-        function appendLeoMessage(text) {
-            const html = `
-                <div class="flex gap-4 items-start max-w-[85%] fade-in-up">
-                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-400 to-orange-600 flex items-center justify-center text-zinc-900 shrink-0 shadow-md">
-                        <i class="fas fa-bolt text-sm"></i>
-                    </div>
-                    <div class="bg-[#1a1a1a] border border-zinc-800 text-zinc-200 rounded-2xl rounded-tl-none p-4 text-sm leading-relaxed shadow-sm">
-                        ${text}
-                    </div>
-                </div>
-            `;
-            chatBox.insertAdjacentHTML('beforeend', html);
-            scrollToBottom();
-        }
+    // Step 1: Success text message with typewriter
+    leoSay(
+      `<span class="hl-green"><i class="fas fa-bullseye"></i> Hoàn tất — Mega Prompt đã sẵn sàng!</span><br><br>` +
+      `<span style="color:var(--text-muted);font-size:12.5px">Tôi đã nhúng toàn bộ 8 câu trả lời của bạn vào cấu trúc 11 section. ` +
+      `Chỉ cần <strong style="color:var(--text)">Copy</strong> và dán vào ChatGPT hoặc Claude để nhận ngay bài Sales Page hoàn chỉnh.</span>`,
+      () => {
+        // Step 2: Append prompt box instantly (no typewriter — too long)
+        const promptId = 'pr-' + Date.now();
+        const row = mkEl('div', 'msg');
+        row.innerHTML = `
+          <div class="msg-av leo-av" style="background:linear-gradient(135deg,#22c55e,#0d9488)"><i class="fas fa-code" style="font-size:11px"></i></div>
+          <div class="bubble" style="max-width:100%;border-color:#22c55e22">
+            <div class="prompt-box" id="${promptId}">
+              <button class="copy-btn" onclick="copyPrompt('${promptId}')"><i class="fas fa-copy"></i> Copy</button>${esc(prompt)}</div>
+          </div>
+        `;
+        chatWrap.appendChild(row);
+        setProgress(8, 8);
+        clearTags();
+        inputEl.disabled = true;
+        inputEl.placeholder = '✓ Phân tích hoàn tất';
+        sendBtn.disabled = true;
 
-        // Render Loading
-        function appendLoading() {
-            const id = 'loading-' + Date.now();
-            const html = `
-                <div class="flex gap-4 items-start max-w-[85%] fade-in-up" id="${id}">
-                    <div class="w-8 h-8 rounded-lg bg-zinc-800 flex items-center justify-center text-amber-500 shrink-0 border border-zinc-700">
-                        <i class="fas fa-microchip text-sm"></i>
-                    </div>
-                    <div class="bg-[#1a1a1a] border border-zinc-800 text-zinc-400 rounded-2xl rounded-tl-none px-5 py-4 flex gap-1.5 items-center">
-                        <span class="text-xs italic mr-2">Leo đang phân tích</span>
-                        <div class="w-1.5 h-1.5 rounded-full bg-amber-500 typing-dot"></div>
-                        <div class="w-1.5 h-1.5 rounded-full bg-amber-500 typing-dot"></div>
-                        <div class="w-1.5 h-1.5 rounded-full bg-amber-500 typing-dot"></div>
-                    </div>
-                </div>
-            `;
-            chatBox.insertAdjacentHTML('beforeend', html);
-            scrollToBottom();
-            return id;
-        }
+        // Restart tag
+        const rb = document.createElement('button');
+        rb.className = 'qtag';
+        rb.innerHTML = '<i class="fas fa-redo" style="margin-right:6px;font-size:10px"></i>Làm lại chiến dịch mới';
+        rb.onclick = () => location.reload();
+        tagsEl.appendChild(rb);
 
-        // Tiến trình
-        function updateProgress() {
-            const percent = (currentStep / 8) * 100;
-            progressBar.style.width = `${percent}%`;
-            progressText.innerText = `Hoàn thành: ${currentStep}/8 dữ liệu`;
-        }
+        scrollBottom();
+      }
+    );
+  }, 1800);
+}
 
-        // Logic Xử lý nhập liệu
-        function processInput() {
-            const text = userInput.value.trim();
-            if(!text) return;
-            if(currentStep >= 8) return;
-
-            // Save data
-            collectedData[`q${currentStep + 1}`] = text;
-            
-            // UI Update
-            appendUserMessage(text);
-            userInput.value = '';
-            userInput.disabled = true;
-            quickTags.innerHTML = '';
-            currentStep++;
-            updateProgress();
-
-            const loadId = appendLoading();
-
-            setTimeout(() => {
-                document.getElementById(loadId).remove();
-                
-                if (currentStep < 8) {
-                    // Next question + Smart Reaction
-                    const reaction = `<span class="text-emerald-400 italic text-[11px] block mb-2"><i class="fas fa-check"></i> Đã ghi nhận: ${aiReactions[currentStep-1]}</span>`;
-                    const nextQ = `<strong class="text-amber-400">${questions[currentStep].q}</strong>`;
-                    
-                    appendLeoMessage(reaction + nextQ);
-                    updateTags(questions[currentStep].hints);
-                    userInput.disabled = false;
-                    userInput.focus();
-                } else {
-                    // Xong 8 câu -> Chuyển sang Compile Prompt
-                    generateFinalPrompt();
-                }
-            }, 800 + Math.random() * 500);
-        }
-
-        function generateFinalPrompt() {
-            const loadId = appendLoading();
-            document.getElementById(`${loadId}`).querySelector('.italic').innerText = "Leo đang biên dịch Mega Prompt cuối cùng...";
-            
-            setTimeout(() => {
-                document.getElementById(loadId).remove();
-                
-                const tone = document.getElementById('setting-tone').value;
-                const format = document.getElementById('setting-format').value;
-                const awareness = document.getElementById('setting-awareness').value;
-
-                // Build Prompt based ON EXACT INSTRUCTION
-                const megaPrompt = `[SYSTEM INSTRUCTION: KÍCH HOẠT QUY TRÌNH VIẾT SALES PAGE TỰ ĐỘNG]
+// ══════════════════════════════════════════════════════════
+//  PROMPT BUILDER
+// ══════════════════════════════════════════════════════════
+function buildPrompt(tone, format, awareness) {
+return `[SYSTEM INSTRUCTION: KÍCH HOẠT QUY TRÌNH VIẾT SALES PAGE TỰ ĐỘNG]
 Tôi đã thu thập đầy đủ dữ liệu trực tiếp về sản phẩm. Hãy bỏ qua bước phỏng vấn và trực tiếp thực thi viết Sales Page ngay lập tức.
 
 1. THIẾT LẬP VAI TRÒ (PERSONA):
-Bạn là một Chuyên gia Copywriter thuộc top 1% trong lĩnh vực Direct Response Marketing và là một Kiến trúc sư UI/UX thực chiến. Bạn am hiểu sâu sắc tâm lý học hành vi. 
-- VĂN PHONG BẮT BUỘC: ${tone}. TUYỆT ĐỐI BÁC BỎ ngôn từ marketing sáo rỗng, phô trương (như "Master Class", "siêu đỉnh", "bí mật"). Ưu tiên thuật ngữ chuẩn xác, văn phong đanh thép, thực tế, khớp hoàn toàn với giọng văn của khách hàng mục tiêu tại Việt Nam.
+Bạn là Chuyên gia Copywriter top 1% trong Direct Response Marketing và Kiến trúc sư UI/UX thực chiến. Bạn am hiểu sâu tâm lý học hành vi.
+- VĂN PHONG BẮT BUỘC: ${tone}. TUYỆT ĐỐI BÁC BỎ ngôn từ sáo rỗng ("Master Class", "siêu đỉnh", "bí mật"). Ưu tiên văn phong đanh thép, thực tế, khớp với giọng văn của khách hàng mục tiêu tại Việt Nam.
 
-2. BỐI CẢNH DỮ LIỆU ĐẦU VÀO CỦA CHIẾN DỊCH:
-- Tên & Định dạng sản phẩm: ${collectedData.q1} (${format})
+2. BỐI CẢNH DỮ LIỆU ĐẦU VÀO:
+- Tên & Định dạng sản phẩm: ${data.q1} (${format})
 - Mức độ nhận thức: ${awareness}
-- Thị trường mục tiêu (ICP): ${collectedData.q2}
-- Nỗi đau & Cảm xúc tiêu cực: ${collectedData.q3}
-- Cách giải quyết từng thử nhưng thất bại: ${collectedData.q4}
-- Kết quả mong muốn (Transformation): ${collectedData.q5}
-- Thời gian đạt kết quả: ${collectedData.q6}
-- Thông tin Chuyên gia/Người tạo: ${collectedData.q7}
-- Chiến lược Giá: ${collectedData.q8}
+- Thị trường mục tiêu (ICP): ${data.q2}
+- Nỗi đau & Cảm xúc tiêu cực: ${data.q3}
+- Cách từng thử nhưng thất bại: ${data.q4}
+- Kết quả mong muốn (Transformation): ${data.q5}
+- Thời gian đạt kết quả: ${data.q6}
+- Thông tin Chuyên gia/Người tạo: ${data.q7}
+- Chiến lược Giá: ${data.q8}
 
 === THỰC THI VIẾT SALES PAGE ===
-Sử dụng [STRICT SALES PAGE TEMPLATE] ở bên dưới. Đối với MỖI SECTION, bạn BẮT BUỘC phải xuất kết quả bằng TIẾNG VIỆT tuần tự theo đúng 4 bước sau:
-
-- BƯỚC 1: [Mục tiêu chuyển đổi] - Mục tiêu tâm lý của section này là gì?
-- BƯỚC 2: [Internal Monologue] - Tự độc thoại phân tích logic ngầm (Ví dụ: Pain point sâu thẳm nhất là gì? Micro-problem nào cần giải quyết?). Tự phân tích xong mới được viết.
-- BƯỚC 3: [Copywriting Thực chiến] - BƯỚC QUAN TRỌNG NHẤT. GIỮ NGUYÊN số lượng gạch đầu dòng và cấu trúc của Section tương ứng trong template. Dịch mượt mà và điền kín các biến số tiếng Anh [...] bằng nội dung tiếng Việt sắc bén dựa trên dữ liệu thu thập ở trên. Xóa bỏ hoàn toàn dấu ngoặc vuông sau khi điền. Nội dung viết ra phải mang tính bán hàng nhưng không sáo rỗng.
-- BƯỚC 4: [Gợi ý UI/UX Visual] - Đề xuất bố cục và hình ảnh minh họa phù hợp cho từng section.
-
-[STRICT SALES PAGE TEMPLATE CẦN ÁP DỤNG CHO BƯỚC 3]
+Với MỖI SECTION bên dưới, xuất bằng TIẾNG VIỆT theo đúng 4 bước:
+- BƯỚC 1: [Mục tiêu chuyển đổi] — Mục tiêu tâm lý của section này?
+- BƯỚC 2: [Internal Monologue] — Tự phân tích logic ngầm trước khi viết.
+- BƯỚC 3: [Copywriting Thực chiến] — Điền kín các biến số [...] bằng nội dung sắc bén dựa trên dữ liệu trên. Xóa dấu ngoặc vuông sau khi điền. Giữ nguyên số lượng gạch đầu dòng.
+- BƯỚC 4: [Gợi ý UI/UX Visual] — Đề xuất bố cục và hình ảnh minh họa cho section.
 
 [SECTION 1: HERO SECTION]
-[ATTENTION-GRABBING HEADLINE ABOUT TRANSFORMATION]
-[SPECIFIC PROMISE WITH TIMEFRAME]: How To [SOLVE MAIN PROBLEM] And [ACHIEVE DESIRED RESULT] In Just [TIME PERIOD]
-(even if [COMMON OBJECTION OR PREVIOUS FAILURE])
-[CALL TO ACTION BUTTON] - Chỉ [PRICE] VNĐ
-[SCARCITY ELEMENT] (Giá gốc [HIGHER PRICE] VNĐ)
+[ATTENTION-GRABBING HEADLINE VỀ TRANSFORMATION]
+[SPECIFIC PROMISE]: How To [GIẢI QUYẾT VẤN ĐỀ] And [ĐẠT KẾT QUẢ] In Just [THỜI GIAN]
+(even if [RÀO CẢN / THẤT BẠI PHỔ BIẾN])
+[NÚT CTA] — Chỉ [GIÁ ƯU ĐÃI] VNĐ
+[SCARCITY] (Giá gốc [GIÁ GỐC] VNĐ)
 
 [SECTION 2: ESTABLISHING PAIN]
-The [SYSTEM/METHOD] That is Transforming [NEGATIVE STATE] Into [POSITIVE STATE] In Just [TIME PERIOD]
-"[EMOTIONAL QUOTE THAT CAPTURES PAIN POINT]"
-[RELATABLE STORY OPENING THAT ESTABLISHES PAIN]
-[DESCRIBE THE CONTRAST BETWEEN NEGATIVE PAST AND DESIRED STATE]
-[EMOTIONAL REACTION TO THE PROBLEM]
-Now my daily struggle with [PROBLEM] includes:
-- [SPECIFIC PAIN POINT 1]
-- [SPECIFIC PAIN POINT 2]
-- [SPECIFIC PAIN POINT 3]
-- [SPECIFIC PAIN POINT 4]
-- [SPECIFIC PAIN POINT 5]
+"[QUOTE CẢM XÚC VỀ NỖI ĐAU]"
+[MỞ ĐẦU BẰNG STORY ĐỒNG CẢNH]
+Cuộc sống hàng ngày của họ bao gồm:
+- [NỖI ĐAU CỤ THỂ 1]
+- [NỖI ĐAU CỤ THỂ 2]
+- [NỖI ĐAU CỤ THỂ 3]
+- [NỖI ĐAU CỤ THỂ 4]
+- [NỖI ĐAU CỤ THỂ 5]
 
 [SECTION 3: CYCLE OF FAILING]
-[DESCRIBE CYCLE OF TRYING AND FAILING]
-I tried everything [AUTHORITY FIGURES/EXPERTS] suggested:
-- [ATTEMPTED SOLUTION 1] ([WHY IT FAILED])
-- [ATTEMPTED SOLUTION 2] ([WHY IT FAILED])
-- [ATTEMPTED SOLUTION 3] ([WHY IT FAILED])
-- [ATTEMPTED SOLUTION 4] ([WHY IT FAILED])
-- [ATTEMPTED SOLUTION 5] ([WHY IT FAILED])
-[EMOTIONAL LOW POINT]
+Tôi đã thử mọi cách được gợi ý:
+- [CÁCH ĐÃ THỬ 1] ([LÝ DO THẤT BẠI])
+- [CÁCH ĐÃ THỬ 2] ([LÝ DO THẤT BẠI])
+- [CÁCH ĐÃ THỬ 3] ([LÝ DO THẤT BẠI])
+- [CÁCH ĐÃ THỬ 4] ([LÝ DO THẤT BẠI])
+- [CÁCH ĐÃ THỬ 5] ([LÝ DO THẤT BẠI])
+[ĐIỂM THẤP CẢM XÚC — TURNING POINT]
 
-[SECTION 4: THE DISCOVERY & INSIGHTS]
-Then I Discovered Something That Changed Everything...
-[DISCOVERY STORY - HOW YOU FOUND THE SOLUTION]
-[REAL RESULTS ACHIEVED AFTER DISCOVERING THE SOLUTION]
-What I learned shocked me:
-According to [RELEVANT RESEARCH/EXPERT SOURCE], [SURPRISING STATISTIC OR FACT ABOUT PROBLEM]:
+[SECTION 4: DISCOVERY & INSIGHTS]
+Rồi tôi khám phá ra điều thay đổi tất cả...
+[STORY KHÁM PHÁ GIẢI PHÁP]
+Những gì tôi học được:
 - [KEY INSIGHT 1]
 - [KEY INSIGHT 2]
 - [KEY INSIGHT 3]
 - [KEY INSIGHT 4]
-But most alarming of all:
-Most [TARGET AUDIENCE] are unknowingly [COMMON MISTAKE THAT WORSENS PROBLEM]
-I know because I was making all these same mistakes...
-Through extensive research and consultation with:
-- [EXPERT/AUTHORITY TYPE 1]
-- [EXPERT/AUTHORITY TYPE 2]
-- [EXPERT/AUTHORITY TYPE 3]
-I discovered WHY traditional approaches fail - and more importantly, what actually works.
+Hầu hết [NHÓM KHÁCH HÀNG] đang vô tình [SAI LẦM PHỔ BIẾN]...
 
-[SECTION 5: THE SOLUTION & BENEFITS]
-I call it the "[PRODUCT NAME]"
-By [KEY MECHANISM OF SOLUTION], I was able to:
-- [BENEFIT 1]
-- [BENEFIT 2]
-- [BENEFIT 3]
-- [BENEFIT 4]
-- [BENEFIT 5]
-[CALL TO ACTION BUTTON] - Chỉ [PRICE] VNĐ
-[SCARCITY ELEMENT] (Giá gốc [HIGHER PRICE] VNĐ)
+[SECTION 5: SOLUTION & BENEFITS]
+Tôi gọi đó là "${data.q1}"
+Nhờ [CƠ CHẾ GIẢI PHÁP], tôi đã có thể:
+- [LỢI ÍCH 1]
+- [LỢI ÍCH 2]
+- [LỢI ÍCH 3]
+- [LỢI ÍCH 4]
+- [LỢI ÍCH 5]
+[NÚT CTA] — Chỉ [GIÁ ƯU ĐÃI] VNĐ
 
 [SECTION 6: ESSENTIAL SKILLS]
-THE [QUALITIES/SKILLS] THAT SEPARATE [SUCCESS STATE] FROM [FAILURE STATE]
-The 4 Essential [SKILLS/ATTRIBUTES] [TARGET AUDIENCE] Need(s) (That [PROBLEM SOURCE] Dont/Doesnt Provide)
-- [SKILL/ATTRIBUTE 1]: [DESCRIPTION] - [WHY IT IS IMPORTANT] (and [NEGATIVE CONSEQUENCE OF NOT HAVING IT])
-- [SKILL/ATTRIBUTE 2]: [DESCRIPTION] - [WHY IT IS IMPORTANT] (and [NEGATIVE CONSEQUENCE OF NOT HAVING IT])
-- [SKILL/ATTRIBUTE 3]: [DESCRIPTION] - [WHY IT IS IMPORTANT] (and [NEGATIVE CONSEQUENCE OF NOT HAVING IT])
-- [SKILL/ATTRIBUTE 4]: [DESCRIPTION] - [WHY IT IS IMPORTANT] (and [NEGATIVE CONSEQUENCE OF NOT HAVING IT])
-[CALL TO ACTION BUTTON] - Chỉ [PRICE] VNĐ
-[SCARCITY ELEMENT] (Giá gốc [HIGHER PRICE] VNĐ)
+4 Kỹ năng cốt lõi [NHÓM KHÁCH HÀNG] cần có:
+- [KỸ NĂNG 1]: [MÔ TẢ] — [TẠI SAO QUAN TRỌNG] (và [HẬU QUẢ NẾU THIẾU])
+- [KỸ NĂNG 2]: [MÔ TẢ] — [TẠI SAO QUAN TRỌNG] (và [HẬU QUẢ NẾU THIẾU])
+- [KỸ NĂNG 3]: [MÔ TẢ] — [TẠI SAO QUAN TRỌNG] (và [HẬU QUẢ NẾU THIẾU])
+- [KỸ NĂNG 4]: [MÔ TẢ] — [TẠI SAO QUAN TRỌNG] (và [HẬU QUẢ NẾU THIẾU])
 
 [SECTION 7: INSTANT ACCESS & BONUSES]
-INSTANT ACCESS - START [DESIRED TRANSFORMATION] TODAY
-Here is Everything You Get With The [PRODUCT NAME] Today!
-What is included:
-The Complete [PRODUCT NAME]: [NUMBER] proven [MODULES/COMPONENTS] that [SOLVE PROBLEM] and [DELIVER RESULT]
-🎁 Plus These 5 [VALUE-ADDING] Bonuses 🎁
-- "[BONUS 1 TITLE]" - [BENEFIT-FOCUSED DESCRIPTION] (Giải quyết micro-problem)
-- "[BONUS 2 TITLE]" - [BENEFIT-FOCUSED DESCRIPTION] (Giải quyết micro-problem)
-- "[BONUS 3 TITLE]" - [BENEFIT-FOCUSED DESCRIPTION] (Giải quyết micro-problem)
-- "[BONUS 4 TITLE]" - [BENEFIT-FOCUSED DESCRIPTION] (Giải quyết micro-problem)
-- "[BONUS 5 TITLE]" - [BENEFIT-FOCUSED DESCRIPTION] (Giải quyết micro-problem)
-Normally: [REGULAR PRICE] VNĐ
-Today: [DISCOUNTED PRICE] VNĐ
-[CALL TO ACTION BUTTON]
-[SCARCITY ELEMENT] Chỉ còn [PRICE] VNĐ
+NHẬN NGAY — BẮT ĐẦU HÔM NAY
+5 Bonus đi kèm:
+- "[BONUS 1]" — [MÔ TẢ LỢI ÍCH]
+- "[BONUS 2]" — [MÔ TẢ LỢI ÍCH]
+- "[BONUS 3]" — [MÔ TẢ LỢI ÍCH]
+- "[BONUS 4]" — [MÔ TẢ LỢI ÍCH]
+- "[BONUS 5]" — [MÔ TẢ LỢI ÍCH]
+Giá gốc: [GIÁ GỐC] VNĐ — Hôm nay: [GIÁ ƯU ĐÃI] VNĐ
+[NÚT CTA]
 
-[SECTION 8: BEFORE AND AFTER]
-The Transformation You Can Expect
-Do not let [PROBLEM] continue dominating your [AREA OF LIFE]. Your [DESIRED OUTCOME] can be [POSITIVE ADJECTIVE] than ever - you just need the right system to make it happen.
-Before The [PRODUCT NAME]:
-- [NEGATIVE STATE 1]
-- [NEGATIVE STATE 2]
-- [NEGATIVE STATE 3]
-- [NEGATIVE STATE 4]
-- [NEGATIVE STATE 5]
-- [NEGATIVE STATE 6]
-After The [PRODUCT NAME]:
-- [POSITIVE STATE 1]
-- [POSITIVE STATE 2]
-- [POSITIVE STATE 3]
-- [POSITIVE STATE 4]
-- [POSITIVE STATE 5]
-- [POSITIVE STATE 6]
-[CALL TO ACTION BUTTON]
-[SCARCITY ELEMENT] Chỉ còn [PRICE] VNĐ
+[SECTION 8: BEFORE & AFTER]
+Trước khi có "${data.q1}":
+- [TRẠNG THÁI TIÊU CỰC 1-6]
+Sau khi có "${data.q1}":
+- [TRẠNG THÁI TÍCH CỰC 1-6]
 
 [SECTION 9: COMPONENTS / MODULES]
-YOUR [TRANSFORMATION] PATH BEGINS HERE
-The 5 [COMPONENTS] That Transform Your [PROBLEM AREA]:
-Each [COMPONENT] precisely designed to [MECHANISM OF TRANSFORMATION] through proven [APPROACH].
-[COMPONENT 1]: [TITLE] ([TIMEFRAME])
-[EMOTIONAL OUTCOME DESCRIPTION] - this [METHOD TYPE] helps you [BENEFIT] while [ADDITIONAL BENEFIT].
-- [SPECIFIC TECHNIQUE 1] that [SPECIFIC BENEFIT]
-- [SPECIFIC TECHNIQUE 2] that [SPECIFIC BENEFIT]
-- [SPECIFIC TECHNIQUE 3] that [SPECIFIC BENEFIT]
-
-[COMPONENT 2]: [TITLE] ([TIMEFRAME])
-[EMOTIONAL OUTCOME DESCRIPTION] - our [METHOD TYPE] helps you [BENEFIT] while [ADDITIONAL BENEFIT].
-- [SPECIFIC TECHNIQUE 1] that [SPECIFIC BENEFIT]
-- [SPECIFIC TECHNIQUE 2] that [SPECIFIC BENEFIT]
-- [SPECIFIC TECHNIQUE 3] that [SPECIFIC BENEFIT]
-
-[COMPONENT 3]: [TITLE] ([TIMEFRAME])
-[EMOTIONAL OUTCOME DESCRIPTION] - our [METHOD TYPE] helps you [BENEFIT] while [ADDITIONAL BENEFIT].
-- [SPECIFIC TECHNIQUE 1] that [SPECIFIC BENEFIT]
-- [SPECIFIC TECHNIQUE 2] that [SPECIFIC BENEFIT]
-- [SPECIFIC TECHNIQUE 3] that [SPECIFIC BENEFIT]
-
-[COMPONENT 4]: [TITLE] ([TIMEFRAME])
-[EMOTIONAL OUTCOME DESCRIPTION] - our [METHOD TYPE] helps you [BENEFIT] while [ADDITIONAL BENEFIT].
-- [SPECIFIC TECHNIQUE 1] that [SPECIFIC BENEFIT]
-- [SPECIFIC TECHNIQUE 2] that [SPECIFIC BENEFIT]
-- [SPECIFIC TECHNIQUE 3] that [SPECIFIC BENEFIT]
-
-[COMPONENT 5]: [TITLE] ([TIMEFRAME])
-[EMOTIONAL OUTCOME DESCRIPTION] - our [METHOD TYPE] helps you [BENEFIT] while [ADDITIONAL BENEFIT].
-- [SPECIFIC TECHNIQUE 1] that [SPECIFIC BENEFIT]
-- [SPECIFIC TECHNIQUE 2] that [SPECIFIC BENEFIT]
-- [SPECIFIC TECHNIQUE 3] that [SPECIFIC BENEFIT]
+5 thành phần cốt lõi của "${data.q1}":
+[THÀNH PHẦN 1-5: Tên + Thời gian + 3 kỹ thuật cụ thể mỗi phần]
 
 [SECTION 10: INSTRUCTOR INFO]
-=== THÊM SECTION GIỚI THIỆU GIẢNG VIÊN ===
-[INSTRUCTOR SECTION HEADLINE]
-Thông tin giảng viên/chuyên gia đào tạo:
-- Họ tên:
-- Chức danh/chuyên môn:
+Thông tin ${data.q7}:
+- Chức danh / chuyên môn:
 - Số năm kinh nghiệm:
 - Thành tựu nổi bật:
-- Dự án/khách hàng/kết quả tiêu biểu:
-- Triết lý đào tạo hoặc điểm khác biệt:
-- Vì sao học viên nên tin tưởng học theo:
+- Dự án / học viên / kết quả tiêu biểu:
+- Lý do học viên nên tin tưởng học theo:
 
 [SECTION 11: FINAL CTA & FORM]
-[COMPELLING CALL TO ACTION HEADLINE]
-Get The [PRODUCT NAME] Now
-While other [TARGET AUDIENCE] struggle with [ONGOING PROBLEM], you will be [ENJOYING BENEFITS] using our proven system.
-[CALL TO ACTION BUTTON]
-[SCARCITY ELEMENT] Chỉ còn [PRICE] VNĐ
+[HEADLINE CTA COMPELLING]
+[SUBHEAD NHẤN MẠNH LỢI ÍCH + URGENCY]
+Form đăng ký: Họ và tên + Số điện thoại
+[NÚT CTA — TIẾNG VIỆT THÚC ĐẨY HÀNH ĐỘNG TỰ NHIÊN]
+[SCARCITY] Chỉ còn [GIÁ ƯU ĐÃI] VNĐ
 
-=== THÊM CTA CUỐI CÙNG KÈM FORM ĐĂNG KÝ ===
-[FINAL CTA HEADLINE]
-[FINAL CTA SUBHEAD THAT REINFORCES BENEFIT + URGENCY]
-Form đăng ký nhận tư vấn / đăng ký khóa học:
-- Họ và tên
-- Số điện thoại
-[NỘI DUNG NÚT CTA THEO PHONG CÁCH THÚC ĐẨY HÀNH ĐỘNG TỰ NHIÊN BẰNG TIẾNG VIỆT]
-[SCARCITY ELEMENT] Chỉ còn [PRICE] VNĐ
+COPYRIGHT 2026 | YOUR BRAND | PRIVACY POLICY | TERMS`;
+}
 
-COPYRIGHT 2026 | YOUR BRAND | PRIVACY POLICY | TERMS & CONDITIONS
-`;
+// ══════════════════════════════════════════════════════════
+//  UTILITIES
+// ══════════════════════════════════════════════════════════
+// Extract most meaningful keyword from answer
+function kw(text) {
+  const stop = new Set(['của','bạn','tôi','họ','này','đã','và','với','cho','trong',
+    'nhưng','không','được','một','những','các','có','là','mà','để','từ','khi',
+    'vì','thì','nên','hay','hoặc','theo','đến','tại','rất','quá','về','ra','lại']);
+  const words = text
+    .replace(/[^\w\sàáảãạăắằẳẵặâấầẩẫậèéẻẽẹêếềểễệìíỉĩịòóỏõọôốồổỗộơớờởỡợùúủũụưứừửữựỳýỷỹỵđÀÁẢÃẠĂẮẰẲẴẶÂẤẦẨẪẬÈÉẺẼẸÊẾỀỂỄỆÌÍỈĨỊÒÓỎÕỌÔỐỒỔỖỘƠỚỜỞỠỢÙÚỦŨỤƯỨỪỬỮỰỲÝỶỸỴĐ]/g, ' ')
+    .split(/\s+/)
+    .filter(w => w.length > 2 && !stop.has(w.toLowerCase()));
+  if (!words.length) return text.substring(0, 20);
+  return words[Math.floor(Math.random() * Math.min(words.length, 5))];
+}
 
-                const finalId = 'prompt-box-' + Date.now();
-                const outputHtml = `
-                <div class="flex gap-4 items-start max-w-[95%] fade-in-up">
-                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center text-white shrink-0 shadow-md">
-                        <i class="fas fa-check-double text-sm"></i>
-                    </div>
-                    <div class="bg-[#1a1a1a] border border-zinc-800 text-zinc-200 rounded-2xl rounded-tl-none p-5 text-sm w-full shadow-lg">
-                        <p class="mb-3 font-medium text-emerald-400"><i class="fas fa-bullseye"></i> Đã hoàn tất đóng gói dữ liệu!</p>
-                        <p class="mb-4 text-xs text-zinc-400">Thay vì phải gõ từng câu trong ChatGPT, tôi đã nhúng toàn bộ 8 câu trả lời của bạn cùng cấu trúc rập khuôn thành 1 đoạn lệnh duy nhất dưới đây. Bạn chỉ cần Copy và Paste vào AI để nhận ngay bài Sales Page.</p>
-                        
-                        <div class="bg-[#0a0a0a] border border-zinc-800 rounded-xl p-4 font-mono text-[10px] leading-relaxed relative glowing-amber">
-                            <button onclick="copyPrompt('${finalId}')" class="absolute top-3 right-3 bg-zinc-800 hover:bg-amber-500 border border-zinc-700 hover:border-amber-400 text-zinc-300 hover:text-zinc-900 px-3 py-1.5 rounded-lg transition-all font-bold flex items-center gap-2 z-10 shadow-md">
-                                <i class="fas fa-copy"></i> Copy Lệnh
-                            </button>
-                            <div class="text-zinc-300 max-h-80 overflow-y-auto pr-2 select-text whitespace-pre-wrap" id="${finalId}">${megaPrompt}</div>
-                        </div>
-                    </div>
-                </div>
-                `;
-                chatBox.insertAdjacentHTML('beforeend', outputHtml);
-                scrollToBottom();
+function esc(s) {
+  return String(s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
 
-                // Highlight Map (Thắp sáng toàn bộ bản đồ bên phải)
-                const maps = document.querySelectorAll('.map-item');
-                maps.forEach(m => {
-                    m.classList.remove('opacity-50');
-                    m.classList.add('border-amber-500/50', 'bg-amber-500/5');
-                    m.querySelector('.icon-box').classList.add('bg-amber-500', 'text-zinc-900');
-                    m.querySelector('.icon-box').classList.remove('bg-zinc-800', 'text-zinc-500');
-                });
-                
-                // Đổi UI bottom
-                userInput.disabled = true;
-                userInput.placeholder = "Tiến trình hoàn tất.";
-                quickTags.innerHTML = `
-                    <button onclick="location.reload()" class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-zinc-900 rounded-lg text-xs font-bold transition-all shadow-md">
-                        <i class="fas fa-redo mr-2"></i> Làm lại chiến dịch mới
-                    </button>
-                `;
-            }, 1500);
-        }
+function now() {
+  const d = new Date();
+  return d.getHours().toString().padStart(2,'0') + ':' + d.getMinutes().toString().padStart(2,'0');
+}
 
-        // Render Bản đồ bên phải
-        function renderMap() {
-            const mapData = [
-                { id: "S1", name: "Hero Section", icon: "fa-rocket" },
-                { id: "S2", name: "Establishing Pain", icon: "fa-heart-crack" },
-                { id: "S3", name: "Cycle of Failing", icon: "fa-rotate" },
-                { id: "S4", name: "Discovery & Insights", icon: "fa-lightbulb" },
-                { id: "S5", name: "Solution & Benefits", icon: "fa-box-open" },
-                { id: "S6", name: "Essential Skills", icon: "fa-key" },
-                { id: "S7", name: "Access & Bonuses", icon: "fa-gift" },
-                { id: "S8", name: "Before & After", icon: "fa-arrows-left-right" },
-                { id: "S9", name: "Components Detail", icon: "fa-list-check" },
-                { id: "S10", name: "Instructor Info", icon: "fa-user-tie" },
-                { id: "S11", name: "Final CTA & Form", icon: "fa-envelope-open-text" }
-            ];
-            const container = document.getElementById('structure-map');
-            mapData.forEach(item => {
-                container.innerHTML += `
-                    <div class="map-item flex items-center gap-3 p-2.5 rounded-lg border border-zinc-800 bg-[#1a1a1a] opacity-50 transition-all duration-500">
-                        <div class="icon-box w-7 h-7 rounded bg-zinc-800 text-zinc-500 flex items-center justify-center text-xs transition-colors">
-                            <i class="fas ${item.icon}"></i>
-                        </div>
-                        <div>
-                            <div class="text-[9px] font-bold text-amber-500/70">SECTION ${item.id.replace('S','')}</div>
-                            <div class="text-[11px] font-semibold text-zinc-200">${item.name}</div>
-                        </div>
-                    </div>
-                `;
-            });
-        }
+function mkEl(tag, cls) {
+  const el = document.createElement(tag);
+  if (cls) el.className = cls;
+  return el;
+}
 
-        function copyPrompt(id) {
-            const text = document.getElementById(id).innerText;
-            const dummy = document.createElement("textarea");
-            document.body.appendChild(dummy);
-            dummy.value = text;
-            dummy.select();
-            document.execCommand("copy");
-            document.body.removeChild(dummy);
+function rmEl(id) { document.getElementById(id)?.remove(); }
 
-            const toast = document.getElementById('toast');
-            toast.classList.remove('translate-y-[-100%]', 'opacity-0');
-            setTimeout(() => {
-                toast.classList.add('translate-y-[-100%]', 'opacity-0');
-            }, 2500);
-        }
-    </script>
+function scrollBottom() {
+  const c = document.getElementById('chat-area');
+  c.scrollTop = c.scrollHeight;
+}
+
+function setActive(on) { avRing.classList.toggle('on', on); }
+
+function setInput(on) {
+  inputEl.disabled = !on;
+  sendBtn.disabled = !on;
+  inputEl.placeholder = on ? 'Nhập câu trả lời của bạn...' : 'Leo đang xử lý...';
+}
+
+function setProgress(cur, total) {
+  progEl.style.width = ((cur / total) * 100) + '%';
+}
+
+function setTags(hints) {
+  tagsEl.innerHTML = '';
+  hints.forEach(h => {
+    const b = document.createElement('button');
+    b.className = 'qtag';
+    b.textContent = h;
+    b.onclick = () => { inputEl.value = h; handleSend(); };
+    tagsEl.appendChild(b);
+  });
+}
+
+function clearTags() { tagsEl.innerHTML = ''; }
+
+// Settings
+function openSettings()  { document.getElementById('settings-overlay').classList.add('open'); }
+function closeSettings() { document.getElementById('settings-overlay').classList.remove('open'); }
+
+// Copy prompt
+function copyPrompt(id) {
+  const el = document.getElementById(id);
+  // Get raw text, skip the Copy button text
+  const btn = el.querySelector('.copy-btn');
+  btn.style.display = 'none';
+  const text = el.innerText.trim();
+  btn.style.display = '';
+
+  (navigator.clipboard?.writeText(text) ?? Promise.reject()).catch(() => {
+    const ta = Object.assign(document.createElement('textarea'), { value: text });
+    document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove();
+  });
+
+  const toast = document.getElementById('toast');
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2400);
+}
+</script>
+
 </body>
 </html>
