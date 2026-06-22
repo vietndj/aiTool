@@ -266,48 +266,48 @@
       <select class="sel" id="sto">
         <option value="Sắc bén, đanh thép, đi thẳng vào logic thực tế">Đanh thép, logic thực tế</option>
         <option value="Đồng cảm sâu sắc, chân thành kể chuyện">Đồng cảm, kể chuyện</option>
-        <option value="Kịch tính, tạo cảm giác F.O.M.O khẩn cấp">Kịch tính, khẩn cấp</option>
-      </select>
-    </div>
-    <button class="abtn" onclick="closeS()">Xác nhận</button>
-  </div>
-</div>
-
-<div id="toast"></div>
-
-<script>
-// ══════════════════════════════════════════════════════════
-//  QUESTIONS — psychology-rewritten
-// ══════════════════════════════════════════════════════════
-const Q = [
+        <option value="Kịch tính, tạo cảm giác F.O.M.O khẩn cấp">Kịch tính, khẩn cấp<const Q = [
   {
-    // Easy opener, no jargon
     q:'Hãy cho tôi biết <span class="h">tên sản phẩm số</span> của bạn là gì?',
-    h:['Khóa học Tiếng Anh giao tiếp','Ebook Xây kênh TikTok từ 0','Dịch vụ Setup hệ thống bán hàng tự động','Template Notion quản lý dự án']
+    // Format hints: show structure of a good product name
+    h:['Khóa học Figma thực chiến 30 ngày','Ebook UX cho Designer tự học','Template Notion quản lý dự án']
   },
   {
-    // Concretization: 1 specific real customer, not abstract "ICP"
     q:'Hãy nghĩ đến <span class="h">1 khách hàng đã mua và hài lòng nhất</span> của bạn. Họ là ai — làm nghề gì, khoảng mấy tuổi, và vấn đề gì khiến họ tìm đến bạn?',
-    h:['Chị 35t, bán hàng online, muốn tăng doanh thu','Sinh viên 22t muốn kiếm tiền từ content','Anh 40t, chủ shop, chạy quảng cáo mãi không hiệu quả']
+    // Format hints: show how to describe 1 specific person
+    h:['Nam 27t, muốn chuyển sang thiết kế, chưa biết bắt đầu từ đâu','Chị 32t, freelancer, khó giải thích giá trị công việc cho khách','Anh 38t, chủ shop, quảng cáo tốn tiền mà không ra đơn']
   },
   {
-    // 11pm Question (Donald Miller): emotional moment, not abstract pain
-    q:'Lúc <span class="h">11 giờ đêm</span>, khi họ chưa ngủ được — điều gì đang lởn vởn trong đầu họ liên quan đến vấn đề này?',
-    h:['Tháng này lại không đủ tiền trả nhân viên','Học mãi vẫn không dám nói tiếng Anh với khách Tây','Chạy quảng cáo hết 5 triệu mà chỉ ra được 2 đơn']
+    q:'Lúc <span class="h">11 giờ đêm</span>, khi họ chưa ngủ được — điều gì đang lớn vớn trong đầu họ liên quan đến vấn đề này?',
+    // Format hints: show emotional, specific 11pm moments
+    h:['Nhìn file Figma 2 tiếng không biết bắt đầu từ đâu','Gửi design rồi bị từ chối mà không hiểu tại sao','Copy tutorial được nhưng tự làm thì bí không được']
   },
   {
-    // "1-2 cách" — reduce recall burden, not "những cách"
     q:'Trước khi tìm đến bạn, họ đã thử <span class="h">1-2 cách</span> nào để giải quyết? Kết quả ra sao và vì sao thất bại?',
-    h:['Tự học YouTube nhưng không biết áp dụng vào thực tế','Thuê người làm nhưng tốn tiền mà không kiểm soát được','Đã mua khóa học khác nhưng quá hàn lâm, không thực chiến']
+    // Format hints: show failed attempt + reason structure
+    h:['Tự học YouTube nhưng chỉ copy được, không tự làm được','Mua khóa học khác nhưng quá hàn lâm, không thực chiến','Thử mình thiết kế nhưng bị khách chê nghiệp dư']
   },
   {
-    // Social proof anchor: "kể với bạn bè" → gets testimonial-format naturally
     q:'Sau khi dùng sản phẩm của bạn, <span class="h">cuộc sống họ thay đổi thế nào?</span> Điều đầu tiên họ kể với bạn bè là gì?',
-    h:['Tháng đầu đã kiếm được 15 triệu từ affiliate','Lần đầu tự tin nói chuyện với khách nước ngoài','Hệ thống tự chạy, tôi nghỉ 3 ngày vẫn ra đơn']
+    // Format hints: show transformation outcome structure
+    h:['Tự thiết kế được landing page đầu tiên cho khách','Giải thích được lý do chọn design cho khách hàng','Nhận dự án đầu tiên sau 30 ngày thực hành']
   },
   {
-    // Timeframe — kept with concrete anchors
     q:'Họ đạt được điều đó sau <span class="h">bao lâu?</span> Càng cụ thể càng tốt.',
+    // Format hints: show timeframe options
+    h:['30 ngày đầu tiên','4–6 tuần thực hành','2 tháng học buổi tối']
+  },
+  {
+    q:'Bạn — hoặc người tạo ra sản phẩm — <span class="h">có gì khiến khách hàng tin tưởng?</span> Không cần hoành tráng, chỉ cần thật.',
+    // Format hints: show authority without overblowing
+    h:['5 năm kinh nghiệm, 200+ học viên đã ra dự án thật','Tự mình đi làm vị trí Senior UX tại công ty nước ngoài','Thiết kế cho 50+ dự án thực tế, có khách hàng từ Masan, Vingroup']
+  },
+  {
+    q:'Sản phẩm bán giá bao nhiêu? Có <span class="h">giá gốc</span> và <span class="h">giá ưu đãi</span> không?',
+    // Format hints: show pricing format options
+    h:['297.000đ / gốc 997.000đ','497.000đ — chỉ còn 20 suất ra mắt','1.200.000đ / gốc 2.500.000đ']
+  }
+];��u đó sau <span class="h">bao lâu?</span> Càng cụ thể càng tốt.',
     h:['Chỉ trong 30 ngày đầu tiên','Sau 8 tuần áp dụng đúng phương pháp','Ngay trong tuần đầu sau khi setup xong']
   },
   {
@@ -607,9 +607,7 @@ async function send(){
     active(false);
     await sleep(350);
     await askQ(step);
-    // Only show hints if Gemini generated contextual ones.
-    // No static fallback — wrong hints are worse than no hints.
-    tags(dynHints||[]);
+    tags(dynHints||Q[step].h);  // Tier 1: Gemini → Tier 2: format-example hints
     setIn(true);uin.focus();
   }else{
     await genPrompt();
