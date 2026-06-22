@@ -568,11 +568,21 @@ async function send(){
   const tid=showThink(THK[s]);
   active(true);
 
-  // Parallel: get dynamic hints for next question
+  // Await hints CONCURRENTLY with thinkDelay.
+  // Hints get up to (thinkDelay + 800ms) to respond — no extra wait for user.
+  // If they miss the window → show no hints (blank > wrong).
   let dynHints=null;
-  if(step<8&&data.q1) AI.hints(data.q1,step).then(h=>{dynHints=h}).catch(()=>{});
-
-  await sleep(thinkDelay);
+  const hintWindow=Math.max(thinkDelay,800)+800;
+  const [,hints]=await Promise.all([
+    sleep(thinkDelay),
+    (step<8&&data.q1&&AI.mode!=='fallback')
+      ? Promise.race([
+          AI.hints(data.q1,step).catch(()=>null),
+          sleep(hintWindow).then(()=>null)
+        ])
+      : Promise.resolve(null)
+  ]);
+  dynHints=hints;
   rm(tid);active(false);
 
   if(step<8){
@@ -595,7 +605,9 @@ async function send(){
     active(false);
     await sleep(350);
     await askQ(step);
-    tags(dynHints||Q[step].h);
+    // Only show hints if Gemini generated contextual ones.
+    // No static fallback — wrong hints are worse than no hints.
+    tags(dynHints||[]);
     setIn(true);uin.focus();
   }else{
     await genPrompt();
