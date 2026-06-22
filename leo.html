@@ -339,32 +339,17 @@ const THK = [
 ];
 
 // Fallback reactions (when no API)
-// q(a,n): safe short quote — takes first n chars, trims to last space to avoid mid-word cut
-function q(a,n=38){
-  a=a.trim();
-  if(a.length<=n) return a;
-  const cut=a.slice(0,n);
-  const last=cut.lastIndexOf(' ');
-  return (last>10?cut.slice(0,last):cut)+'...';
-}
-
+// Fallback reactions — pure step-based, zero answer extraction.
+// Generic by design: no input parsing = no bugs from random user input.
 const FR = [
-  // Q1 - product name: quote directly
-  a=>`Tôi đã ghi nhận <span class="h">"${q(a,40)}"</span>. Tên này sẽ xuất hiện ở Hero Section và toàn bộ CTA.`,
-  // Q2 - customer: generic confirmation (no keyword extraction)
-  a=>`Chân dung khách hàng đã được capture. Tôi sẽ xây ngôn ngữ thấu cảm trực tiếp cho nhóm này.`,
-  // Q3 - pain: generic (11pm moment)
-  a=>`Cảm xúc đêm khuya đã ghi nhận. Đây sẽ là điểm neo tâm lý mở đầu Section 2.`,
-  // Q4 - failed solutions: generic
-  a=>`Lịch sử thất bại đã capture. Sẽ là vũ khí mạnh nhất ở Section 3 — Cycle of Failing.`,
-  // Q5 - transformation: quote directly
-  a=>`Transformation <span class="h">"${q(a,40)}"</span> — sẽ trở thành Headline hứa hẹn chính ở Hero.`,
-  // Q6 - timeframe: quote directly (short answer, safe)
-  a=>`Timeframe <span class="h">"${q(a,25)}"</span> đã ghi nhận. Sẽ được lặp ít nhất 3 lần trong toàn bộ copy.`,
-  // Q7 - authority: generic
-  a=>`Authority đã được đánh giá. Section 10 sẽ xây kỹ để phá rào cản hoài nghi của khách hàng.`,
-  // Q8 - price: quote directly
-  a=>`Chiến lược giá <span class="h">"${q(a,35)}"</span> — neo giá và FOMO sẽ bật ở Section 5, 7, 11.`
+  _=>'Tên sản phẩm đã được ghi nhận. Hero Section và toàn bộ CTA sẽ được xây dựng xung quanh tên này.',
+  _=>'Chân dung khách hàng đã capture. Ngôn ngữ thấu cảm sẽ được xây dựng trực tiếp cho nhóm này.',
+  _=>'Nỗi đau đêm khuya đã ghi nhận. Đây sẽ là điểm neo cảm xúc mở đầu Section 2.',
+  _=>'Lịch sử thất bại đã capture. Đây sẽ là vũ khí tâm lý mạnh nhất ở Section 3.',
+  _=>'Kết quả chuyển đổi đã ghi nhận. Sẽ trở thành Headline hứa hẹn chính ở Hero Section.',
+  _=>'Timeframe đã ghi nhận. Sẽ được lặp ít nhất 3 lần trong toàn bộ copy để kích Desire.',
+  _=>'Authority đã được đánh giá. Section 10 sẽ được xây kỹ để phá rào cản hoài nghi.',
+  _=>'Chiến lược giá đã ghi nhận. Neo giá và FOMO sẽ được kích hoạt ở Section 5, 7 và 11.'
 ];
 
 // ══════════════════════════════════════════════════════════
