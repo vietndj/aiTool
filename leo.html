@@ -3,420 +3,221 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Leo 2.0 — Kiến trúc sư Sales Page</title>
+  <title>Leo 2.1 — Kiến trúc sư Sales Page</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --bg:          #0d0d0d;
-      --surface:     #181818;
-      --surface-2:   #222222;
-      --border:      #2c2c2c;
-      --text:        #e8e8e8;
-      --text-muted:  #777;
-      --text-dim:    #999;
-      --accent:      #f59e0b;
-      --accent-dim:  rgba(245,158,11,0.12);
-      --accent-glow: rgba(245,158,11,0.25);
-      --user-bg:     #1c2235;
-      --user-border: #283047;
+      --bg:#0d0d0d; --surface:#181818; --s2:#222; --border:#2c2c2c;
+      --text:#e8e8e8; --muted:#777; --dim:#999;
+      --a:#f59e0b; --a-dim:rgba(245,158,11,.12); --a-glow:rgba(245,158,11,.25);
+      --ubg:#1c2235; --uborder:#283047;
+      --g:#22c55e; --g-dim:rgba(34,197,94,.1);
     }
+    html,body{height:100%}
+    body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--text);
+      display:flex;flex-direction:column;height:100vh;overflow:hidden}
 
-    html, body { height: 100%; }
+    /* ── HEADER ── */
+    header{display:flex;align-items:center;justify-content:space-between;
+      padding:13px 20px;background:var(--surface);border-bottom:1px solid var(--border);
+      flex-shrink:0;z-index:50}
+    .hl{display:flex;align-items:center;gap:12px}
+    .av-w{position:relative;width:38px;height:38px}
+    .av{width:38px;height:38px;border-radius:11px;
+      background:linear-gradient(135deg,#f59e0b,#ea580c);
+      display:flex;align-items:center;justify-content:center;
+      font-size:16px;font-weight:800;color:#0d0d0d;position:relative;z-index:2;
+      box-shadow:0 0 14px rgba(245,158,11,.2)}
+    .av-ring{position:absolute;inset:-4px;border-radius:14px;
+      border:2px solid var(--a);opacity:0;transition:opacity .3s}
+    .av-ring.on{opacity:1;animation:rp 1.6s ease-in-out infinite}
+    @keyframes rp{0%,100%{box-shadow:0 0 0 0 var(--a-glow)}50%{box-shadow:0 0 0 7px transparent}}
+    .hd-title{font-size:14px;font-weight:700;display:flex;align-items:center;gap:7px}
+    .badge{font-size:9px;font-weight:700;padding:2px 7px;border-radius:999px;
+      background:var(--a-dim);color:var(--a);border:1px solid rgba(245,158,11,.25);
+      letter-spacing:.5px;text-transform:uppercase}
+    .hd-sub{font-size:11px;color:var(--dim);display:flex;align-items:center;gap:5px;margin-top:2px}
+    .dot-live{width:6px;height:6px;border-radius:50%;background:var(--g);
+      animation:blink 2.2s ease-in-out infinite}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
 
-    body {
-      font-family: 'Inter', -apple-system, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-      overflow: hidden;
-    }
+    /* Mode badge */
+    .mode-badge{display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:8px;
+      border:1px solid var(--border);background:var(--s2);
+      font-size:11px;font-weight:600;color:var(--muted);cursor:pointer;transition:all .2s}
+    .mode-badge.on{border-color:rgba(34,197,94,.3);background:var(--g-dim);color:var(--g)}
+    .mode-dot{width:6px;height:6px;border-radius:50%;background:var(--muted)}
+    .mode-badge.on .mode-dot{background:var(--g)}
+    .hr{display:flex;align-items:center;gap:8px}
+    .icon-btn{width:34px;height:34px;border-radius:9px;border:1px solid var(--border);
+      background:transparent;color:var(--muted);display:flex;align-items:center;justify-content:center;
+      cursor:pointer;font-size:13px;transition:all .2s}
+    .icon-btn:hover{background:var(--s2);color:var(--text)}
 
-    /* ─── HEADER ─── */
-    header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 13px 20px;
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      flex-shrink: 0;
-      z-index: 50;
-    }
-    .hdr-left { display: flex; align-items: center; gap: 12px; }
+    /* ── PROGRESS ── */
+    .pt{height:2px;background:var(--border);flex-shrink:0}
+    .pf{height:100%;background:linear-gradient(90deg,var(--a),#ea580c);
+      width:0%;transition:width .6s cubic-bezier(.4,0,.2,1)}
 
-    /* Avatar with pulse ring */
-    .av-wrap { position: relative; width: 38px; height: 38px; }
-    .av {
-      width: 38px; height: 38px;
-      border-radius: 11px;
-      background: linear-gradient(135deg, #f59e0b, #ea580c);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 16px; font-weight: 800; color: #0d0d0d;
-      position: relative; z-index: 2;
-      box-shadow: 0 0 14px rgba(245,158,11,0.2);
-    }
-    .av-ring {
-      position: absolute; inset: -4px;
-      border-radius: 14px;
-      border: 2px solid var(--accent);
-      opacity: 0;
-      transition: opacity .3s;
-    }
-    .av-ring.on {
-      opacity: 1;
-      animation: ring-pulse 1.6s ease-in-out infinite;
-    }
-    @keyframes ring-pulse {
-      0%,100% { box-shadow: 0 0 0 0 var(--accent-glow); }
-      50%      { box-shadow: 0 0 0 7px transparent; }
-    }
+    /* ── CHAT ── */
+    #chat{flex:1;overflow-y:auto;padding:28px 16px 0;scroll-behavior:smooth}
+    #chat::-webkit-scrollbar{width:4px}
+    #chat::-webkit-scrollbar-thumb{background:#333;border-radius:999px}
+    .cw{max-width:660px;margin:0 auto;display:flex;flex-direction:column;gap:18px;padding-bottom:20px}
+    .msg{display:flex;gap:10px;animation:rise .28s ease-out}
+    @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+    .msg.user{flex-direction:row-reverse}
+    .mav{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;
+      justify-content:center;font-size:12px;flex-shrink:0;margin-top:2px}
+    .mav.leo{background:linear-gradient(135deg,#f59e0b,#ea580c);font-weight:800;color:#0d0d0d}
+    .mav.human{background:var(--s2);border:1px solid var(--border);color:var(--muted)}
+    .bubble{max-width:82%;background:var(--surface);border:1px solid var(--border);
+      border-radius:4px 16px 16px 16px;padding:12px 15px;font-size:13.5px;
+      line-height:1.72;color:var(--text)}
+    .msg.user .bubble{background:var(--ubg);border-color:var(--uborder);
+      border-radius:16px 4px 16px 16px;color:#c9d8f8}
+    .bm{font-size:10px;color:var(--muted);margin-top:7px;display:flex;align-items:center;gap:4px}
+    .qlabel{display:block;font-size:10px;font-weight:700;color:var(--muted);
+      text-transform:uppercase;letter-spacing:.6px;margin-bottom:5px}
+    .h{color:var(--a);font-weight:600}
+    .hg{color:#4ade80;font-weight:600}
 
-    .hdr-title {
-      font-size: 14px; font-weight: 700; color: var(--text);
-      display: flex; align-items: center; gap: 7px;
-    }
-    .badge {
-      font-size: 9px; font-weight: 700;
-      padding: 2px 7px; border-radius: 999px;
-      background: var(--accent-dim); color: var(--accent);
-      border: 1px solid rgba(245,158,11,0.25);
-      letter-spacing: .5px; text-transform: uppercase;
-    }
-    .hdr-sub {
-      font-size: 11px; color: var(--text-dim);
-      display: flex; align-items: center; gap: 5px; margin-top: 2px;
-    }
-    .dot-live {
-      width: 6px; height: 6px; border-radius: 50%;
-      background: #22c55e;
-      animation: blink 2.2s ease-in-out infinite;
-    }
-    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+    /* Chunk typewriter cursor */
+    .cur{display:inline-block;width:2px;height:13px;background:var(--a);
+      margin-left:2px;vertical-align:middle;animation:cb .75s step-end infinite}
+    @keyframes cb{0%,100%{opacity:1}50%{opacity:0}}
 
-    .hdr-right { display: flex; gap: 8px; }
-    .icon-btn {
-      width: 34px; height: 34px;
-      border-radius: 9px;
-      border: 1px solid var(--border);
-      background: transparent; color: var(--text-muted);
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer; font-size: 13px;
-      transition: all .2s;
-    }
-    .icon-btn:hover { background: var(--surface-2); color: var(--text); }
+    /* ACK chip */
+    .chip{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;
+      color:#4ade80;background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.18);
+      border-radius:6px;padding:2px 8px;margin-bottom:8px}
 
-    /* ─── PROGRESS BAR ─── */
-    .prog-track { height: 2px; background: var(--border); flex-shrink: 0; }
-    .prog-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--accent), #ea580c);
-      width: 0%; transition: width .6s cubic-bezier(.4,0,.2,1);
-    }
+    /* Thinking */
+    .tb{background:var(--surface);border:1px solid var(--border);
+      border-radius:4px 16px 16px 16px;padding:11px 14px;
+      display:flex;align-items:center;gap:9px;font-size:12px;color:var(--muted);font-style:italic}
+    .dots{display:flex;gap:4px}
+    .d{width:5px;height:5px;border-radius:50%;background:var(--a);
+      animation:db 1.4s ease-in-out infinite}
+    .d:nth-child(2){animation-delay:.16s}
+    .d:nth-child(3){animation-delay:.32s}
+    @keyframes db{0%,80%,100%{transform:scale(.65);opacity:.4}40%{transform:scale(1);opacity:1}}
 
-    /* ─── CHAT AREA ─── */
-    #chat-area {
-      flex: 1;
-      overflow-y: auto;
-      padding: 28px 16px 0;
-      scroll-behavior: smooth;
-    }
-    #chat-area::-webkit-scrollbar { width: 4px; }
-    #chat-area::-webkit-scrollbar-thumb { background: #333; border-radius: 999px; }
+    /* Summary card */
+    .sc{background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.2);
+      border-radius:12px;padding:14px 16px;margin:10px 0 4px}
+    .sct{font-size:11px;font-weight:700;color:var(--g);letter-spacing:.4px;
+      text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+    .sr{display:flex;gap:8px;align-items:baseline;margin-bottom:5px}
+    .sk{color:var(--muted);min-width:110px;font-size:11px;flex-shrink:0}
+    .sv{color:var(--text);font-weight:500;font-size:12.5px}
 
-    .chat-wrap {
-      max-width: 660px;
-      margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
-      padding-bottom: 20px;
-    }
+    /* Prompt box */
+    .pbox{background:#0a0a0a;border:1px solid var(--border);border-radius:12px;
+      padding:14px;font-family:'Courier New',monospace;font-size:11px;line-height:1.65;
+      color:#8a9ab8;max-height:280px;overflow-y:auto;white-space:pre-wrap;
+      word-break:break-word;margin-top:12px;position:relative}
+    .pbox::-webkit-scrollbar{width:4px}
+    .pbox::-webkit-scrollbar-thumb{background:#333}
+    .cpbtn{position:sticky;top:0;left:100%;display:block;width:fit-content;
+      margin-left:auto;margin-bottom:8px;padding:5px 12px;border-radius:7px;
+      background:var(--s2);border:1px solid var(--border);color:var(--dim);
+      font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;
+      font-family:'Inter',sans-serif}
+    .cpbtn:hover{background:var(--a);color:#0d0d0d;border-color:var(--a)}
 
-    /* Message rows */
-    .msg {
-      display: flex;
-      gap: 10px;
-      animation: rise .28s ease-out;
-    }
-    @keyframes rise {
-      from { opacity:0; transform: translateY(8px); }
-      to   { opacity:1; transform: translateY(0); }
-    }
+    /* ── INPUT ── */
+    #inp-area{flex-shrink:0;padding:10px 16px 18px;
+      background:linear-gradient(to top,var(--bg) 75%,transparent)}
+    #qtags{display:flex;gap:7px;overflow-x:auto;padding-bottom:2px;margin-bottom:9px}
+    #qtags::-webkit-scrollbar{display:none}
+    .qt{flex-shrink:0;padding:5px 11px;border-radius:8px;background:var(--surface);
+      border:1px solid var(--border);color:var(--dim);font-size:11.5px;cursor:pointer;
+      transition:all .18s;white-space:nowrap;font-family:'Inter',sans-serif}
+    .qt:hover{border-color:var(--a);color:var(--a);background:var(--a-dim)}
+    .irow{display:flex;align-items:center;gap:9px;background:var(--surface);
+      border:1px solid var(--border);border-radius:14px;padding:9px 9px 9px 15px;
+      transition:border-color .2s,box-shadow .2s}
+    .irow:focus-within{border-color:var(--a);box-shadow:0 0 0 3px var(--a-dim)}
+    #uin{flex:1;background:transparent;border:none;outline:none;color:var(--text);
+      font-size:13.5px;font-family:'Inter',sans-serif}
+    #uin::placeholder{color:var(--muted)}
+    #sbtn{width:36px;height:36px;border-radius:10px;background:var(--a);border:none;
+      color:#0d0d0d;font-size:13px;display:flex;align-items:center;justify-content:center;
+      cursor:pointer;transition:all .2s;flex-shrink:0}
+    #sbtn:hover:not(:disabled){background:#d97706;transform:scale(1.06)}
+    #sbtn:disabled{opacity:.35;cursor:default;transform:none}
 
-    .msg.user { flex-direction: row-reverse; }
+    /* ── SETTINGS ── */
+    #sov{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:200;
+      display:flex;align-items:flex-end;justify-content:center;
+      opacity:0;pointer-events:none;transition:opacity .25s}
+    #sov.open{opacity:1;pointer-events:all}
+    .ss{background:var(--surface);border:1px solid var(--border);
+      border-radius:20px 20px 0 0;padding:22px 20px 32px;
+      width:100%;max-width:600px;
+      transform:translateY(100%);transition:transform .3s cubic-bezier(.4,0,.2,1)}
+    #sov.open .ss{transform:translateY(0)}
+    .sh{width:36px;height:3px;border-radius:999px;background:var(--border);margin:0 auto 18px}
+    .st{font-size:14px;font-weight:700;color:var(--text);margin-bottom:16px}
+    .sb{margin-bottom:13px}
+    .sl{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;
+      letter-spacing:.5px;margin-bottom:5px;display:flex;align-items:center;gap:6px}
+    .sel{width:100%;background:var(--s2);border:1px solid var(--border);
+      border-radius:10px;padding:9px 12px;color:var(--text);font-size:13px;
+      font-family:'Inter',sans-serif;outline:none;appearance:none;-webkit-appearance:none}
+    .sel:focus{border-color:var(--a)}
 
-    .msg-av {
-      width: 30px; height: 30px; border-radius: 9px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 12px; flex-shrink: 0; margin-top: 2px;
-    }
-    .msg-av.leo-av {
-      background: linear-gradient(135deg, #f59e0b, #ea580c);
-      font-weight: 800; color: #0d0d0d;
-    }
-    .msg-av.user-av {
-      background: var(--surface-2);
-      border: 1px solid var(--border);
-      color: var(--text-muted);
-    }
+    /* API key */
+    .arow{display:flex;gap:8px}
+    .ainput{flex:1;background:var(--s2);border:1px solid var(--border);
+      border-radius:10px;padding:9px 12px;color:var(--text);font-size:12px;
+      font-family:'Inter',sans-serif;outline:none}
+    .ainput:focus{border-color:var(--a)}
+    .ainput::placeholder{color:var(--muted)}
+    .asave{padding:9px 14px;border-radius:10px;background:var(--s2);
+      border:1px solid var(--border);color:var(--dim);font-size:12px;font-weight:600;
+      cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s}
+    .asave:hover{background:var(--a);color:#0d0d0d;border-color:var(--a)}
+    .ahint{font-size:10.5px;color:var(--muted);margin-top:5px;display:flex;align-items:center;gap:5px}
+    .astat{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:600;
+      padding:1px 7px;border-radius:999px;margin-left:4px}
+    .astat.on{background:var(--g-dim);color:var(--g);border:1px solid rgba(34,197,94,.2)}
+    .astat.off{background:rgba(113,113,122,.1);color:var(--muted);border:1px solid var(--border)}
 
-    /* Bubbles */
-    .bubble {
-      max-width: 80%;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 4px 16px 16px 16px;
-      padding: 12px 15px;
-      font-size: 13.5px;
-      line-height: 1.72;
-      color: var(--text);
-      position: relative;
-    }
-    .msg.user .bubble {
-      background: var(--user-bg);
-      border-color: var(--user-border);
-      border-radius: 16px 4px 16px 16px;
-      color: #c9d8f8;
-    }
-    .bubble-meta {
-      font-size: 10px; color: var(--text-muted);
-      margin-top: 7px;
-      display: flex; align-items: center; gap: 4px;
-    }
+    /* Which AI section */
+    .ai-compare{background:var(--s2);border:1px solid var(--border);border-radius:12px;
+      padding:13px;margin-bottom:13px;font-size:12px}
+    .ai-compare-title{font-size:10px;font-weight:700;color:var(--muted);
+      text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+    .ai-row{display:flex;align-items:center;gap:8px;padding:6px 0;
+      border-bottom:1px solid var(--border)}
+    .ai-row:last-child{border-bottom:none}
+    .ai-name{font-weight:600;color:var(--text);min-width:130px;font-size:12px}
+    .ai-tag{font-size:10px;padding:2px 7px;border-radius:999px;font-weight:600}
+    .tag-best{background:rgba(245,158,11,.15);color:var(--a);border:1px solid rgba(245,158,11,.3)}
+    .tag-free{background:var(--g-dim);color:var(--g);border:1px solid rgba(34,197,94,.2)}
+    .tag-offline{background:rgba(99,102,241,.15);color:#818cf8;border:1px solid rgba(99,102,241,.3)}
+    .ai-desc{font-size:11px;color:var(--muted);flex:1}
 
-    /* Inline reaction chip */
-    .chip {
-      display: inline-flex; align-items: center; gap: 5px;
-      font-size: 11px; font-weight: 600;
-      color: #4ade80;
-      background: rgba(74,222,128,.08);
-      border: 1px solid rgba(74,222,128,.18);
-      border-radius: 6px;
-      padding: 2px 8px;
-      margin-bottom: 8px;
-    }
+    .abtn{width:100%;padding:12px;border-radius:12px;background:var(--a);border:none;
+      color:#0d0d0d;font-size:14px;font-weight:700;cursor:pointer;margin-top:4px;
+      font-family:'Inter',sans-serif;transition:background .2s}
+    .abtn:hover{background:#d97706}
 
-    /* Typing cursor inside bubble */
-    .cursor {
-      display: inline-block;
-      width: 2px; height: 13px;
-      background: var(--accent);
-      margin-left: 2px;
-      vertical-align: middle;
-      animation: cur-blink .75s step-end infinite;
-    }
-    @keyframes cur-blink { 0%,100%{opacity:1} 50%{opacity:0} }
+    /* ── TOAST ── */
+    #toast{position:fixed;bottom:90px;left:50%;
+      transform:translateX(-50%) translateY(16px);
+      background:var(--g);color:#fff;padding:9px 18px;border-radius:12px;
+      font-size:13px;font-weight:600;opacity:0;pointer-events:none;
+      transition:all .28s;z-index:999;white-space:nowrap}
+    #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
-    /* Label above question */
-    .q-label {
-      display: block;
-      font-size: 10px; font-weight: 700;
-      color: var(--text-muted);
-      text-transform: uppercase; letter-spacing: .6px;
-      margin-bottom: 5px;
-    }
-
-    /* Highlights inside Leo text */
-    .hl        { color: var(--accent); font-weight: 600; }
-    .hl-green  { color: #4ade80; font-weight: 600; }
-
-    /* Thinking row */
-    .thinking-bubble {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 4px 16px 16px 16px;
-      padding: 11px 14px;
-      display: flex; align-items: center; gap: 9px;
-      font-size: 12px; color: var(--text-muted); font-style: italic;
-    }
-    .dots { display: flex; gap: 4px; }
-    .d {
-      width: 5px; height: 5px; border-radius: 50%;
-      background: var(--accent);
-      animation: dot-bounce 1.4s ease-in-out infinite;
-    }
-    .d:nth-child(2) { animation-delay: .16s; }
-    .d:nth-child(3) { animation-delay: .32s; }
-    @keyframes dot-bounce {
-      0%,80%,100% { transform: scale(.65); opacity: .4; }
-      40%          { transform: scale(1);   opacity: 1;  }
-    }
-
-    /* Prompt output */
-    .prompt-box {
-      background: #0a0a0a;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 14px 14px 14px 14px;
-      font-family: 'Courier New', monospace;
-      font-size: 11px; line-height: 1.65;
-      color: #8a9ab8;
-      max-height: 280px;
-      overflow-y: auto;
-      white-space: pre-wrap;
-      word-break: break-word;
-      margin-top: 12px;
-      position: relative;
-    }
-    .prompt-box::-webkit-scrollbar { width: 4px; }
-    .prompt-box::-webkit-scrollbar-thumb { background: #333; }
-
-    .copy-btn {
-      position: sticky; top: 0; left: 100%;
-      display: block; width: fit-content; margin-left: auto; margin-bottom: 8px;
-      padding: 5px 12px;
-      border-radius: 7px;
-      background: var(--surface-2);
-      border: 1px solid var(--border);
-      color: var(--text-dim);
-      font-size: 11px; font-weight: 600;
-      cursor: pointer;
-      transition: all .2s;
-      font-family: 'Inter', sans-serif;
-    }
-    .copy-btn:hover { background: var(--accent); color: #0d0d0d; border-color: var(--accent); }
-
-    /* ─── INPUT AREA ─── */
-    #input-area {
-      flex-shrink: 0;
-      padding: 10px 16px 18px;
-      background: linear-gradient(to top, var(--bg) 75%, transparent);
-    }
-    #quick-tags {
-      display: flex; gap: 7px;
-      overflow-x: auto; padding-bottom: 2px;
-      margin-bottom: 9px;
-    }
-    #quick-tags::-webkit-scrollbar { display: none; }
-    .qtag {
-      flex-shrink: 0;
-      padding: 5px 11px;
-      border-radius: 8px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      color: var(--text-dim);
-      font-size: 11.5px;
-      cursor: pointer;
-      transition: all .18s;
-      white-space: nowrap;
-      font-family: 'Inter', sans-serif;
-    }
-    .qtag:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
-
-    .input-row {
-      display: flex; align-items: center; gap: 9px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 9px 9px 9px 15px;
-      transition: border-color .2s, box-shadow .2s;
-    }
-    .input-row:focus-within {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px var(--accent-dim);
-    }
-    #user-input {
-      flex: 1; background: transparent; border: none; outline: none;
-      color: var(--text); font-size: 13.5px;
-      font-family: 'Inter', sans-serif;
-    }
-    #user-input::placeholder { color: var(--text-muted); }
-    #user-input:disabled { opacity: .6; }
-
-    #send-btn {
-      width: 36px; height: 36px;
-      border-radius: 10px;
-      background: var(--accent); border: none;
-      color: #0d0d0d; font-size: 13px;
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer;
-      transition: all .2s; flex-shrink: 0;
-    }
-    #send-btn:hover:not(:disabled) { background: #d97706; transform: scale(1.06); }
-    #send-btn:disabled { opacity: .35; cursor: default; transform: none; }
-
-    /* ─── SETTINGS OVERLAY ─── */
-    #settings-overlay {
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,.65);
-      z-index: 200;
-      display: flex; align-items: flex-end; justify-content: center;
-      opacity: 0; pointer-events: none;
-      transition: opacity .25s;
-    }
-    #settings-overlay.open { opacity: 1; pointer-events: all; }
-
-    .settings-sheet {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 20px 20px 0 0;
-      padding: 22px 20px 32px;
-      width: 100%; max-width: 600px;
-      transform: translateY(100%);
-      transition: transform .3s cubic-bezier(.4,0,.2,1);
-    }
-    #settings-overlay.open .settings-sheet { transform: translateY(0); }
-
-    .sheet-handle {
-      width: 36px; height: 3px;
-      border-radius: 999px; background: var(--border);
-      margin: 0 auto 18px;
-    }
-    .sheet-title {
-      font-size: 14px; font-weight: 700; color: var(--text);
-      margin-bottom: 14px;
-    }
-    .setting-block { margin-bottom: 13px; }
-    .setting-label {
-      font-size: 10px; font-weight: 700;
-      color: var(--text-muted);
-      text-transform: uppercase; letter-spacing: .5px;
-      margin-bottom: 5px;
-    }
-    .setting-select {
-      width: 100%;
-      background: var(--surface-2);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 9px 12px;
-      color: var(--text); font-size: 13px;
-      font-family: 'Inter', sans-serif;
-      outline: none; appearance: none; -webkit-appearance: none;
-    }
-    .setting-select:focus { border-color: var(--accent); }
-
-    .apply-btn {
-      width: 100%; padding: 12px;
-      border-radius: 12px;
-      background: var(--accent); border: none;
-      color: #0d0d0d; font-size: 14px; font-weight: 700;
-      cursor: pointer; margin-top: 4px;
-      font-family: 'Inter', sans-serif;
-      transition: background .2s;
-    }
-    .apply-btn:hover { background: #d97706; }
-
-    /* ─── TOAST ─── */
-    #toast {
-      position: fixed; bottom: 90px; left: 50%;
-      transform: translateX(-50%) translateY(16px);
-      background: #22c55e; color: #fff;
-      padding: 9px 18px; border-radius: 12px;
-      font-size: 13px; font-weight: 600;
-      opacity: 0; pointer-events: none;
-      transition: all .28s; z-index: 999;
-      white-space: nowrap;
-    }
-    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-    @media (min-width: 768px) {
-      #chat-area { padding: 36px 32px 0; }
-      #input-area { padding: 10px 32px 22px; }
+    @media(min-width:768px){
+      #chat{padding:36px 32px 0}
+      #inp-area{padding:10px 32px 22px}
     }
   </style>
 </head>
@@ -424,580 +225,655 @@
 
 <!-- ── HEADER ── -->
 <header>
-  <div class="hdr-left">
-    <div class="av-wrap">
+  <div class="hl">
+    <div class="av-w">
       <div class="av">L</div>
       <div class="av-ring" id="av-ring"></div>
     </div>
     <div>
-      <div class="hdr-title">
-        Leo <span class="badge">2.0</span>
-      </div>
-      <div class="hdr-sub">
-        <span class="dot-live"></span>
-        Kiến trúc sư Sales Page · Phân tích thời gian thực
-      </div>
+      <div class="hd-title">Leo <span class="badge">2.1</span></div>
+      <div class="hd-sub"><span class="dot-live"></span>Kiến trúc sư Sales Page · Phân tích thời gian thực</div>
     </div>
   </div>
-  <div class="hdr-right">
-    <button class="icon-btn" onclick="openSettings()" title="Cài đặt chiến dịch">
-      <i class="fas fa-sliders-h"></i>
-    </button>
+  <div class="hr">
+    <div class="mode-badge" id="mbadge" onclick="openS()">
+      <span class="mode-dot" id="mdot"></span>
+      <span id="mtext">Offline</span>
+    </div>
+    <button class="icon-btn" onclick="openS()" title="Cài đặt"><i class="fas fa-sliders-h"></i></button>
   </div>
 </header>
 
-<!-- ── PROGRESS BAR ── -->
-<div class="prog-track">
-  <div class="prog-fill" id="prog"></div>
-</div>
+<!-- ── PROGRESS ── -->
+<div class="pt"><div class="pf" id="prog"></div></div>
 
-<!-- ── CHAT AREA ── -->
-<div id="chat-area">
-  <div class="chat-wrap" id="chat-wrap"></div>
-</div>
+<!-- ── CHAT ── -->
+<div id="chat"><div class="cw" id="cw"></div></div>
 
-<!-- ── INPUT AREA ── -->
-<div id="input-area">
-  <div id="quick-tags"></div>
-  <div class="input-row">
-    <input id="user-input" type="text" autocomplete="off"
+<!-- ── INPUT ── -->
+<div id="inp-area">
+  <div id="qtags"></div>
+  <div class="irow">
+    <input id="uin" type="text" autocomplete="off"
       placeholder="Nhập câu trả lời của bạn..."
-      onkeydown="if(event.key==='Enter'&&!event.shiftKey)handleSend()">
-    <button id="send-btn" onclick="handleSend()">
-      <i class="fas fa-arrow-up"></i>
-    </button>
+      onkeydown="if(event.key==='Enter'&&!event.shiftKey)send()">
+    <button id="sbtn" onclick="send()"><i class="fas fa-arrow-up"></i></button>
   </div>
 </div>
 
-<!-- ── SETTINGS OVERLAY ── -->
-<div id="settings-overlay" onclick="if(event.target===this)closeSettings()">
-  <div class="settings-sheet">
-    <div class="sheet-handle"></div>
-    <div class="sheet-title">⚙ Cài đặt chiến dịch</div>
+<!-- ── SETTINGS ── -->
+<div id="sov" onclick="if(event.target===this)closeS()">
+  <div class="ss">
+    <div class="sh"></div>
+    <div class="st">⚙ Cài đặt chiến dịch</div>
 
-    <div class="setting-block">
-      <div class="setting-label">Định dạng sản phẩm số</div>
-      <select class="setting-select" id="setting-format">
+    <!-- Which AI? Guide -->
+    <div class="ai-compare">
+      <div class="ai-compare-title">🤖 Chọn AI nào cho Leo?</div>
+      <div class="ai-row">
+        <span class="ai-name">Gemini 2.0 Flash</span>
+        <span class="ai-tag tag-best">Khuyến nghị</span>
+        <span class="ai-tag tag-free">Free</span>
+        <span class="ai-desc">Nhanh nhất · 1500 req/ngày · aistudio.google.com</span>
+      </div>
+      <div class="ai-row">
+        <span class="ai-name">Chrome Nano</span>
+        <span class="ai-tag tag-offline">On-device</span>
+        <span class="ai-desc">Tự động bật nếu Chrome hỗ trợ · $0 mãi mãi · offline</span>
+      </div>
+      <div class="ai-row">
+        <span class="ai-name">Gemini Ultra (bạn đang dùng)</span>
+        <span class="ai-desc" style="color:#555">Chat only — không dùng được làm API</span>
+      </div>
+    </div>
+
+    <!-- API KEY -->
+    <div class="sb">
+      <div class="sl">
+        Gemini API Key (miễn phí)
+        <span class="astat off" id="astat">○ Chưa kết nối</span>
+      </div>
+      <div class="arow">
+        <input type="password" class="ainput" id="akey" placeholder="AIza...">
+        <button class="asave" onclick="saveKey()">Lưu</button>
+      </div>
+      <div class="ahint">
+        <i class="fas fa-info-circle"></i>
+        Vào <a href="https://aistudio.google.com" target="_blank"
+          style="color:var(--a);text-decoration:none">aistudio.google.com</a>
+        → Get API key → (tuỳ chọn) Restrict domain: fedu.vn
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sl">Định dạng sản phẩm số</div>
+      <select class="sel" id="sf">
         <option value="Ebook / Tài liệu PDF">Ebook / Tài liệu PDF</option>
         <option value="Khóa học Video quay sẵn">Khóa học Video quay sẵn</option>
         <option value="Template / Công cụ đóng gói">Template / Công cụ (Notion, Excel)</option>
         <option value="Dịch vụ Coaching / Tư vấn 1-1">Dịch vụ Coaching / Tư vấn 1-1</option>
       </select>
     </div>
-    <div class="setting-block">
-      <div class="setting-label">Mức độ nhận thức (Awareness)</div>
-      <select class="setting-select" id="setting-awareness">
+    <div class="sb">
+      <div class="sl">Mức độ nhận thức (Awareness)</div>
+      <select class="sel" id="saw">
         <option value="Khách hàng mới nhận ra vấn đề (Problem Aware)">Mới nhận ra vấn đề (Problem Aware)</option>
         <option value="Khách hàng đã biết các giải pháp (Solution Aware)">Đã đi tìm giải pháp (Solution Aware)</option>
         <option value="Khách hàng đã biết bạn (Product Aware)">Đã biết đến bạn (Product Aware)</option>
       </select>
     </div>
-    <div class="setting-block">
-      <div class="setting-label">Giọng điệu (Tone of Voice)</div>
-      <select class="setting-select" id="setting-tone">
+    <div class="sb">
+      <div class="sl">Giọng điệu (Tone of Voice)</div>
+      <select class="sel" id="sto">
         <option value="Sắc bén, đanh thép, đi thẳng vào logic thực tế">Đanh thép, logic thực tế</option>
         <option value="Đồng cảm sâu sắc, chân thành kể chuyện">Đồng cảm, kể chuyện</option>
         <option value="Kịch tính, tạo cảm giác F.O.M.O khẩn cấp">Kịch tính, khẩn cấp</option>
       </select>
     </div>
-
-    <button class="apply-btn" onclick="closeSettings()">Áp dụng cài đặt</button>
+    <button class="abtn" onclick="closeS()">Xác nhận</button>
   </div>
 </div>
 
-<!-- ── TOAST ── -->
-<div id="toast"><i class="fas fa-check-circle"></i> Đã sao chép Mega Prompt!</div>
+<div id="toast"></div>
 
 <script>
 // ══════════════════════════════════════════════════════════
-//  DATA
+//  QUESTIONS — psychology-rewritten
 // ══════════════════════════════════════════════════════════
-const QUESTIONS = [
+const Q = [
   {
-    q: 'Hãy cho tôi biết <span class="hl">tên sản phẩm số</span> của bạn là gì?',
-    hints: ['Khóa học Tiếng Anh giao tiếp', 'Ebook Xây kênh TikTok', 'Dịch vụ Setup hệ thống tự động', 'Template Notion quản lý dự án']
+    // Easy opener, no jargon
+    q:'Hãy cho tôi biết <span class="h">tên sản phẩm số</span> của bạn là gì?',
+    h:['Khóa học Tiếng Anh giao tiếp','Ebook Xây kênh TikTok từ 0','Dịch vụ Setup hệ thống bán hàng tự động','Template Notion quản lý dự án']
   },
   {
-    q: '<span class="hl">Khách hàng mục tiêu (ICP)</span> của bạn là ai — đặc điểm, độ tuổi, nghề nghiệp?',
-    hints: ['Mẹ bỉm sữa muốn kinh doanh online', 'Sinh viên mới ra trường muốn freelance', 'Chủ doanh nghiệp SME 30-45 tuổi']
+    // Concretization: 1 specific real customer, not abstract "ICP"
+    q:'Hãy nghĩ đến <span class="h">1 khách hàng đã mua và hài lòng nhất</span> của bạn. Họ là ai — làm nghề gì, khoảng mấy tuổi, và vấn đề gì khiến họ tìm đến bạn?',
+    h:['Chị 35t, bán hàng online, muốn tăng doanh thu','Sinh viên 22t muốn kiếm tiền từ content','Anh 40t, chủ shop, chạy quảng cáo mãi không hiệu quả']
   },
   {
-    q: '<span class="hl">Nỗi đau nhức nhối nhất</span> và cảm xúc tiêu cực họ gặp hàng ngày là gì?',
-    hints: ['Làm nhiều nhưng thu nhập không tăng', 'Học nhiều khóa nhưng không áp dụng được', 'Chạy quảng cáo đốt tiền nhưng không ra đơn']
+    // 11pm Question (Donald Miller): emotional moment, not abstract pain
+    q:'Lúc <span class="h">11 giờ đêm</span>, khi họ chưa ngủ được — điều gì đang lởn vởn trong đầu họ liên quan đến vấn đề này?',
+    h:['Tháng này lại không đủ tiền trả nhân viên','Học mãi vẫn không dám nói tiếng Anh với khách Tây','Chạy quảng cáo hết 5 triệu mà chỉ ra được 2 đơn']
   },
   {
-    q: 'Họ đã <span class="hl">thử những cách gì</span> trong quá khứ nhưng thất bại? Vì sao thất bại?',
-    hints: ['Tự học YouTube nhưng kiến thức chắp vá', 'Thuê Agency nhưng nội dung không hiệu quả', 'Thử nhiều phương pháp nhưng thiếu hệ thống bài bản']
+    // "1-2 cách" — reduce recall burden, not "những cách"
+    q:'Trước khi tìm đến bạn, họ đã thử <span class="h">1-2 cách</span> nào để giải quyết? Kết quả ra sao và vì sao thất bại?',
+    h:['Tự học YouTube nhưng không biết áp dụng vào thực tế','Thuê người làm nhưng tốn tiền mà không kiểm soát được','Đã mua khóa học khác nhưng quá hàn lâm, không thực chiến']
   },
   {
-    q: '<span class="hl">Kết quả lớn nhất</span> (Transformation thực tế) họ đạt được sau khi dùng sản phẩm của bạn?',
-    hints: ['Tự tin giao tiếp tiếng Anh với người nước ngoài', 'Xây phễu tự động đạt 50 đơn/ngày', 'Tăng gấp 3 thu nhập chỉ sau 2 tháng']
+    // Social proof anchor: "kể với bạn bè" → gets testimonial-format naturally
+    q:'Sau khi dùng sản phẩm của bạn, <span class="h">cuộc sống họ thay đổi thế nào?</span> Điều đầu tiên họ kể với bạn bè là gì?',
+    h:['Tháng đầu đã kiếm được 15 triệu từ affiliate','Lần đầu tự tin nói chuyện với khách nước ngoài','Hệ thống tự chạy, tôi nghỉ 3 ngày vẫn ra đơn']
   },
   {
-    q: 'Mất bao lâu để đạt được kết quả đó? <span class="hl">(Timeframe cụ thể)</span>',
-    hints: ['Chỉ trong 30 ngày đầu tiên', 'Sau 8 tuần áp dụng đúng phương pháp', 'Ngay sau 24h setup xong hệ thống']
+    // Timeframe — kept with concrete anchors
+    q:'Họ đạt được điều đó sau <span class="h">bao lâu?</span> Càng cụ thể càng tốt.',
+    h:['Chỉ trong 30 ngày đầu tiên','Sau 8 tuần áp dụng đúng phương pháp','Ngay trong tuần đầu sau khi setup xong']
   },
   {
-    q: '<span class="hl">Ai là người tạo ra sản phẩm</span> — tên, chức danh, thành tựu bảo chứng uy tín?',
-    hints: ['Trần A — Founder với 5 năm kinh nghiệm thực chiến', 'Nguyễn B — Top 10 Marketer Việt Nam 2023', 'Dược sĩ C — 10 năm lâm sàng, đào tạo 5.000+ học viên']
+    // Lower the bar: "không cần hoành tráng, chỉ cần thật"
+    q:'Bạn — hoặc người tạo ra sản phẩm — <span class="h">có gì khiến khách hàng tin tưởng?</span> Không cần hoành tráng, chỉ cần thật. Ví dụ: số năm làm, số người đã giúp, hay kết quả tự mình đạt được.',
+    h:['5 năm làm marketing, đã giúp 200+ chủ shop','Tự mình đạt 100 triệu/tháng từ phương pháp này','Cựu giảng viên, từng training cho 3.000 học viên']
   },
   {
-    q: '<span class="hl">Chiến lược giá</span> của bạn thế nào? Bao gồm giá gốc và giá ưu đãi hiện tại (VNĐ).',
-    hints: ['Giá gốc 2.000.000đ — Ưu đãi còn 499.000đ', 'Chỉ 199.000đ (Giá trị thực 1.000.000đ)', 'Miễn phí tài liệu — Upsell sau 30 ngày']
+    // Simplified pricing: remove "chiến lược" jargon
+    q:'Sản phẩm bán giá bao nhiêu? Có <span class="h">giá gốc</span> và <span class="h">giá ưu đãi</span> không?',
+    h:['Giá gốc 2.000.000đ — Ưu đãi ra mắt còn 499.000đ','Chỉ 199.000đ (đã bao gồm toàn bộ tài liệu)','Freemium: Nhận tài liệu miễn phí — Upsell coaching 3.000.000đ']
   }
 ];
 
-// Contextual reactions per step — reference user's actual keywords
-const REACTIONS = [
-  ans => `Tôi đã ghi nhận <span class="hl">"${ans.trim()}"</span>. Tên này sẽ xuất hiện ở Hero Section và toàn bộ các nút CTA.`,
-  ans => `Tệp <span class="hl">${kw(ans)}</span> có tỷ lệ chốt cao khi đánh đúng cảm xúc. Tôi đang lập bản đồ tâm lý cho nhóm này.`,
-  ans => `Nỗi đau <span class="hl">"${kw(ans)}"</span> — sắc bén. Tôi sẽ dùng chính ngôn ngữ này làm điểm neo cảm xúc ở Section 2.`,
-  ans => `Điểm mù thị trường: <span class="hl">${kw(ans)}</span>. Cái này sẽ phá vỡ định kiến mạnh mẽ ở Section 3 — Cycle of Failing.`,
-  ans => `Transformation <span class="hl">"${kw(ans)}"</span> rất cụ thể — tôi sẽ biến nó thành Headline hứa hẹn ở Hero Section.`,
-  ans => `Timeframe <span class="hl">${kw(ans)}</span> cụ thể và đáng tin. Sẽ kích hoạt Desire mạnh — tôi sẽ lặp lại ít nhất 3 lần trong toàn bộ copy.`,
-  ans => `Authority của <span class="hl">${kw(ans)}</span> đủ mạnh để phá rào cản hoài nghi. Section 10 sẽ được xây dựng kỹ.`,
-  ans => `Chiến lược <span class="hl">${kw(ans)}</span> tạo hiệu ứng neo giá tốt. FOMO sẽ được kích hoạt ở Section 5, 7 và 11.`,
-];
+// 8 ACK verbs — rotated so pattern never repeats
+const ACK = ['Đã ghi nhận','Capture xong','Insight đã lưu','Dữ liệu rõ','Đã phân tích','Locked in','Đã xử lý','Pattern xác định'];
 
-// Thinking messages per step — contextual to each data point
-const THINKING = [
+// Thinking messages — step-contextual
+const THK = [
   'Đang phân tích tên sản phẩm...',
-  'Đang lập bản đồ tâm lý khách hàng mục tiêu...',
-  'Đang khai thác cấu trúc nỗi đau...',
+  'Đang xây dựng chân dung khách hàng...',
+  'Đang khai thác cấu trúc cảm xúc...',
   'Đang phân tích vòng lặp thất bại...',
   'Đang xây dựng mô hình chuyển đổi...',
-  'Đang calibrate timeframe chuyển đổi...',
-  'Đang đánh giá mức độ uy tín...',
+  'Đang calibrate timeframe hứa hẹn...',
+  'Đang đánh giá mức độ authority...',
   'Đang thiết kế ma trận giá...',
-  'Đang biên dịch Mega Prompt cuối cùng...',
+  'Đang biên dịch Mega Prompt...'
+];
+
+// Fallback reactions (when no API)
+const FR = [
+  a=>`Tôi đã ghi nhận <span class="h">"${a.trim().slice(0,40)}"</span>. Tên này sẽ xuất hiện ở Hero Section và toàn bộ CTA.`,
+  a=>`Chân dung <span class="h">${kw(a)}</span> rõ ràng — tôi sẽ xây ngôn ngữ thấu cảm trực tiếp cho nhóm này.`,
+  a=>`Nỗi đau <span class="h">"${kw(a)}"</span> sắc bén. Đây sẽ là điểm neo cảm xúc mở đầu Section 2.`,
+  a=>`Thất bại với <span class="h">${kw(a)}</span> sẽ là vũ khí tâm lý mạnh nhất ở Section 3.`,
+  a=>`Transformation <span class="h">"${kw(a)}"</span> cụ thể — sẽ trở thành Headline hứa hẹn chính.`,
+  a=>`Timeframe <span class="h">${kw(a)}</span> đáng tin. Sẽ được lặp ít nhất 3 lần trong toàn bộ copy.`,
+  a=>`Authority từ <span class="h">${kw(a)}</span> đủ mạnh để phá rào cản hoài nghi. Section 10 xây kỹ.`,
+  a=>`Chiến lược <span class="h">${kw(a)}</span> tạo neo giá tốt — FOMO bật ở Section 5, 7, 11.`
 ];
 
 // ══════════════════════════════════════════════════════════
 //  STATE
 // ══════════════════════════════════════════════════════════
-let step = 0;
-let data = {};
-let busy = false;
-
-// DOM
-const chatWrap  = document.getElementById('chat-wrap');
-const inputEl   = document.getElementById('user-input');
-const sendBtn   = document.getElementById('send-btn');
-const tagsEl    = document.getElementById('quick-tags');
-const progEl    = document.getElementById('prog');
-const avRing    = document.getElementById('av-ring');
+let step=0, data={}, busy=false;
+const SK='leo_v21', AK='leo_api';
+const cw=document.getElementById('cw');
+const uin=document.getElementById('uin');
+const sbtn=document.getElementById('sbtn');
+const qtags=document.getElementById('qtags');
+const prog=document.getElementById('prog');
+const ring=document.getElementById('av-ring');
 
 // ══════════════════════════════════════════════════════════
-//  BOOT
+//  AI ENGINE — Hybrid: Chrome Nano → Gemini Flash → Fallback
 // ══════════════════════════════════════════════════════════
-window.addEventListener('load', () => {
-  setTimeout(() => {
-    leoSay(
-      `Chào bạn! Tôi là <span class="hl">Leo 2.0</span> — trợ lý xây dựng phễu Sales Page cho sản phẩm số.<br><br>` +
-      `Thay vì bắt bạn tự viết prompt dài, tôi sẽ <span class="hl">thu thập và phân tích dữ liệu</span> từng bước, ` +
-      `rồi tạo một Mega Prompt hoàn chỉnh để bạn dán thẳng vào ChatGPT hoặc Claude.<br><br>` +
-      `<span class="hl-green">Chỉ 8 câu hỏi.</span> Bắt đầu nào —`,
-      () => setTimeout(() => askQuestion(0), 350)
-    );
-  }, 280);
-});
+const AI={
+  mode:'fallback', key:'',
+  GURL:'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:streamGenerateContent?alt=sse&key=',
+  GNURL:'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=',
 
-// ══════════════════════════════════════════════════════════
-//  TYPEWRITER ENGINE  (HTML-aware)
-// ══════════════════════════════════════════════════════════
-function typewriter(el, html, speed, onDone) {
-  el.innerHTML = '';
-  // Tokenise: complete HTML tags & entities are atomic; everything else is a single char
-  const tokens = [];
-  const re = /(<[^>]+>|&[^;]+;|[\s\S])/g;
-  let m;
-  while ((m = re.exec(html)) !== null) tokens.push(m[0]);
+  async init(){
+    // 1. Chrome Nano (free, on-device, instant)
+    if(window.ai?.languageModel){
+      try{
+        const c=await window.ai.languageModel.capabilities();
+        if(c.available==='readily'){this.mode='nano';this.badge();return}
+      }catch(e){}
+    }
+    // 2. Gemini API key from localStorage
+    const k=localStorage.getItem(AK);
+    if(k&&k.startsWith('AIza')){this.key=k;this.mode='gemini'}
+    this.badge();
+  },
 
-  let i = 0;
-  const CURSOR = '<span class="cursor"></span>';
+  badge(){
+    const mb=document.getElementById('mbadge');
+    const md=document.getElementById('mdot');
+    const mt=document.getElementById('mtext');
+    const as=document.getElementById('astat');
+    if(this.mode==='nano'){
+      mb.classList.add('on');md.style.background='var(--g)';mt.textContent='AI · On-device';
+    }else if(this.mode==='gemini'){
+      mb.classList.add('on');md.style.background='var(--g)';mt.textContent='AI · Gemini Flash';
+    }else{
+      mb.classList.remove('on');md.style.background='var(--muted)';mt.textContent='Offline';
+    }
+    if(as){
+      const on=this.mode!=='fallback';
+      as.className='astat '+(on?'on':'off');
+      as.textContent=on?'● Đang kết nối':'○ Chưa kết nối';
+    }
+  },
 
-  function tick() {
-    if (i < tokens.length) {
-      el.innerHTML = tokens.slice(0, i + 1).join('') + CURSOR;
-      i++;
-      const t = tokens[i - 1];
-      const delay = (t === '.' || t === '!' || t === '?') ? 90
-                  : (t === ',') ? 50
-                  : (t === ' ' || t.startsWith('<')) ? 10
-                  : speed;
-      setTimeout(tick, delay);
-      scrollBottom();
-    } else {
-      el.innerHTML = html;
-      if (onDone) onDone();
-      scrollBottom();
+  // Stream AI reaction into a text el — returns Promise
+  async stream(stepIdx, answer, el){
+    const qtext=Q[stepIdx].q.replace(/<[^>]+>/g,'');
+    const prompt=`Bạn là Leo, chuyên gia phân tích Sales Page. Phản hồi TỐI ĐA 2 câu, đanh thép, cụ thể. Tiếng Việt. Không emoji. Không "cảm ơn".
+
+Câu hỏi: "${qtext}"
+Câu trả lời: "${answer}"
+
+Hãy: (1) xác nhận insight quan trọng nhất từ câu trả lời — trích dẫn 1-2 từ khoá của họ; (2) nói ngắn gọn nó sẽ được dùng vào section nào (Hero, Pain, Failing, Solution, CTA...). Phong cách chuyên gia, không phải chatbot.`;
+
+    try{
+      if(this.mode==='nano') return await this._nano(prompt,el);
+      if(this.mode==='gemini') return await this._gemini(prompt,el,80);
+    }catch(e){}
+    // Fallback
+    await chunk(el,FR[stepIdx]?.(answer)||'',3,16);
+  },
+
+  // Generate dynamic hints (non-streaming, returns array or null)
+  async hints(q1,nextIdx){
+    if(this.mode==='fallback') return null;
+    const nq=Q[nextIdx]?.q.replace(/<[^>]+>/g,'')||'';
+    const p=`Sản phẩm: "${q1}". Câu hỏi tiếp theo: "${nq}".
+3 gợi ý ví dụ ngắn (≤8 từ/cái) phù hợp sản phẩm này. Trả về CHỈ JSON array. Tiếng Việt đời thường.`;
+    try{
+      if(this.mode==='nano'){
+        const s=await window.ai.languageModel.create();
+        const r=await s.prompt(p);
+        const m=r.match(/\[.*?\]/s);
+        return m?JSON.parse(m[0]):null;
+      }
+      if(this.mode==='gemini'){
+        const r=await fetch(this.GNURL+this.key,{
+          method:'POST',headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({contents:[{parts:[{text:p}]}],
+            generationConfig:{maxOutputTokens:80,temperature:.7}})
+        });
+        const j=await r.json();
+        const raw=j.candidates?.[0]?.content?.parts?.[0]?.text||'';
+        const m=raw.match(/\[.*?\]/s);
+        return m?JSON.parse(m[0]):null;
+      }
+    }catch(e){return null}
+  },
+
+  async _gemini(prompt,el,max=80){
+    const r=await fetch(this.GURL+this.key,{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({contents:[{parts:[{text:prompt}]}],
+        generationConfig:{maxOutputTokens:max,temperature:.85}})
+    });
+    if(!r.ok) throw new Error(r.status);
+    const reader=r.body.getReader();
+    const dec=new TextDecoder();
+    let buf='';
+    while(true){
+      const{done,value}=await reader.read();
+      if(done) break;
+      buf+=dec.decode(value,{stream:true});
+      const lines=buf.split('\n');
+      buf=lines.pop()||'';
+      for(const ln of lines){
+        if(!ln.startsWith('data: ')||ln.includes('[DONE]')) continue;
+        try{
+          const j=JSON.parse(ln.slice(6));
+          const t=j.candidates?.[0]?.content?.parts?.[0]?.text||'';
+          if(t){el.appendChild(document.createTextNode(t));scrollB()}
+        }catch(e){}
+      }
+    }
+  },
+
+  async _nano(prompt,el){
+    const s=await window.ai.languageModel.create({
+      systemPrompt:'Bạn là Leo, chuyên gia Sales Page. Phản hồi ngắn, đanh thép, Tiếng Việt.'
+    });
+    const st=s.promptStreaming(prompt);
+    let prev=0;
+    for await(const chunk of st){
+      const d=chunk.slice(prev); prev=chunk.length;
+      if(d){el.appendChild(document.createTextNode(d));scrollB()}
     }
   }
-  tick();
+};
+
+// ══════════════════════════════════════════════════════════
+//  CHUNK TYPEWRITER — 3 chars/16ms, mimics ChatGPT streaming
+// ══════════════════════════════════════════════════════════
+function chunk(el,html,n=3,ms=16){
+  return new Promise(res=>{
+    el.innerHTML='';
+    const tokens=[];
+    const re=/(<[^>]+>|&[^;]+;|[\s\S])/g;
+    let m;
+    while((m=re.exec(html))!==null) tokens.push(m[0]);
+    let i=0;
+    const CUR='<span class="cur"></span>';
+    function tick(){
+      if(i>=tokens.length){el.innerHTML=html;res();return}
+      let added=0;
+      while(i<tokens.length&&added<n){
+        i++;
+        if(!tokens[i-1].startsWith('<')) added++;
+      }
+      el.innerHTML=tokens.slice(0,i).join('')+CUR;
+      scrollB();
+      const last=tokens[i-1]||'';
+      const delay=last==='.'||last==='!'||last==='?'?120:last===','?60:ms;
+      setTimeout(tick,delay);
+    }
+    tick();
+  });
 }
 
 // ══════════════════════════════════════════════════════════
 //  MESSAGE RENDERERS
 // ══════════════════════════════════════════════════════════
-function leoSay(html, onDone) {
-  busy = true;
-  setActive(true);
-  setInput(false);
-
-  const row = mkEl('div', 'msg');
-  row.innerHTML = `<div class="msg-av leo-av">L</div><div class="bubble"><div class="txt"></div><div class="bubble-meta"><i class="fas fa-check-double" style="color:#f59e0b"></i> ${now()}</div></div>`;
-  chatWrap.appendChild(row);
-  scrollBottom();
-
-  typewriter(row.querySelector('.txt'), html, 20, () => {
-    busy = false;
-    setActive(false);
-    if (onDone) onDone();
-  });
+async function leoSay(html,noWait=false){
+  busy=true;active(true);setIn(false);
+  const row=mkRow('leo');
+  const txt=row.querySelector('.txt');
+  cw.appendChild(row);scrollB();
+  await chunk(txt,html,3,16);
+  busy=false;active(false);
 }
 
-function userSay(text) {
-  const row = mkEl('div', 'msg user');
-  row.innerHTML = `
-    <div class="msg-av user-av"><i class="fas fa-user" style="font-size:11px"></i></div>
-    <div class="bubble"><div class="txt">${esc(text)}</div><div class="bubble-meta">${now()}</div></div>
-  `;
-  chatWrap.appendChild(row);
-  scrollBottom();
+function userSay(text){
+  const row=mkRow('user');
+  row.querySelector('.txt').textContent=text;
+  cw.appendChild(row);scrollB();
 }
 
-function showThinking(msg) {
-  const id = 'th-' + Date.now();
-  const row = mkEl('div', 'msg');
-  row.id = id;
-  row.innerHTML = `
-    <div class="msg-av leo-av">L</div>
-    <div class="thinking-bubble">
-      <div class="dots"><div class="d"></div><div class="d"></div><div class="d"></div></div>
-      <span>${msg}</span>
-    </div>
-  `;
-  chatWrap.appendChild(row);
-  scrollBottom();
-  return id;
+function showThink(msg){
+  const id='t'+Date.now();
+  const el=document.createElement('div');
+  el.id=id;el.className='msg';
+  el.innerHTML=`<div class="mav leo"><i class="fas fa-bolt" style="font-size:11px"></i></div>
+    <div class="tb"><div class="dots"><div class="d"></div><div class="d"></div><div class="d"></div></div><span>${msg}</span></div>`;
+  cw.appendChild(el);scrollB();return id;
+}
+
+function mkRow(who){
+  const r=document.createElement('div');
+  r.className='msg'+(who==='user'?' user':'');
+  const u=who==='user';
+  r.innerHTML=`<div class="mav ${u?'human':'leo'}">${u?'<i class="fas fa-user" style="font-size:11px"></i>':'L'}</div>
+    <div class="bubble"><div class="txt"></div>
+    <div class="bm"><i class="fas fa-check-double" style="color:${u?'#555':'var(--a)'}"></i> ${now()}</div></div>`;
+  return r;
 }
 
 // ══════════════════════════════════════════════════════════
-//  CONVERSATION FLOW
+//  FLOW
 // ══════════════════════════════════════════════════════════
-function askQuestion(n) {
-  const q = QUESTIONS[n];
-  leoSay(
-    `<span class="q-label">Câu ${n + 1} / 8</span>` + q.q,
-    () => {
-      setTags(q.hints);
-      setInput(true);
-      inputEl.focus();
+async function askQ(n){
+  await leoSay(`<span class="qlabel">Câu ${n+1} / 8</span>${Q[n].q}`);
+  tags(Q[n].h);setIn(true);uin.focus();
+}
+
+async function send(){
+  const val=uin.value.trim();
+  if(!val||busy||step>=8) return;
+  data[`q${step+1}`]=val;
+  userSay(val);uin.value='';clearTags();setIn(false);save();
+
+  const s=step; step++; setP(step,8);
+  const thinkDelay=600+Math.min(val.length*14,1600)+Math.random()*300;
+  const tid=showThink(THK[s]);
+  active(true);
+
+  // Parallel: get dynamic hints for next question
+  let dynHints=null;
+  if(step<8&&data.q1) AI.hints(data.q1,step).then(h=>{dynHints=h}).catch(()=>{});
+
+  await sleep(thinkDelay);
+  rm(tid);active(false);
+
+  if(step<8){
+    // Reaction row
+    const row=mkRow('leo');
+    const txt=row.querySelector('.txt');
+    const chip=document.createElement('span');
+    chip.className='chip';
+    chip.innerHTML=`<i class="fas fa-check"></i> ${ACK[s%ACK.length]}`;
+    txt.appendChild(chip);
+    txt.appendChild(document.createElement('br'));
+    cw.appendChild(row);active(true);
+
+    try{
+      await AI.stream(s,val,txt);
+    }catch(e){
+      const sp=document.createElement('span');
+      sp.innerHTML=FR[s]?.(val)||'';txt.appendChild(sp);
     }
+    active(false);
+    await sleep(350);
+    await askQ(step);
+    tags(dynHints||Q[step-1+(step<8?0:0)].h);
+    // Use next question hints (step already incremented)
+    const currentHints=dynHints||Q[step>0?step-1:0].h;
+    // Actually just set correct hints for current step
+    tags(dynHints||Q[step].h);
+    setIn(true);uin.focus();
+  }else{
+    await genPrompt();
+  }
+}
+
+// ══════════════════════════════════════════════════════════
+//  GENERATION
+// ══════════════════════════════════════════════════════════
+async function genPrompt(){
+  const tid=showThink(THK[8]);active(true);
+  await sleep(1800);rm(tid);active(false);
+
+  const tone=document.getElementById('sto').value;
+  const fmt=document.getElementById('sf').value;
+  const aw=document.getElementById('saw').value;
+  const prompt=buildP(tone,fmt,aw);
+
+  // Summary message
+  await leoSay(
+    `<span class="hg"><i class="fas fa-check-circle"></i> Phân tích hoàn tất!</span><br><br>`+
+    `<span style="color:var(--muted);font-size:12.5px">Tôi đã xử lý toàn bộ 8 data points và biên dịch thành Mega Prompt 11 section. Tóm tắt chiến dịch:</span>`+
+    `<div class="sc"><div class="sct"><i class="fas fa-chart-bar"></i> Tóm tắt</div>`+
+    `<div class="sr"><span class="sk">Sản phẩm</span><span class="sv">${esc(data.q1||'—')}</span></div>`+
+    `<div class="sr"><span class="sk">Khách hàng</span><span class="sv">${esc((data.q2||'').slice(0,55))}</span></div>`+
+    `<div class="sr"><span class="sk">Nỗi đau cốt lõi</span><span class="sv">${esc((data.q3||'').slice(0,55))}</span></div>`+
+    `<div class="sr"><span class="sk">Cam kết</span><span class="sv">${esc((data.q5||'').slice(0,40))} · ${esc(data.q6||'')}</span></div>`+
+    `<div class="sr"><span class="sk">Cấu trúc</span><span class="sv">11 sections · ${esc(tone.split(',')[0])}</span></div></div>`
   );
-}
 
-function handleSend() {
-  const val = inputEl.value.trim();
-  if (!val || busy || step >= 8) return;
+  // Prompt box (no typewriter — content too long)
+  const pid='pr'+Date.now();
+  const row=document.createElement('div');
+  row.className='msg';
+  row.innerHTML=`
+    <div class="mav leo" style="background:linear-gradient(135deg,#22c55e,#0d9488)"><i class="fas fa-code" style="font-size:11px"></i></div>
+    <div class="bubble" style="max-width:100%;border-color:#22c55e22">
+      <div style="font-size:12px;color:var(--muted);margin-bottom:8px">Copy và paste vào <strong style="color:var(--text)">ChatGPT / Claude / Gemini</strong>:</div>
+      <div class="pbox" id="${pid}"><button class="cpbtn" onclick="copyP('${pid}')"><i class="fas fa-copy"></i> Copy</button>${esc(prompt)}</div>
+    </div>`;
+  cw.appendChild(row);
+  setP(8,8);clearTags();
+  uin.disabled=true;uin.placeholder='✓ Phân tích hoàn tất';sbtn.disabled=true;
+  clearSess();
 
-  data[`q${step + 1}`] = val;
-  userSay(val);
-  inputEl.value = '';
-  clearTags();
-  setInput(false);
-
-  const s = step;
-  step++;
-  setProgress(step, 8);
-
-  // Delay ∝ answer length → feels like "reading" the answer
-  const delay = 650 + Math.min(val.length * 16, 1800) + Math.random() * 350;
-  const thId = showThinking(THINKING[s]);
-  setActive(true);
-
-  setTimeout(() => {
-    rmEl(thId);
-    setActive(false);
-
-    if (step < 8) {
-      const reaction = REACTIONS[s](val);
-      const nextQ = `<span class="q-label">Câu ${step + 1} / 8</span>` + QUESTIONS[step].q;
-      leoSay(
-        `<span class="chip"><i class="fas fa-check"></i> Đã ghi nhận</span><br>${reaction}<br><br>${nextQ}`,
-        () => {
-          setTags(QUESTIONS[step].hints);
-          setInput(true);
-          inputEl.focus();
-        }
-      );
-    } else {
-      generatePrompt();
-    }
-  }, delay);
-}
-
-// ══════════════════════════════════════════════════════════
-//  MEGA PROMPT GENERATION
-// ══════════════════════════════════════════════════════════
-function generatePrompt() {
-  const thId = showThinking(THINKING[8]);
-  setActive(true);
-
-  setTimeout(() => {
-    rmEl(thId);
-    setActive(false);
-
-    const tone      = document.getElementById('setting-tone').value;
-    const format    = document.getElementById('setting-format').value;
-    const awareness = document.getElementById('setting-awareness').value;
-    const prompt    = buildPrompt(tone, format, awareness);
-
-    // Step 1: Success text message with typewriter
-    leoSay(
-      `<span class="hl-green"><i class="fas fa-bullseye"></i> Hoàn tất — Mega Prompt đã sẵn sàng!</span><br><br>` +
-      `<span style="color:var(--text-muted);font-size:12.5px">Tôi đã nhúng toàn bộ 8 câu trả lời của bạn vào cấu trúc 11 section. ` +
-      `Chỉ cần <strong style="color:var(--text)">Copy</strong> và dán vào ChatGPT hoặc Claude để nhận ngay bài Sales Page hoàn chỉnh.</span>`,
-      () => {
-        // Step 2: Append prompt box instantly (no typewriter — too long)
-        const promptId = 'pr-' + Date.now();
-        const row = mkEl('div', 'msg');
-        row.innerHTML = `
-          <div class="msg-av leo-av" style="background:linear-gradient(135deg,#22c55e,#0d9488)"><i class="fas fa-code" style="font-size:11px"></i></div>
-          <div class="bubble" style="max-width:100%;border-color:#22c55e22">
-            <div class="prompt-box" id="${promptId}">
-              <button class="copy-btn" onclick="copyPrompt('${promptId}')"><i class="fas fa-copy"></i> Copy</button>${esc(prompt)}</div>
-          </div>
-        `;
-        chatWrap.appendChild(row);
-        setProgress(8, 8);
-        clearTags();
-        inputEl.disabled = true;
-        inputEl.placeholder = '✓ Phân tích hoàn tất';
-        sendBtn.disabled = true;
-
-        // Restart tag
-        const rb = document.createElement('button');
-        rb.className = 'qtag';
-        rb.innerHTML = '<i class="fas fa-redo" style="margin-right:6px;font-size:10px"></i>Làm lại chiến dịch mới';
-        rb.onclick = () => location.reload();
-        tagsEl.appendChild(rb);
-
-        scrollBottom();
-      }
-    );
-  }, 1800);
+  const rb=document.createElement('button');
+  rb.className='qt';
+  rb.innerHTML='<i class="fas fa-redo" style="margin-right:6px;font-size:10px"></i>Làm lại chiến dịch mới';
+  rb.onclick=()=>location.reload();
+  qtags.appendChild(rb);
+  scrollB();
 }
 
 // ══════════════════════════════════════════════════════════
 //  PROMPT BUILDER
 // ══════════════════════════════════════════════════════════
-function buildPrompt(tone, format, awareness) {
-return `[SYSTEM INSTRUCTION: KÍCH HOẠT QUY TRÌNH VIẾT SALES PAGE TỰ ĐỘNG]
-Tôi đã thu thập đầy đủ dữ liệu trực tiếp về sản phẩm. Hãy bỏ qua bước phỏng vấn và trực tiếp thực thi viết Sales Page ngay lập tức.
+function buildP(tone,fmt,aw){
+return `[SYSTEM: KÍCH HOẠT QUY TRÌNH VIẾT SALES PAGE TỰ ĐỘNG]
+Tôi đã thu thập đầy đủ dữ liệu. Bỏ qua bước phỏng vấn — trực tiếp thực thi viết Sales Page.
 
-1. THIẾT LẬP VAI TRÒ (PERSONA):
-Bạn là Chuyên gia Copywriter top 1% trong Direct Response Marketing và Kiến trúc sư UI/UX thực chiến. Bạn am hiểu sâu tâm lý học hành vi.
-- VĂN PHONG BẮT BUỘC: ${tone}. TUYỆT ĐỐI BÁC BỎ ngôn từ sáo rỗng ("Master Class", "siêu đỉnh", "bí mật"). Ưu tiên văn phong đanh thép, thực tế, khớp với giọng văn của khách hàng mục tiêu tại Việt Nam.
+1. VAI TRÒ: Copywriter Direct Response top 1% + Kiến trúc sư UI/UX thực chiến.
+VĂN PHONG: ${tone}. TUYỆT ĐỐI BÁC BỎ ngôn từ sáo rỗng. Đanh thép, thực tế, khớp với người Việt Nam.
 
-2. BỐI CẢNH DỮ LIỆU ĐẦU VÀO:
-- Tên & Định dạng sản phẩm: ${data.q1} (${format})
-- Mức độ nhận thức: ${awareness}
-- Thị trường mục tiêu (ICP): ${data.q2}
-- Nỗi đau & Cảm xúc tiêu cực: ${data.q3}
-- Cách từng thử nhưng thất bại: ${data.q4}
-- Kết quả mong muốn (Transformation): ${data.q5}
+2. DỮ LIỆU ĐẦU VÀO:
+- Sản phẩm: ${data.q1} (${fmt})
+- Nhận thức KH: ${aw}
+- Khách hàng mục tiêu: ${data.q2}
+- Nỗi đau / Cảm xúc: ${data.q3}
+- Giải pháp đã thử & thất bại: ${data.q4}
+- Kết quả / Transformation: ${data.q5}
 - Thời gian đạt kết quả: ${data.q6}
-- Thông tin Chuyên gia/Người tạo: ${data.q7}
-- Chiến lược Giá: ${data.q8}
+- Authority người tạo: ${data.q7}
+- Chiến lược giá: ${data.q8}
 
-=== THỰC THI VIẾT SALES PAGE ===
-Với MỖI SECTION bên dưới, xuất bằng TIẾNG VIỆT theo đúng 4 bước:
-- BƯỚC 1: [Mục tiêu chuyển đổi] — Mục tiêu tâm lý của section này?
-- BƯỚC 2: [Internal Monologue] — Tự phân tích logic ngầm trước khi viết.
-- BƯỚC 3: [Copywriting Thực chiến] — Điền kín các biến số [...] bằng nội dung sắc bén dựa trên dữ liệu trên. Xóa dấu ngoặc vuông sau khi điền. Giữ nguyên số lượng gạch đầu dòng.
-- BƯỚC 4: [Gợi ý UI/UX Visual] — Đề xuất bố cục và hình ảnh minh họa cho section.
+=== THỰC THI — 11 SECTIONS ===
+Với MỖI SECTION, xuất TIẾNG VIỆT tuần tự 4 bước:
+BƯỚC 1 [Mục tiêu tâm lý] | BƯỚC 2 [Internal Monologue — phân tích trước khi viết] | BƯỚC 3 [Copywriting thực chiến — điền kín biến số, xóa ngoặc, giữ cấu trúc] | BƯỚC 4 [Gợi ý UI/UX Visual]
 
-[SECTION 1: HERO SECTION]
-[ATTENTION-GRABBING HEADLINE VỀ TRANSFORMATION]
-[SPECIFIC PROMISE]: How To [GIẢI QUYẾT VẤN ĐỀ] And [ĐẠT KẾT QUẢ] In Just [THỜI GIAN]
-(even if [RÀO CẢN / THẤT BẠI PHỔ BIẾN])
-[NÚT CTA] — Chỉ [GIÁ ƯU ĐÃI] VNĐ
-[SCARCITY] (Giá gốc [GIÁ GỐC] VNĐ)
+[S1 HERO]
+[HEADLINE TRANSFORMATION]
+How To [GIẢI QUYẾT] And [KẾT QUẢ] In Just [THỜI GIAN] (even if [RÀO CẢN])
+CTA — Chỉ [GIÁ ƯU ĐÃI] VNĐ | Giá gốc [GIÁ GỐC] VNĐ
 
-[SECTION 2: ESTABLISHING PAIN]
-"[QUOTE CẢM XÚC VỀ NỖI ĐAU]"
-[MỞ ĐẦU BẰNG STORY ĐỒNG CẢNH]
-Cuộc sống hàng ngày của họ bao gồm:
-- [NỖI ĐAU CỤ THỂ 1]
-- [NỖI ĐAU CỤ THỂ 2]
-- [NỖI ĐAU CỤ THỂ 3]
-- [NỖI ĐAU CỤ THỂ 4]
-- [NỖI ĐAU CỤ THỂ 5]
+[S2 ESTABLISHING PAIN]
+"[EMOTIONAL QUOTE]" | [STORY MỞ ĐẦU ĐỒNG CẢNH]
+Hàng ngày họ phải đối mặt: [NỖI ĐAU CỤ THỂ × 5]
 
-[SECTION 3: CYCLE OF FAILING]
-Tôi đã thử mọi cách được gợi ý:
-- [CÁCH ĐÃ THỬ 1] ([LÝ DO THẤT BẠI])
-- [CÁCH ĐÃ THỬ 2] ([LÝ DO THẤT BẠI])
-- [CÁCH ĐÃ THỬ 3] ([LÝ DO THẤT BẠI])
-- [CÁCH ĐÃ THỬ 4] ([LÝ DO THẤT BẠI])
-- [CÁCH ĐÃ THỬ 5] ([LÝ DO THẤT BẠI])
+[S3 CYCLE OF FAILING]
+Tôi đã thử mọi cách:
+[CÁCH ĐÃ THỬ + LÝ DO THẤT BẠI × 5]
 [ĐIỂM THẤP CẢM XÚC — TURNING POINT]
 
-[SECTION 4: DISCOVERY & INSIGHTS]
+[S4 DISCOVERY & INSIGHTS]
 Rồi tôi khám phá ra điều thay đổi tất cả...
-[STORY KHÁM PHÁ GIẢI PHÁP]
-Những gì tôi học được:
-- [KEY INSIGHT 1]
-- [KEY INSIGHT 2]
-- [KEY INSIGHT 3]
-- [KEY INSIGHT 4]
-Hầu hết [NHÓM KHÁCH HÀNG] đang vô tình [SAI LẦM PHỔ BIẾN]...
+[STORY KHÁM PHÁ] | [KEY INSIGHT × 4]
+Hầu hết [NHÓM KH] đang vô tình [SAI LẦM PHỔ BIẾN]...
 
-[SECTION 5: SOLUTION & BENEFITS]
-Tôi gọi đó là "${data.q1}"
-Nhờ [CƠ CHẾ GIẢI PHÁP], tôi đã có thể:
-- [LỢI ÍCH 1]
-- [LỢI ÍCH 2]
-- [LỢI ÍCH 3]
-- [LỢI ÍCH 4]
-- [LỢI ÍCH 5]
-[NÚT CTA] — Chỉ [GIÁ ƯU ĐÃI] VNĐ
+[S5 SOLUTION & BENEFITS]
+Giới thiệu: "${data.q1}"
+[LỢI ÍCH CỤ THỂ × 5]
+CTA — Chỉ [GIÁ] VNĐ
 
-[SECTION 6: ESSENTIAL SKILLS]
-4 Kỹ năng cốt lõi [NHÓM KHÁCH HÀNG] cần có:
-- [KỸ NĂNG 1]: [MÔ TẢ] — [TẠI SAO QUAN TRỌNG] (và [HẬU QUẢ NẾU THIẾU])
-- [KỸ NĂNG 2]: [MÔ TẢ] — [TẠI SAO QUAN TRỌNG] (và [HẬU QUẢ NẾU THIẾU])
-- [KỸ NĂNG 3]: [MÔ TẢ] — [TẠI SAO QUAN TRỌNG] (và [HẬU QUẢ NẾU THIẾU])
-- [KỸ NĂNG 4]: [MÔ TẢ] — [TẠI SAO QUAN TRỌNG] (và [HẬU QUẢ NẾU THIẾU])
+[S6 ESSENTIAL SKILLS]
+4 kỹ năng cốt lõi [NHÓM KH] cần có:
+[KỸ NĂNG + MÔ TẢ + HẬU QUẢ NẾU THIẾU × 4]
 
-[SECTION 7: INSTANT ACCESS & BONUSES]
-NHẬN NGAY — BẮT ĐẦU HÔM NAY
-5 Bonus đi kèm:
-- "[BONUS 1]" — [MÔ TẢ LỢI ÍCH]
-- "[BONUS 2]" — [MÔ TẢ LỢI ÍCH]
-- "[BONUS 3]" — [MÔ TẢ LỢI ÍCH]
-- "[BONUS 4]" — [MÔ TẢ LỢI ÍCH]
-- "[BONUS 5]" — [MÔ TẢ LỢI ÍCH]
-Giá gốc: [GIÁ GỐC] VNĐ — Hôm nay: [GIÁ ƯU ĐÃI] VNĐ
-[NÚT CTA]
+[S7 ACCESS & BONUSES]
+5 Bonus đi kèm: ["BONUS TITLE" — LỢI ÍCH × 5]
+Giá gốc: [GIÁ GỐC] | Hôm nay: [GIÁ ƯU ĐÃI]
 
-[SECTION 8: BEFORE & AFTER]
-Trước khi có "${data.q1}":
-- [TRẠNG THÁI TIÊU CỰC 1-6]
-Sau khi có "${data.q1}":
-- [TRẠNG THÁI TÍCH CỰC 1-6]
+[S8 BEFORE & AFTER]
+Trước: [TRẠNG THÁI TIÊU CỰC × 6]
+Sau: [TRẠNG THÁI TÍCH CỰC × 6]
 
-[SECTION 9: COMPONENTS / MODULES]
-5 thành phần cốt lõi của "${data.q1}":
-[THÀNH PHẦN 1-5: Tên + Thời gian + 3 kỹ thuật cụ thể mỗi phần]
+[S9 COMPONENTS]
+5 thành phần của "${data.q1}":
+[THÀNH PHẦN + TIMEFRAME + 3 KỸ THUẬT × 5]
 
-[SECTION 10: INSTRUCTOR INFO]
-Thông tin ${data.q7}:
-- Chức danh / chuyên môn:
-- Số năm kinh nghiệm:
-- Thành tựu nổi bật:
-- Dự án / học viên / kết quả tiêu biểu:
-- Lý do học viên nên tin tưởng học theo:
+[S10 INSTRUCTOR]
+${data.q7}: Chức danh · Năm kinh nghiệm · Thành tựu · Kết quả tiêu biểu · Lý do tin tưởng
 
-[SECTION 11: FINAL CTA & FORM]
+[S11 FINAL CTA & FORM]
 [HEADLINE CTA COMPELLING]
-[SUBHEAD NHẤN MẠNH LỢI ÍCH + URGENCY]
-Form đăng ký: Họ và tên + Số điện thoại
-[NÚT CTA — TIẾNG VIỆT THÚC ĐẨY HÀNH ĐỘNG TỰ NHIÊN]
-[SCARCITY] Chỉ còn [GIÁ ƯU ĐÃI] VNĐ
+Form: Họ và tên + Số điện thoại
+[NÚT CTA THÚC ĐẨY HÀNH ĐỘNG — TIẾNG VIỆT TỰ NHIÊN]
+Chỉ còn [GIÁ ƯU ĐÃI] VNĐ
 
-COPYRIGHT 2026 | YOUR BRAND | PRIVACY POLICY | TERMS`;
+© 2026 | YOUR BRAND | PRIVACY POLICY`;
 }
 
 // ══════════════════════════════════════════════════════════
-//  UTILITIES
+//  SESSION PERSISTENCE
 // ══════════════════════════════════════════════════════════
-// Extract most meaningful keyword from answer
-function kw(text) {
-  const stop = new Set(['của','bạn','tôi','họ','này','đã','và','với','cho','trong',
-    'nhưng','không','được','một','những','các','có','là','mà','để','từ','khi',
-    'vì','thì','nên','hay','hoặc','theo','đến','tại','rất','quá','về','ra','lại']);
-  const words = text
-    .replace(/[^\w\sàáảãạăắằẳẵặâấầẩẫậèéẻẽẹêếềểễệìíỉĩịòóỏõọôốồổỗộơớờởỡợùúủũụưứừửữựỳýỷỹỵđÀÁẢÃẠĂẮẰẲẴẶÂẤẦẨẪẬÈÉẺẼẸÊẾỀỂỄỆÌÍỈĨỊÒÓỎÕỌÔỐỒỔỖỘƠỚỜỞỠỢÙÚỦŨỤƯỨỪỬỮỰỲÝỶỸỴĐ]/g, ' ')
-    .split(/\s+/)
-    .filter(w => w.length > 2 && !stop.has(w.toLowerCase()));
-  if (!words.length) return text.substring(0, 20);
-  return words[Math.floor(Math.random() * Math.min(words.length, 5))];
+function save(){localStorage.setItem(SK,JSON.stringify({step,data,ts:Date.now()}))}
+function clearSess(){localStorage.removeItem(SK)}
+function tryResume(){
+  try{
+    const s=JSON.parse(localStorage.getItem(SK)||'null');
+    if(!s||Date.now()-s.ts>7200000||!s.step) return false;
+    step=s.step;data=s.data;return true;
+  }catch(e){return false}
 }
-
-function esc(s) {
-  return String(s)
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-function now() {
-  const d = new Date();
-  return d.getHours().toString().padStart(2,'0') + ':' + d.getMinutes().toString().padStart(2,'0');
-}
-
-function mkEl(tag, cls) {
-  const el = document.createElement(tag);
-  if (cls) el.className = cls;
-  return el;
-}
-
-function rmEl(id) { document.getElementById(id)?.remove(); }
-
-function scrollBottom() {
-  const c = document.getElementById('chat-area');
-  c.scrollTop = c.scrollHeight;
-}
-
-function setActive(on) { avRing.classList.toggle('on', on); }
-
-function setInput(on) {
-  inputEl.disabled = !on;
-  sendBtn.disabled = !on;
-  inputEl.placeholder = on ? 'Nhập câu trả lời của bạn...' : 'Leo đang xử lý...';
-}
-
-function setProgress(cur, total) {
-  progEl.style.width = ((cur / total) * 100) + '%';
-}
-
-function setTags(hints) {
-  tagsEl.innerHTML = '';
-  hints.forEach(h => {
-    const b = document.createElement('button');
-    b.className = 'qtag';
-    b.textContent = h;
-    b.onclick = () => { inputEl.value = h; handleSend(); };
-    tagsEl.appendChild(b);
-  });
-}
-
-function clearTags() { tagsEl.innerHTML = ''; }
 
 // Settings
-function openSettings()  { document.getElementById('settings-overlay').classList.add('open'); }
-function closeSettings() { document.getElementById('settings-overlay').classList.remove('open'); }
+function saveKey(){
+  const k=document.getElementById('akey').value.trim();
+  if(k){localStorage.setItem(AK,k);AI.key=k;AI.mode='gemini';AI.badge();toast('✓ API key đã lưu — AI Mode bật!')}
+  else{localStorage.removeItem(AK);AI.key='';AI.mode='fallback';AI.badge()}
+}
+function openS(){document.getElementById('sov').classList.add('open')}
+function closeS(){document.getElementById('sov').classList.remove('open')}
 
-// Copy prompt
-function copyPrompt(id) {
-  const el = document.getElementById(id);
-  // Get raw text, skip the Copy button text
-  const btn = el.querySelector('.copy-btn');
-  btn.style.display = 'none';
-  const text = el.innerText.trim();
-  btn.style.display = '';
+// ══════════════════════════════════════════════════════════
+//  BOOT
+// ══════════════════════════════════════════════════════════
+window.addEventListener('load',async()=>{
+  await AI.init();
+  const sk=localStorage.getItem(AK);
+  if(sk) document.getElementById('akey').value=sk;
 
-  (navigator.clipboard?.writeText(text) ?? Promise.reject()).catch(() => {
-    const ta = Object.assign(document.createElement('textarea'), { value: text });
-    document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove();
+  if(tryResume()){
+    await leoSay(
+      `Tôi thấy bạn đang làm dở chiến dịch cho <span class="h">"${data.q1||'sản phẩm của bạn'}"</span> — đã hoàn thành <span class="h">${step}/8</span> bước.<br><br>`+
+      `<span style="color:var(--muted)">Tiếp tục từ câu ${step+1} nhé —</span>`
+    );
+    await askQ(step);
+  }else{
+    await sleep(220);
+    const aiTag=AI.mode!=='fallback'?` <span style="color:#4ade80;font-size:12px">· AI ${AI.mode==='nano'?'On-device':'Gemini Flash'} đang chạy</span>`:'';
+    await leoSay(
+      `Chào bạn! Tôi là <span class="h">Leo 2.1</span>${aiTag} — trợ lý xây dựng phễu Sales Page cho sản phẩm số.<br><br>`+
+      `Thay vì bắt bạn tự viết prompt dài, tôi sẽ <span class="h">phân tích dữ liệu từng bước</span>, rồi tạo Mega Prompt hoàn chỉnh để dán thẳng vào ChatGPT, Claude hoặc Gemini.<br><br>`+
+      `<span class="hg">Chỉ 8 câu hỏi.</span> Bắt đầu nào —`
+    );
+    await askQ(0);
+  }
+});
+
+// ══════════════════════════════════════════════════════════
+//  UTILS
+// ══════════════════════════════════════════════════════════
+function kw(text){
+  const stop=new Set(['của','bạn','tôi','họ','này','đã','và','với','cho','trong','nhưng','không','được','một','những','các','có','là','mà','để','từ','khi','vì','thì','nên','hay','hoặc','theo','đến','tại','rất','quá','về','ra','lại']);
+  const words=text.replace(/[^\w\sàáảãạăắằẳẵặâấầẩẫậèéẻẽẹêếềểễệìíỉĩịòóỏõọôốồổỗộơớờởỡợùúủũụưứừửữựỳýỷỹỵđÀÁẢÃẠĂẮẰẲẴẶÂẤẦẨẪẬÈÉẺẼẸÊẾỀỂỄỆÌÍỈĨỊÒÓỎÕỌÔỐỒỔỖỘƠỚỜỞỠỢÙÚỦŨỤƯỨỪỬỮỰỲÝỶỸỴĐ]/g,' ')
+    .split(/\s+/).filter(w=>w.length>2&&!stop.has(w.toLowerCase()));
+  return words[Math.floor(Math.random()*Math.min(words.length||1,5))]||text.slice(0,15);
+}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function now(){const d=new Date();return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0')}
+function rm(id){document.getElementById(id)?.remove()}
+function scrollB(){const c=document.getElementById('chat');c.scrollTop=c.scrollHeight}
+function active(on){ring.classList.toggle('on',on)}
+function sleep(ms){return new Promise(r=>setTimeout(r,ms))}
+function setIn(on){uin.disabled=!on;sbtn.disabled=!on;uin.placeholder=on?'Nhập câu trả lời của bạn...':'Leo đang xử lý...'}
+function setP(cur,tot){prog.style.width=((cur/tot)*100)+'%'}
+function tags(h){qtags.innerHTML='';(h||[]).forEach(t=>{const b=document.createElement('button');b.className='qt';b.textContent=t;b.onclick=()=>{uin.value=t;send()};qtags.appendChild(b)})}
+function clearTags(){qtags.innerHTML=''}
+function toast(msg){const t=document.getElementById('toast');t.innerHTML=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2400)}
+function copyP(id){
+  const el=document.getElementById(id);
+  const btn=el.querySelector('.cpbtn');btn.style.display='none';
+  const text=el.innerText.trim();btn.style.display='';
+  (navigator.clipboard?.writeText(text)??Promise.reject()).catch(()=>{
+    const ta=Object.assign(document.createElement('textarea'),{value:text});
+    document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();
   });
-
-  const toast = document.getElementById('toast');
-  toast.classList.add('show');
-  setTimeout(() => toast.classList.remove('show'), 2400);
+  toast('<i class="fas fa-check-circle"></i> Đã sao chép Mega Prompt!');
 }
 </script>
-
 </body>
 </html>
