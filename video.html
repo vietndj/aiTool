@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nova 2.0 — Trợ lý kịch bản video 3 module</title>
+  <title>Video — Trợ lý kịch bản video 3 module</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <style>
@@ -187,8 +187,8 @@
       <div class="av-ring" id="av-ring"></div>
     </div>
     <div>
-      <div class="hd-title">Nova <span class="badge">2.0</span></div>
-      <div class="hd-sub"><span class="dot-live"></span>Trợ lý kịch bản 3 module · Hook - Body - CTA</div>
+      <div class="hd-title">Video <span class="badge">Script</span></div>
+      <div class="hd-sub"><span class="dot-live"></span>Kịch bản video 3 module · Hook - Body - CTA</div>
     </div>
   </div>
   <div class="hr">
@@ -653,7 +653,7 @@ function rm(id) { document.getElementById(id)?.remove() }
 function scrollB() { const c = document.getElementById('chat'); c.scrollTop = c.scrollHeight }
 function active(on) { ring.classList.toggle('on', on) }
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)) }
-function setIn(on) { uin.disabled = !on; sbtn.disabled = !on; uin.placeholder = on ? 'Nhập câu trả lời của bạn...' : 'Nova đang xử lý...' }
+function setIn(on) { uin.disabled = !on; sbtn.disabled = !on; uin.placeholder = on ? 'Nhập câu trả lời của bạn...' : 'Video AI đang xử lý...' }
 function setP(cur, tot) { prog.style.width = ((cur / tot) * 100) + '%' }
 function tags(h) {
   qtags.innerHTML = '';
@@ -695,16 +695,192 @@ function copyAndOpenGemini(id) {
 window.addEventListener('load', async () => {
   await AI.init();
   await sleep(220);
+
+  // ── Kiểm tra dữ liệu từ Plan ──
+  const shared = loadShared();
+  if (shared) {
+    await bootFromPlan(shared);
+  } else {
+    await bootNormal();
+  }
+});
+
+function loadShared() {
+  try {
+    const s = JSON.parse(localStorage.getItem('fedu_shared') || 'null');
+    if (!s || s.source !== 'plan') return null;
+    // Dữ liệu hết hạn sau 24h
+    if (Date.now() - s.ts > 86400000) return null;
+    return s;
+  } catch(e) { return null; }
+}
+
+// ── Boot thông thường (không có Plan data) ──
+async function bootNormal() {
   const aiTag = AI.mode !== 'fallback'
     ? ` <span style="color:#4ade80;font-size:12px">· AI Gemini Flash đang chạy</span>`
     : '';
   await novaSay(
-    `Chào bạn! Tôi là <span class="h">Nova 2.0</span>${aiTag} — trợ lý lên chiến lược sản xuất video ngắn.<br><br>` +
+    `Chào bạn! Tôi là <span class="h">Video Script AI</span>${aiTag} — trợ lý lên chiến lược sản xuất video ngắn.<br><br>` +
     `Nhiệm vụ của tôi là giúp bạn thiết lập một quy trình sản xuất video dưới 75 giây được bóc tách làm <span class="h">3 module</span>: <strong>Hook linh hoạt — Body cố định — CTA linh hoạt</strong>.<br><br>` +
     `<span class="hg">Chỉ 2 câu hỏi.</span> Bắt đầu nào —`
   );
   await askQ(0);
-});
+}
+
+// ── Boot thông minh (có Plan data) ──
+async function bootFromPlan(shared) {
+  const aiTag = AI.mode !== 'fallback'
+    ? ` <span style="color:#4ade80;font-size:12px">· AI Gemini Flash</span>` : '';
+
+  await novaSay(
+    `<span class="hg"><i class="fas fa-bolt"></i> Phát hiện dữ liệu từ Plan AI!</span><br><br>` +
+    `Tôi là <span class="h">Video Script AI</span>${aiTag}. Tôi đang đọc dữ liệu bạn đã nhập ở bước Plan và <span class="h">tự suy ra các thông số cần thiết</span>…`
+  );
+
+  // Dùng Gemini infer 2 trường cần cho video
+  const tid = showThink('Đang phân tích dữ liệu Plan và suy ra framework phù hợp...');
+  active(true);
+
+  let inferred = null;
+  if (AI.mode !== 'fallback') {
+    try {
+      inferred = await AI.inferFromPlan(shared);
+    } catch(e) {}
+  }
+
+  // Fallback inference nếu không có AI
+  if (!inferred) {
+    inferred = fallbackInfer(shared);
+  }
+
+  rm(tid); active(false);
+  await sleep(300);
+
+  // Hiển thị confirm card
+  await showConfirmCard(shared, inferred);
+}
+
+// ── Gemini suy ra từ Plan data ──
+AI.inferFromPlan = async function(shared) {
+  const p = `Dữ liệu từ bước Plan:
+- Sản phẩm MVP: "${shared.product}"
+- Nỗi đau khách hàng: "${shared.painPoint}"
+- Kẽ hở đối thủ: "${shared.marketGap}"
+- Upsell: "${shared.upsell}"
+
+Hãy suy ra 2 thông tin sau cho kịch bản video ngắn TikTok/Reels:
+1. "industry": Phân loại ngành hàng ngắn gọn (ví dụ: "Dịch vụ / Khóa học / Chuyên gia")
+2. "painPoint": Rào cản tâm lý / định kiến lớn nhất khiến KH chưa mua (1 câu ngắn, đúng văn nói)
+
+Trả về JSON: {"industry":"...","painPoint":"..."}`;
+
+  const r = await fetch(this.GNURL + this.key, {
+    method: 'POST', headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ contents: [{parts: [{text: p}]}],
+      generationConfig: {maxOutputTokens: 120, temperature: .4}})
+  });
+  const j = await r.json();
+  const raw = j.candidates?.[0]?.content?.parts?.[0]?.text || '';
+  const m = raw.match(/\{[\s\S]*?\}/);
+  return m ? JSON.parse(m[0]) : null;
+};
+
+// ── Fallback inference không cần AI ──
+function fallbackInfer(shared) {
+  const p = shared.product.toLowerCase();
+  let industry = '🎓 Dịch vụ / Khóa học / Chuyên gia';
+  if (p.includes('vật lý') || p.includes('sản phẩm') || p.includes('hàng')) {
+    industry = '📦 Bán lẻ / Sản phẩm vật lý';
+  } else if (p.includes('viral') || p.includes('giải trí') || p.includes('kênh')) {
+    industry = '🎬 Xây kênh Viral / Giải trí';
+  }
+  return { industry, painPoint: shared.painPoint };
+}
+
+// ── Hiển thị card xác nhận ──
+async function showConfirmCard(shared, inferred) {
+  const fw = detectFramework(inferred.industry);
+
+  const row = mkRow('nova');
+  const txt = row.querySelector('.txt');
+  txt.innerHTML = `
+    <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px">
+      <i class="fas fa-database" style="margin-right:5px"></i>Dữ liệu đã suy ra từ Plan
+    </div>
+    <div style="background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.18);border-radius:10px;padding:12px 14px;margin-bottom:12px">
+      <div style="display:flex;gap:8px;align-items:baseline;margin-bottom:7px">
+        <span style="color:var(--muted);min-width:105px;font-size:11px">Ngành hàng</span>
+        <span style="color:var(--text);font-weight:500;font-size:12.5px">${esc(inferred.industry)}</span>
+      </div>
+      <div style="display:flex;gap:8px;align-items:baseline;margin-bottom:7px">
+        <span style="color:var(--muted);min-width:105px;font-size:11px">Framework</span>
+        <span style="color:var(--a);font-weight:600;font-size:12.5px">${esc(fw.code)} — ${esc(fw.name.split('—')[0].trim())}</span>
+      </div>
+      <div style="display:flex;gap:8px;align-items:baseline">
+        <span style="color:var(--muted);min-width:105px;font-size:11px">Rào cản KH</span>
+        <span style="color:var(--text);font-weight:500;font-size:12.5px">${esc(inferred.painPoint.slice(0,70))}</span>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button id="btn-confirm-video" style="flex:1;padding:11px;border-radius:10px;
+        background:linear-gradient(135deg,var(--a),#6366f1);border:none;color:#fff;
+        font-size:13px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif"
+        onclick="confirmAndGenerate()">
+        <i class="fas fa-check"></i> Xác nhận &amp; Tạo Prompt ngay
+      </button>
+      <button style="padding:11px 14px;border-radius:10px;background:var(--s2);
+        border:1px solid var(--border);color:var(--muted);font-size:12px;
+        cursor:pointer;font-family:'Inter',sans-serif"
+        onclick="rejectAndAskManual()">
+        <i class="fas fa-edit"></i> Nhập lại
+      </button>
+    </div>`;
+  cw.appendChild(row);
+  scrollB();
+
+  // Lưu tạm để dùng khi xác nhận
+  window._planInferred = { ...inferred, fw };
+}
+
+// ── Xác nhận và tạo prompt ngay ──
+async function confirmAndGenerate() {
+  document.getElementById('btn-confirm-video')?.closest('.msg')?.remove?.();
+  const inf = window._planInferred;
+
+  // Điền userData
+  userData.industry = inf.industry;
+  userData.framework = inf.fw.name;
+  userData.frameworkReason = inf.fw.desc;
+  userData.fwCode = inf.fw.code;
+  userData.painPoint = inf.painPoint;
+
+  setP(3, 3);
+
+  // Hiển thị framework card
+  await novaSay(
+    `Framework marketing được xác định từ dữ liệu Plan:<br><br>` +
+    `<div class="fw-card">` +
+    `<div class="fw-title"><i class="fas fa-chart-network"></i> Framework</div>` +
+    `<div class="fw-name">${inf.fw.name}</div>` +
+    `<div class="fw-desc">${inf.fw.desc}</div>` +
+    `</div>`
+  );
+
+  await sleep(500);
+  const tid2 = showThink('Đang đóng gói Mega Prompt cá nhân hóa...');
+  active(true);
+  await sleep(1600);
+  rm(tid2); active(false);
+
+  await genPrompt();
+}
+
+// ── Nhập lại thủ công ──
+async function rejectAndAskManual() {
+  document.querySelector('.msg:last-of-type')?.remove?.();
+  await bootNormal();
+}
 </script>
 </body>
 </html>
